@@ -1,0 +1,10 @@
+generate_report:
+  description: >
+    Create a comprehensive report summarizing:
+    - Conference details
+    - Venues analyzed
+    - Scoring results
+    - Email outreach status
+    Include recommendations and next steps.
+  expected_output: >
+    Detailed report with analysis and recommendations 

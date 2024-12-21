@@ -1,0 +1,7 @@
+identify_venues:
+  description: >
+    Using the conference location, identify all potential venues within 
+    {radius_km}km radius that could host technology-related events. Consider only venues 
+    that are appropriate for professional gatherings.
+  expected_output: >
+    List of potential venues with their locations and distances 

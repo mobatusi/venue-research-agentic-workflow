@@ -1,0 +1,11 @@
+score_venues:
+  description: >
+    Evaluate each venue based on:
+    - Distance from conference
+    - Available features
+    - Technical capabilities
+    - Accessibility
+    - Overall suitability
+    Assign a score from 0-100.
+  expected_output: >
+    Scored list of venues with detailed evaluations 

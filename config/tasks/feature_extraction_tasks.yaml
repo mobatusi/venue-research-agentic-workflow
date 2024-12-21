@@ -1,0 +1,11 @@
+extract_features:
+  description: >
+    For each identified venue, extract relevant features including:
+    - Capacity and room configurations
+    - Technical capabilities (AV equipment, internet)
+    - Parking availability
+    - Proximity to public transport
+    - Catering options
+    - Accessibility features
+  expected_output: >
+    Detailed feature list for each venue 
