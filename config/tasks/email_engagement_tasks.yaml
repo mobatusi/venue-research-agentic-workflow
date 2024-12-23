@@ -1,6 +1,21 @@
 generate_emails:
   description: >
-    For venues scoring above 75, generate personalized email outreach 
-    messages. Include specific venue features and potential conference requirements.
+    For venues scoring above 75, generate personalized email outreach messages using this template:
+    "Hello,
+    
+    I am interested in learning more about {venue_name} for hosting a technology mixer 
+    on {conference_dates}. MixerCloud organizes professional networking events across the country, 
+    and your venue's {specific_features} particularly caught our attention.
+    
+    We're looking to host {expected_attendance} attendees and would like to discuss how we 
+    can make this event possible at your location. Our events focus on creating engaging 
+    environments for technology professionals to connect and collaborate.
+    
+    You can learn more about our event style and past conferences through our social media:
+    LinkedIn: https://www.linkedin.com/company/mixercloud/
+    Instagram: https://www.instagram.com/mixercloud/?hl=en
+    TikTok: https://www.tiktok.com/@mixer.cloud
+    
+    Looking forward to discussing the possibilities."
   expected_output: >
     Personalized email templates for high-scoring venues 
