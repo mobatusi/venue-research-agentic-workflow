@@ -24,7 +24,7 @@ class VenueSearchFlow(Flow[VenueSearchState]):
     @start()
     def initialize_search(self):
         """Initialize the search parameters"""
-        print(f"Starting venue search for location: {self.state.address}")
+        print(f"Starting venue search for location: {self.state.address} with radius {self.state.radius_km}km")
         # Could add validation or preprocessing here
 
     @listen(initialize_search)

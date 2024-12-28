@@ -101,6 +101,7 @@ class VenueSearchCrew:
     def extract_features(self) -> Task:
         return Task(
             config=self.tasks_config["extract_features"],
+            input_data={"venues": self.state.get("venues", [])}
         )
 
     @task
@@ -108,6 +109,7 @@ class VenueSearchCrew:
         """Creates the Venue Scoring Task"""
         return Task(
             config=self.tasks_config["score_venues"],
+            input_data={"features": self.state.get("features", [])}
         )
 
     @task
@@ -115,6 +117,7 @@ class VenueSearchCrew:
         """Creates the Email Generation Task"""
         return Task(
             config=self.tasks_config["generate_emails"],
+            input_data={"scores": self.state.get("scores", [])}
         )
 
     @task
@@ -122,20 +125,24 @@ class VenueSearchCrew:
         """Creates the Report Generation Task"""
         return Task(
             config=self.tasks_config["generate_report"],
+            input_data={"emails": self.state.get("emails", [])}
         )
 
     @crew
     def crew(self, address: str, radius_km: float = 5.0) -> Crew:
         """Creates the Venue Search Crew"""
+        # Set state before creating tasks
+        self.state = {
+            **self.state,
+            "address": address,
+            "radius_km": radius_km
+        }
+
         return Crew(
-            agents=self.agents,  # Automatically created by the @agent decorator
-            tasks=self.tasks,    # Automatically created by the @task decorator
+            agents=self.agents,
+            tasks=self.tasks,
             process=Process.sequential,
-            verbose=True,
-            input_data={
-                "address": address,
-                "radius_km": radius_km
-            }
+            verbose=True
         )
 
     # async def run(self, address: str, radius_km: float = 5.0) -> ReportDocument:

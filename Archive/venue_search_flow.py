@@ -114,7 +114,7 @@ class VenueSearchFlow:
 
     async def analyze_location(self, address: str, radius_km: float = 5.0) -> List[VenueBasicInfo]:
         """Start the flow by analyzing the specified location"""
-        print(f"Starting venue search for location: {address}")
+        print(f"Starting venue search for location: {address} with radius {radius_km}km")
         
         task = self._create_task('location_analysis', address=address, radius_km=radius_km)
         crew = Crew(
@@ -129,6 +129,7 @@ class VenueSearchFlow:
 
     async def extract_venue_features(self, venues: List[VenueBasicInfo]) -> List[VenueFeatures]:
         """Extract features for each identified venue"""
+        print(f"Extracting features for {len(venues)} venues")
         task = self._create_task('feature_extraction')
         crew = Crew(
             agents=[self.agents['feature_extractor']],
@@ -142,6 +143,7 @@ class VenueSearchFlow:
 
     async def score_venues(self, features: List[VenueFeatures]) -> List[VenueScore]:
         """Score venues based on their features"""
+        print(f"Scoring {len(features)} venues")
         task = self._create_task('scoring')
         crew = Crew(
             agents=[self.agents['scoring_agent']],
@@ -155,6 +157,7 @@ class VenueSearchFlow:
 
     async def generate_emails(self, scores: List[VenueScore]) -> List[EmailTemplate]:
         """Generate emails for high-scoring venues"""
+        print(f"Generating emails for {len(scores)} venues")
         task = self._create_task('email_engagement')
         crew = Crew(
             agents=[self.agents['email_agent']],
@@ -168,6 +171,7 @@ class VenueSearchFlow:
 
     async def generate_report(self) -> ReportDocument:
         """Generate final report"""
+        print(f"Generating report for {len(self.state['venues'])} venues")
         task = self._create_task('reporting')
         crew = Crew(
             agents=[self.agents['reporting_agent']],

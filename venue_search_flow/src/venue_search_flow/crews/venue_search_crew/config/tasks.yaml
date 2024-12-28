@@ -1,6 +1,5 @@
 analyze_location:
-  description: >
-    Search for venues within {radius_km}km of {address}
+  description: "Search for venues within {input_data[radius_km]}km of {input_data[address]}"
   expected_output: >
     List of potential venues with details
   context: []
