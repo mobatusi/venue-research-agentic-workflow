@@ -1,0 +1,39 @@
+analyze_location:
+  description: >
+    Search for venues within {radius_km}km of {address}
+  expected_output: >
+    List of potential venues with details
+  context: []
+  agent: "location_analyst"
+
+extract_features:
+  description: >
+    Extract features from identified venues
+  expected_output: >
+    Detailed venue features
+  context: ["analyze_location"]
+  agent: "feature_extractor"
+
+score_venues:
+  description: >
+    Score venues based on features
+  expected_output: >
+    Venue scores and rankings
+  context: ["extract_features"]
+  agent: "scoring_agent"
+
+generate_emails:
+  description: >
+    Generate outreach emails for top venues
+  expected_output: >
+    Email templates
+  context: ["score_venues"]
+  agent: "email_agent"
+
+generate_report:
+  description: >
+    Create final analysis report
+  expected_output: >
+    Comprehensive report
+  context: ["generate_emails"] 
+  agent: "reporting_agent"
