@@ -1,6 +1,0 @@
-collect_conference_data:
-  description: >
-    Research and collect detailed information about {conference_name} 
-    in {city}. Include the exact location, dates, and expected attendance.
-  expected_output: >
-    Detailed conference information including exact location and requirements 

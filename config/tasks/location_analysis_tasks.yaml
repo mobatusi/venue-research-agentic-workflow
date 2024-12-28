@@ -1,7 +1,46 @@
 identify_venues:
   description: >
-    Using the provided {address}, identify all potential venues within 
-    {radius_km}km radius that could host technology-related events. Consider only venues 
-    that are appropriate for professional gatherings.
+    Using professional venue databases and GIS tools, identify all potential venues within {radius_km}km radius of {address}.
+    
+    Required venue details:
+    - Venue name and type
+    - Complete address
+    - Distance from target location
+    - Available contact information
+    
+    Constraints:
+    - Only include venues suitable for professional events
+    - Must be accessible by public transport
+    - Must have parking facilities
+  
+  context: >
+    This is the first step in our venue search process. The results will be used by the 
+    Facilities Assessment Expert for detailed feature analysis.
+  
   expected_output: >
-    List of potential venues with their locations and distances 
+    List[VenueBasicInfo] containing:
+    {
+      "venues": [
+        {
+          "name": str,
+          "type": str,
+          "address": str,
+          "distance_km": float,
+          "contact_info": dict
+        }
+      ]
+    }
+  
+  tools:
+    - SerperDevTool
+    - GoogleMapsAPI
+    - VenueFinderPro
+  
+  human_intervention: >
+    Prompt user to verify venue list before proceeding to feature extraction:
+    - Confirm venues meet basic requirements
+    - Remove any unsuitable venues
+    - Add any known venues not identified
+  
+  output_format: json
+  async: true 

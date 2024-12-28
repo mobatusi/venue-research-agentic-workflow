@@ -1,11 +1,55 @@
 score_venues:
   description: >
-    Evaluate each venue based on:
-    - Distance from conference
-    - Available features
-    - Technical capabilities
-    - Accessibility
-    - Overall suitability
-    Assign a score from 0-100.
+    Apply industry-standard scoring algorithm to evaluate venues based on:
+    
+    Scoring Categories (100 points total):
+    1. Location (25 points)
+       - Distance from target
+       - Accessibility
+       - Parking
+    
+    2. Facilities (35 points)
+       - Space configuration
+       - Technical capabilities
+       - Amenities
+    
+    3. Operations (25 points)
+       - Staff support
+       - Catering options
+       - Setup/breakdown
+    
+    4. Cost-Value (15 points)
+       - Pricing
+       - Included services
+       - Additional fees
+  
+  context: >
+    Using detailed feature data from extraction phase.
+    Scores will determine which venues receive outreach.
+  
   expected_output: >
-    Scored list of venues with detailed evaluations 
+    List[VenueScore] containing:
+    {
+      "venue_id": str,
+      "total_score": float,
+      "category_scores": {
+        "location": float,
+        "facilities": float,
+        "operations": float,
+        "cost_value": float
+      },
+      "recommendations": List[str]
+    }
+  
+  tools:
+    - VenueScoringAlgorithm
+    - PricingAnalyzer
+  
+  human_intervention: >
+    Review and adjust scores for:
+    - Unusual circumstances
+    - Special requirements
+    - Local market factors
+  
+  output_format: pydantic
+  run_parallel: true 

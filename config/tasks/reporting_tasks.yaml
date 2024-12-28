@@ -1,9 +1,55 @@
 generate_report:
   description: >
-    Create a comprehensive report summarizing:
-    - Venues analyzed
-    - Scoring results
-    - Personalized email generated for each venue
-    Include recommendations and next steps.
+    Create comprehensive analysis report including:
+    
+    1. Executive Summary
+       - Key findings
+       - Top recommendations
+    
+    2. Detailed Analysis
+       - Venue comparisons
+       - Scoring breakdowns
+       - Cost analysis
+    
+    3. Outreach Status
+       - Contact attempts
+       - Responses
+       - Next steps
+    
+    4. Visual Elements
+       - Charts
+       - Maps
+       - Comparison tables
+  
+  context: >
+    Using all previous task outputs.
+    Final deliverable for stakeholder review.
+  
   expected_output: >
-    Detailed report with analysis and recommendations 
+    ReportDocument containing:
+    {
+      "summary": dict,
+      "analysis": dict,
+      "outreach_status": dict,
+      "visualizations": List[str],
+      "recommendations": List[str],
+      "attachments": List[str]
+    }
+  
+  tools:
+    - ReportGenerator
+    - DataVisualization
+    - PDFCreator
+  
+  human_intervention: >
+    Final review of:
+    - Report accuracy
+    - Recommendations
+    - Visual elements
+  
+  output_format: 
+    - json
+    - pdf
+    - pydantic
+  
+  save_to_file: "venue_analysis_report.pdf" 

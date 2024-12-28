@@ -1,21 +1,41 @@
 generate_emails:
   description: >
-    For venues scoring above 75, generate personalized email outreach messages using this template:
-    "Hello,
+    Create personalized outreach emails for venues scoring above 75 points.
     
-    I am interested in learning more about {venue_name} for hosting a technology mixer 
-    on {conference_dates}. MixerCloud organizes professional networking events across the country, 
-    and your venue's {specific_features} particularly caught our attention.
+    Required Elements:
+    1. Custom introduction referencing venue specifics
+    2. Clear event requirements
+    3. Specific venue features of interest
+    4. Professional credentials
+    5. Clear call to action
     
-    We're looking to host {expected_attendance} attendees and would like to discuss how we 
-    can make this event possible at your location. Our events focus on creating engaging 
-    environments for technology professionals to connect and collaborate.
-    
-    You can learn more about our event style and past conferences through our social media:
-    LinkedIn: https://www.linkedin.com/company/mixercloud/
-    Instagram: https://www.instagram.com/mixercloud/?hl=en
-    TikTok: https://www.tiktok.com/@mixer.cloud
-    
-    Looking forward to discussing the possibilities."
+    Tone: Professional, direct, engaging
+    Length: 150-200 words maximum
+  
+  context: >
+    Using scoring results and venue features.
+    Only targeting highest-rated venues.
+  
   expected_output: >
-    Personalized email templates for high-scoring venues 
+    List[EmailTemplate] containing:
+    {
+      "venue_id": str,
+      "recipient": str,
+      "subject": str,
+      "body": str,
+      "custom_elements": dict,
+      "follow_up_date": datetime
+    }
+  
+  tools:
+    - EmailTemplateTool
+    - ContactEnrichmentAPI
+  
+  human_intervention: >
+    Review and approve:
+    - Email content
+    - Custom elements
+    - Timing of outreach
+  
+  output_format: json
+  save_to_file: "email_templates.json" 
