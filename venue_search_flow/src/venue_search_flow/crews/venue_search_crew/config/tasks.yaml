@@ -23,16 +23,19 @@ score_venues:
 
 generate_emails:
   description: >
-    Generate outreach emails for top venues
+    Generate outreach emails for top venues and save them to the 'generated_emails' folder.
+    Each email should be saved as a separate file with the venue name.
   expected_output: >
-    Email templates
+    List of generated email paths and their metadata
   context: ["score_venues"]
   agent: "email_agent"
 
 generate_report:
   description: >
-    Create final analysis report
+    Create final analysis report and save it to the 'generated_reports' folder
+    with timestamp. Include comprehensive venue analysis, scoring details,
+    and references to generated emails.
   expected_output: >
-    Comprehensive report
+    Path to generated report file and summary of findings
   context: ["generate_emails"] 
   agent: "reporting_agent"

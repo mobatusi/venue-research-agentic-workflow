@@ -1,7 +1,6 @@
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
-from langchain.tools import Tool
-from langchain_community.utilities import SerpAPIWrapper
+from crewai_tools import SerperDevTool, ScrapeWebsiteTool
 from typing import Dict, List
 import os
 from venue_search_flow.models.venue_models import (
@@ -11,6 +10,10 @@ from venue_search_flow.models.venue_models import (
     EmailTemplate,
     ReportDocument
 )
+from pydantic import Field
+from pathlib import Path
+import json
+from datetime import datetime
 
 @CrewBase
 class VenueSearchCrew:
@@ -22,37 +25,24 @@ class VenueSearchCrew:
     tasks_config = os.path.join(base_path, "config", "tasks.yaml")
 
     def __init__(self):
-        # Initialize SerpAPI search
-        search = SerpAPIWrapper(
-            serpapi_api_key=os.getenv("SERPER_API_KEY"),
-            params={
-                "engine": "google",
-                "google_domain": "google.com",
-                "gl": "us",
-                "hl": "en"
-            }
-        )
-        
-        # Create search tools
-        self.search_tool = Tool(
-            name="Search",
-            func=search.run,
-            description="Search for venue information online"
-        )
-        
-        self.web_tool = Tool(
-            name="Detailed Search",
-            func=search.run,
-            description="Search for detailed venue features and specifications"
-        )
-        
-        self.state = {
+        # Initialize state with default values
+        self._state = {
+            "address": "333 Adams St, Brooklyn, NY 11201, United States",
+            "radius_km": 1.0,
             "venues": [],
             "features": [],
             "scores": [],
             "emails": [],
             "report": None
         }
+        # Create output directories
+        self.emails_dir = Path("generated_emails")
+        self.reports_dir = Path("generated_reports")
+        self.emails_dir.mkdir(exist_ok=True)
+        self.reports_dir.mkdir(exist_ok=True)
+        
+        self.search_tool = SerperDevTool()
+        self.web_tool = ScrapeWebsiteTool()
 
     @agent
     def location_analyst(self) -> Agent:
@@ -93,15 +83,20 @@ class VenueSearchCrew:
     def analyze_location(self) -> Task:
         """Creates the Location Analysis Task"""
         return Task(
-            config=self.tasks_config["analyze_location"],
-            input_data={"address": self.state.get("address"), "radius_km": self.state.get("radius_km")}
+            description=f"Search for venues within {self._state['radius_km']}km of {self._state['address']}",
+            agent=self.location_analyst(),
+            tools=[self.search_tool],
+            expected_output="List of potential venues with details"
         )
 
     @task
     def extract_features(self) -> Task:
         return Task(
-            config=self.tasks_config["extract_features"],
-            input_data={"venues": self.state.get("venues", [])}
+            description="Extract features from identified venues",
+            agent=self.feature_extractor(),
+            tools=[self.web_tool],
+            input_data={"venues": self._state.get("venues", [])},
+            expected_output="Detailed venue features"
         )
 
     @task
@@ -109,34 +104,60 @@ class VenueSearchCrew:
         """Creates the Venue Scoring Task"""
         return Task(
             config=self.tasks_config["score_venues"],
-            input_data={"features": self.state.get("features", [])}
+            input_data={"features": self._state.get("features", [])}
         )
 
     @task
     def generate_emails(self) -> Task:
         """Creates the Email Generation Task"""
         return Task(
-            config=self.tasks_config["generate_emails"],
-            input_data={"scores": self.state.get("scores", [])}
+            description="Generate outreach emails for top venues and save them",
+            agent=self.email_agent(),
+            tools=[],
+            input_data={
+                "scores": self._state.get("scores", []),
+                "output_dir": str(self.emails_dir)
+            },
+            expected_output="List of generated email paths and metadata"
         )
 
     @task
     def generate_report(self) -> Task:
         """Creates the Report Generation Task"""
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        report_path = self.reports_dir / f"venue_report_{timestamp}.json"
+        
         return Task(
-            config=self.tasks_config["generate_report"],
-            input_data={"emails": self.state.get("emails", [])}
+            description="Generate comprehensive venue analysis report",
+            agent=self.reporting_agent(),
+            tools=[],
+            input_data={
+                "emails": self._state.get("emails", []),
+                "output_path": str(report_path)
+            },
+            expected_output="Path to generated report and summary"
         )
+
+    def _save_email(self, venue_name: str, email_content: str) -> str:
+        """Save email to file and return the path"""
+        safe_name = "".join(c for c in venue_name if c.isalnum() or c in (' ', '-', '_')).strip()
+        file_path = self.emails_dir / f"{safe_name}_email.txt"
+        file_path.write_text(email_content)
+        return str(file_path)
+
+    def _save_report(self, report_data: dict) -> str:
+        """Save report to file and return the path"""
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        file_path = self.reports_dir / f"venue_report_{timestamp}.json"
+        file_path.write_text(json.dumps(report_data, indent=2))
+        return str(file_path)
 
     @crew
     def crew(self, address: str, radius_km: float = 5.0) -> Crew:
         """Creates the Venue Search Crew"""
         # Set state before creating tasks
-        self.state = {
-            **self.state,
-            "address": address,
-            "radius_km": radius_km
-        }
+        self._state["address"] = address
+        self._state["radius_km"] = radius_km
 
         return Crew(
             agents=self.agents,
@@ -151,6 +172,6 @@ class VenueSearchCrew:
     #     result = await crew_instance.kickoff()
         
     #     # Update state with results
-    #     self.state.update(result)
+    #     self._state.update(result)
         
-    #     return ReportDocument(**self.state["report"]) 
+    #     return ReportDocument(**self._state["report"]) 

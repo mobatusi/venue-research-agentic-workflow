@@ -31,22 +31,34 @@ class VenueSearchFlow(Flow[VenueSearchState]):
     def execute_search(self):
         """Execute the venue search workflow"""
         print("Executing venue search workflow")
-        result = (
-            VenueSearchCrew()
-            .crew(address=self.state.address, radius_km=self.state.radius_km)
-            .kickoff()
-        )
+        crew = VenueSearchCrew()
+        result = crew.crew(
+            address=self.state.address, 
+            radius_km=self.state.radius_km
+        ).kickoff()
 
+        # Create a report from the last task's output
         print("Search completed, processing results")
-        self.state.report = ReportDocument(**result["report"])
+        self.state.report = ReportDocument(
+            summary={
+                "venues_found": 0,
+                "emails_generated": len(result.raw_output.get("email_paths", []))
+            },
+            analysis=result.raw_output,
+            outreach_status={
+                "emails_saved": result.raw_output.get("email_paths", [])
+            },
+            visualizations=[],
+            recommendations=[],
+            attachments=result.raw_output.get("email_paths", [])
+        )
 
     @listen(execute_search)
     def save_report(self):
         """Save the final report"""
         print("Saving venue search report")
-        # Save report to file
-        report_path = "venue_search_report.json"
-        self.state.report.json(path=report_path)
+        # Report is already saved by the generate_report task
+        report_path = self.state.report.analysis.get("report_path", "report_not_found")
         print(f"Report saved to {report_path}")
 
 def kickoff(address: str, radius_km: float = 5.0):
