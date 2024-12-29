@@ -215,41 +215,37 @@ def main():
             key="radius_input"
         )
 
-        # API key validation
-        api_keys_set = True
-        openai_key = os.getenv("OPENAI_API_KEY")
-        serper_key = os.getenv("SERPER_API_KEY")
-        
-        # Check if either key is missing from both env and session state
-        if not (openai_key or st.session_state.get('openai_key_input')):
-            st.warning("⚠️ OpenAI API key not found. Please enter it in the sidebar.")
-            api_keys_set = False
-        
-        if not (serper_key or st.session_state.get('serper_key_input')):
-            st.warning("⚠️ Serper API key not found. Please enter it in the sidebar.")
-            api_keys_set = False
-
     with col2:
         # Progress tracking
         st.write("### Progress")
         progress_bar = st.progress(0.0, "Ready to start")
 
+    # API key validation
+    openai_key = os.getenv("OPENAI_API_KEY", "")
+    serper_key = os.getenv("SERPER_API_KEY", "")
+    openai_key_input = st.session_state.get('openai_key_input', "")
+    serper_key_input = st.session_state.get('serper_key_input', "")
+    
+    # Check if either key is missing or empty
+    has_openai_key = bool(openai_key_input.strip())  # Only consider session state input
+    has_serper_key = bool(serper_key_input.strip())  # Only consider session state input
+    
+    if not has_openai_key:
+        st.warning("⚠️ OpenAI API key not found. Please enter it in the sidebar.")
+    
+    if not has_serper_key:
+        st.warning("⚠️ Serper API key not found. Please enter it in the sidebar.")
+    
     # Search button - placed below both columns
-    search_disabled = not api_keys_set or not address or not (
-        openai_key or st.session_state.get('openai_key_input', '').strip()
-    ) or not (
-        serper_key or st.session_state.get('serper_key_input', '').strip()
-    )
+    search_disabled = not address or not has_openai_key or not has_serper_key
     
     if st.button("🔍 Start Search", disabled=search_disabled, type="primary"):
-        if address and api_keys_set:
+        if address and has_openai_key and has_serper_key:
             try:
                 with st.spinner("Searching for venues..."):
-                    # Set API keys from session state if available
-                    if st.session_state.get('openai_key_input'):
-                        os.environ["OPENAI_API_KEY"] = st.session_state.openai_key_input
-                    if st.session_state.get('serper_key_input'):
-                        os.environ["SERPER_API_KEY"] = st.session_state.serper_key_input
+                    # Set API keys from session state
+                    os.environ["OPENAI_API_KEY"] = openai_key_input
+                    os.environ["SERPER_API_KEY"] = serper_key_input
                     
                     # Execute search with user inputs
                     result = kickoff(
@@ -291,7 +287,7 @@ def main():
         # OpenAI API Key input
         openai_key_input = st.text_input(
             "OpenAI API Key",
-            value=os.getenv("OPENAI_API_KEY", ""),
+            # value=os.getenv("OPENAI_API_KEY", ""),
             type="password",
             placeholder="Enter your OpenAI API key",
             help="Required for AI-powered analysis and content generation",
@@ -301,7 +297,7 @@ def main():
         # Serper API Key input
         serper_key_input = st.text_input(
             "Serper API Key",
-            value=os.getenv("SERPER_API_KEY", ""),
+            # value=os.getenv("SERPER_API_KEY", ""),
             type="password",
             placeholder="Enter your Serper API key",
             help="Required for web search functionality",

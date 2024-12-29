@@ -1,0 +1,10 @@
+{
+  "venues_found": 1,
+  "emails_generated": 1,
+  "venues_data": "{\"venue_id\": \"new_york_marriott_at_the_brooklyn_bridge\", \"venue_score\": 88.0, \"key_features\": \"Ideal for large corporate gatherings,Strategic location,Excellent amenities\"}",
+  "emails_data": "{\"recipient\": \"contact@brooklynbridge.com\", \"subject\": \"Collaboration Opportunity with New York Marriott at the Brooklyn Bridge\", \"body\": \"Dear Venue Manager,\\n\\nI hope this message finds you well. I am reaching out to explore potential partnership opportunities between our organizations. The New York Marriott at the Brooklyn Bridge is an ideal venue for large corporate gatherings and presents an excellent opportunity for marketing efforts through high-quality photography.\\n\\nWith exceptional amenities and strategic location, we believe that a collaboration could benefit both parties significantly. \\n\\nI would love to schedule a time to discuss this further. Please let me know your availability.\\n\\nThank you for considering this opportunity. I look forward to your response.\\n\\nBest regards,\\n[Your Name]\\n[Your Title]\\n[Your Contact Information]\"}",
+  "emails_saved": "outputs/search_20241229_001554/emails/email_001.txt",
+  "visualizations": "",
+  "recommendations": "Utilize the venue for corporate gatherings due to its strategic location; Focus on marketing high-quality photography due to great amenities.",
+  "attachments": ""
+}
