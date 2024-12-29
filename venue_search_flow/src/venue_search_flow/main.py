@@ -286,7 +286,6 @@ def kickoff(address: str, radius_km: float = 0.5) -> dict:
     # Return the output paths and progress
     return {
         "output_dir": flow.state.output_dir,
-        "report_path": str(Path(flow.state.output_dir) / "reports" / "search_report.json"),
         "current_step": flow.state.current_step,
         "progress": flow.state.progress
     }

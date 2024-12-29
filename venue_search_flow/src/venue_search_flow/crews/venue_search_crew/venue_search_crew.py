@@ -498,9 +498,8 @@ class VenueSearchCrew:
         print("\n=== Starting Report Generation ===")
         print("Compiling final report with all data...")
         
-        # Pre-compute the output paths
-        report_path = str(self.reports_dir / "search_report.json")
-        raw_output_path = str(self.reports_dir / "report_generation_output.json")
+        # Pre-compute the output path
+        output_path = str(self.reports_dir / "report_generation_output.json")
         
         def process_output(task_output):
             """Process and save the task output"""
@@ -518,31 +517,15 @@ class VenueSearchCrew:
                         print(f"Failed to parse output as JSON: {output_data[:100]}...")
                         return output_data
                 
-                # Save the raw output
+                # Save the output
                 if isinstance(output_data, dict):
-                    # Save raw output
-                    with open(raw_output_path, 'w') as f:
+                    with open(output_path, 'w') as f:
                         json.dump(output_data, f, indent=2)
-                    print(f"Saved raw report generation output to {raw_output_path}")
+                    print(f"Saved report generation output to {output_path}")
                     
-                    # Save final report
-                    report_data = {
-                        "venues_found": output_data.get("venues_found", 0),
-                        "emails_generated": output_data.get("emails_generated", 0),
-                        "venues_data": output_data.get("venues_data", "[]"),
-                        "emails_data": output_data.get("emails_data", "[]"),
-                        "emails_saved": output_data.get("emails_saved", ""),
-                        "visualizations": output_data.get("visualizations", ""),
-                        "recommendations": output_data.get("recommendations", ""),
-                        "attachments": output_data.get("attachments", "")
-                    }
-                    with open(report_path, 'w') as f:
-                        json.dump(report_data, f, indent=2)
-                    print(f"Saved final report to {report_path}")
-                    
-                    # Update state with report
-                    self._state["report"] = report_data
-                    print(f"Added report to state with {report_data['venues_found']} venues and {report_data['emails_generated']} emails")
+                    # Update state with report data
+                    self._state["report"] = output_data
+                    print(f"Added report to state with {output_data['venues_found']} venues and {output_data['emails_generated']} emails")
                 else:
                     print(f"Unexpected output type after parsing: {type(output_data)}")
                     print(f"Output data: {output_data}")
@@ -591,8 +574,7 @@ class VenueSearchCrew:
             After compiling each section:
             1. Print progress updates (e.g., "Processed venue data: X venues found")
             2. Print summary of recommendations
-            3. Save the report to """ + report_path + """
-            4. Save your raw output to """ + raw_output_path + """
+            3. Save your output to """ + output_path + """
             """,
             agent=self.reporting_agent(),
             expected_output="""

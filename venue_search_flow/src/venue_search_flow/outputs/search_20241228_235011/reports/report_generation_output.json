@@ -1,0 +1,10 @@
+{
+  "venues_found": 1,
+  "emails_generated": 1,
+  "venues_data": "{\"venue_id\":\"new_york_marriott_at_the_brooklyn_bridge\",\"venue_score\":87.0,\"key_features\":\"Large Corporate Events, Rooftop Terrace, Catering Package Deals\"}",
+  "emails_data": "{\"recipient\":\"contact@marriott.com\",\"subject\":\"Partnership Opportunity\",\"body\":\"Dear Venue Manager,\\n\\nI hope this message finds you well. I am reaching out to explore potential partnership opportunities that could enhance both our offerings in the vibrant events industry. The New York Marriott at the Brooklyn Bridge stands out as an ideal venue for large corporate events, especially with your impressive scores in location and amenities.\\n\\nWe are particularly interested in discussing how we can collaborate to promote your venue to our clientele. I believe your space can benefit tremendously from our extensive network and marketing capabilities.\\n\\nAdditionally, I noticed the option to pre-book the rooftop terrace for events, which I believe can create a unique appeal and unforgettable experiences for guests. Let's connect soon to discuss this further.\\n\\nLooking forward to your thoughts!\\n\\nWarm regards,\\n\\n[Your Name]  \\nSenior Venue Communications Specialist  \\n[Your Contact Information]\"}",
+  "emails_saved": "outputs/emails/new_york_marriott_at_the_brooklyn_bridge_email.txt",
+  "visualizations": "",
+  "recommendations": "Promote catering package deals; Leverage marketing network for visibility; Highlight rooftop terrace features on website.",
+  "attachments": ""
+}

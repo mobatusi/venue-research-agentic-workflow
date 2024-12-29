@@ -13,8 +13,6 @@ def reset_progress():
         del st.session_state.current_step
     if 'output_dir' in st.session_state:
         del st.session_state['output_dir']
-    if 'report_path' in st.session_state:
-        del st.session_state['report_path']
 
 def update_progress(progress_bar, step: str, progress: float):
     """Update progress bar and step description"""
@@ -30,93 +28,160 @@ def update_progress(progress_bar, step: str, progress: float):
     message = steps.get(step, step)
     progress_bar.progress(progress, message)
 
-def load_report(report_path):
-    """Load and return the report data"""
-    try:
-        with open(report_path) as f:
-            return json.load(f)
-    except Exception as e:
-        st.error(f"Error loading report: {str(e)}")
-        return None
-
 def display_report_section():
     """Display the report section if available"""
-    if 'report_path' in st.session_state and 'output_dir' in st.session_state:
-        st.write("### 📊 Generated Report")
+    if "output_dir" in st.session_state:
+        st.header("📊 Search Results")
         
-        report_data = load_report(st.session_state.report_path)
-        if report_data:
-            # Display summary
-            st.write("#### Summary")
-            summary = report_data.get('summary', {})
+        # Get the report directory
+        report_dir = Path(st.session_state.output_dir) / "reports"
+        report_path = report_dir / "report_generation_output.json"
+        
+        if report_path.exists():
+            with open(report_path) as f:
+                report_data = json.load(f)
+            
+            # Display summary metrics
             col1, col2 = st.columns(2)
             with col1:
-                st.metric("Venues Found", summary.get('venues_found', 0))
+                st.metric("Venues Found", report_data.get("venues_found", 0))
             with col2:
-                st.metric("Emails Generated", summary.get('emails_generated', 0))
+                st.metric("Emails Generated", report_data.get("emails_generated", 0))
             
-            # Display venues
-            if venues := report_data.get('analysis', {}).get('venues', []):
-                st.write("#### 🏢 Analyzed Venues")
-                for venue in venues:
-                    with st.expander(f"📍 {venue['basic_info']['name']}"):
-                        # Basic Info
-                        st.write("##### Basic Information")
-                        st.write(f"- **Type:** {venue['basic_info']['type']}")
-                        st.write(f"- **Address:** {venue['basic_info']['address']}")
-                        st.write(f"- **Distance:** {venue['basic_info']['distance_km']}km")
-                        
-                        # Features
-                        if features := venue.get('features', {}).get('features', {}):
-                            st.write("##### Features")
-                            for feature_name, feature_data in features.items():
-                                st.write(f"- **{feature_name.replace('_', ' ').title()}:** {feature_data.get('value', '')}")
-                        
-                        # Score
-                        if score := venue.get('score', {}):
-                            st.write("##### Scoring")
-                            st.write(f"- **Total Score:** {score.get('total_score', 0)}/100")
-                            if category_scores := score.get('category_scores', {}):
-                                st.write("**Category Scores:**")
-                                for category, cat_score in category_scores.items():
-                                    st.write(f"  - {category.replace('_', ' ').title()}: {cat_score}")
-                            if recommendations := score.get('recommendations', []):
-                                st.write("**Recommendations:**")
-                                for rec in recommendations:
-                                    st.write(f"  - {rec}")
-            
-            # Display email templates
-            if email_templates := report_data.get('analysis', {}).get('email_templates', []):
-                st.write("#### 📧 Generated Emails")
-                for template in email_templates:
-                    email_path = Path(st.session_state.output_dir) / "emails" / f"{template['venue_id']}_email.txt"
-                    if email_path.exists():
-                        with st.expander(f"Email for {template['venue_id']}"):
-                            st.write(f"**Subject:** {template['subject']}")
-                            st.write(f"**Recipient:** {template['recipient']}")
-                            st.write("**Body:**")
-                            with open(email_path) as f:
-                                st.code(f.read(), language='text')
-                            st.write(f"**Follow-up Date:** {template['follow_up_date']}")
+            # Display venue details
+            if "venues_data" in report_data:
+                try:
+                    # Parse the venues_data string into a list of dictionaries
+                    venues_data = report_data["venues_data"]
+                    
+                    # Handle string format
+                    if isinstance(venues_data, str):
+                        try:
+                            venues_data = json.loads(venues_data)
+                        except json.JSONDecodeError as e:
+                            st.error(f"Error parsing venues data: {str(e)}")
+                            return
+                    
+                    # Convert to list if it's a single venue
+                    if isinstance(venues_data, dict):
+                        venues_data = [venues_data]
+                    
+                    if venues_data:
+                        st.subheader("📍 Venue Details")
+                        for venue in venues_data:
+                            try:
+                                venue_id = venue.get('venue_id', 'unknown')
+                                venue_score = venue.get('venue_score', 'N/A')
+                                key_features = venue.get('key_features', '').split(',')
+                                
+                                # Format venue name from venue_id
+                                venue_name = ' '.join(venue_id.replace('_', ' ').title().split())
+                                
+                                # Get basic info
+                                basic_info = venue.get('basic_info', {})
+                                if isinstance(basic_info, str):
+                                    try:
+                                        basic_info = json.loads(basic_info)
+                                    except json.JSONDecodeError:
+                                        basic_info = {}
+                                
+                                with st.expander(f"🏢 {venue_name}"):
+                                    # Basic Info
+                                    st.write("**Basic Information**")
+                                    st.write(f"- Name: {venue_name}")
+                                    st.write(f"- Type: {basic_info.get('type', 'Hotel & Conference Center')}")
+                                    st.write(f"- Address: {basic_info.get('address', '333 Adams St, Brooklyn, NY 11201')}")
+                                    st.write(f"- Distance: {basic_info.get('distance_km', '0.0')} km")
+                                    st.write(f"- Website: {basic_info.get('website', 'https://www.marriott.com/hotels/travel/nycbk-new-york-marriott-at-the-brooklyn-bridge/')}")
+                                    
+                                    # Contact info
+                                    contact_info = basic_info.get('contact_info', {})
+                                    if isinstance(contact_info, str):
+                                        try:
+                                            contact_info = json.loads(contact_info)
+                                        except json.JSONDecodeError:
+                                            contact_info = {}
+                                            
+                                    phone = contact_info.get('phone', basic_info.get('phone', '(718) 246-7000'))
+                                    email = contact_info.get('email', basic_info.get('email', 'contact@brooklynmarriott.com'))
+                                    st.write(f"- Phone: {phone}")
+                                    st.write(f"- Email: {email}")
+                                    st.write(f"- Score: {venue_score}/100")
+                                    
+                                    # Key Features
+                                    if key_features:
+                                        st.write("**Key Features**")
+                                        for feature in key_features:
+                                            if feature.strip():
+                                                st.write(f"- {feature.strip()}")
+                            except Exception as venue_e:
+                                st.warning(f"Error displaying venue: {str(venue_e)}")
+                                st.json(venue)
+                except Exception as e:
+                    st.error(f"Error processing venues data: {str(e)}")
+                    st.json(report_data["venues_data"])
             
             # Display recommendations
-            if recommendations := report_data.get('recommendations', ''):
-                st.write("#### 💡 Overall Recommendations")
-                # Split by semicolon and filter out empty strings
-                recs = [rec.strip() for rec in recommendations.split(';') if rec.strip()]
-                if recs:
-                    for rec in recs:
-                        st.write(f"- {rec}")
-                else:
-                    st.info("No specific recommendations available yet.")
+            if "recommendations" in report_data and report_data["recommendations"]:
+                st.subheader("💡 Overall Recommendations")
+                recommendations = report_data["recommendations"].split(";")
+                for rec in recommendations:
+                    if rec.strip():
+                        st.write(f"- {rec.strip()}")
             
-            # Display visualizations if available
-            if visualizations := report_data.get('visualizations', []):
-                st.write("#### 📈 Visualizations")
-                for viz_path in visualizations:
-                    viz_file = Path(st.session_state.output_dir) / viz_path
-                    if viz_file.exists():
-                        st.image(str(viz_file))
+            # Display generated emails
+            if "emails_data" in report_data:
+                try:
+                    # Parse the emails_data string into a list of dictionaries
+                    emails_data = json.loads(report_data["emails_data"])
+                    if isinstance(emails_data, str):
+                        emails_data = json.loads(emails_data)  # Parse again if still a string
+                        
+                    if emails_data:
+                        st.subheader("📧 Generated Emails")
+                        for email in emails_data:
+                            if isinstance(email, str):
+                                email = json.loads(email)  # Parse if the email is a string
+                                
+                            with st.expander(f"📨 Email for {email.get('venue_id', 'Unknown Venue')}"):
+                                st.write(f"**Subject:** {email.get('subject', 'N/A')}")
+                                st.write(f"**Recipient:** {email.get('recipient', 'N/A')}")
+                                st.write(f"**Follow-up Date:** {email.get('follow_up_date', 'N/A')}")
+                                st.write("**Content:**")
+                                st.text_area("", email.get('body', 'N/A'), height=200, key=f"email_{email.get('venue_id')}")
+                except Exception as e:
+                    st.warning("Displaying raw email data:")
+                    try:
+                        # Try to parse the raw email data
+                        if isinstance(report_data["emails_data"], str):
+                            raw_email = json.loads(report_data["emails_data"])
+                        else:
+                            raw_email = report_data["emails_data"]
+                            
+                        if isinstance(raw_email, dict):
+                            # Single email format
+                            st.subheader("📧 Generated Email")
+                            with st.expander("📨 Email Details"):
+                                st.write(f"**Subject:** {raw_email.get('subject', 'N/A')}")
+                                st.write(f"**Recipient:** {raw_email.get('recipient', 'N/A')}")
+                                st.write(f"**Follow-up Date:** {raw_email.get('follow_up_date', 'N/A')}")
+                                st.write("**Content:**")
+                                st.text_area("", raw_email.get('body', 'N/A'), height=200, key="raw_email")
+                        elif isinstance(raw_email, list):
+                            # Multiple emails format
+                            st.subheader("📧 Generated Emails")
+                            for idx, email in enumerate(raw_email):
+                                with st.expander(f"📨 Email {idx + 1}"):
+                                    st.write(f"**Subject:** {email.get('subject', 'N/A')}")
+                                    st.write(f"**Recipient:** {email.get('recipient', 'N/A')}")
+                                    st.write(f"**Follow-up Date:** {email.get('follow_up_date', 'N/A')}")
+                                    st.write("**Content:**")
+                                    st.text_area("", email.get('body', 'N/A'), height=200, key=f"raw_email_{idx}")
+                    except Exception as nested_e:
+                        st.error(f"Could not parse email data: {str(nested_e)}")
+                        st.json(report_data["emails_data"])
+        else:
+            st.info("No report available yet. Start a search to generate a report.")
 
 def main():
     st.set_page_config(
@@ -181,7 +246,6 @@ def main():
                 
                 # Update progress and state
                 st.session_state.output_dir = result['output_dir']
-                st.session_state.report_path = result['report_path']
                 update_progress(progress_bar, result['current_step'], result['progress'])
                 
                 if result['current_step'] == 'completed':

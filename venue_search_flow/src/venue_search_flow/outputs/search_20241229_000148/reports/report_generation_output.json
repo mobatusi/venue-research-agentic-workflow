@@ -1,0 +1,10 @@
+{
+  "venues_found": 1,
+  "emails_generated": 1,
+  "venues_data": "{\"venue_id\": \"new_york_marriott_at_the_brooklyn_bridge\", \"venue_score\": 90.0, \"key_features\": \"Large Capacity, Rooftop Terrace, Central Location\"}",
+  "emails_data": "{\"recipient\": \"contact@newyorkmarriott.com\", \"subject\": \"Partnership Opportunity with New York Marriott at the Brooklyn Bridge\", \"body\": \"Dear Venue Manager,\\n\\nI hope this message finds you well. My name is [Your Name], and I am reaching out to discuss potential partnership opportunities between our organizations. Given your venue\u2019s stellar reputation and excellent score reflecting its location and amenities, I believe there is great potential for successful collaboration.\\n\\nWith your impressive scores (90.0 overall), particularly the location score of 95.0, your venue stands out as an ideal spot for large corporate events. The recommendations to take advantage of the rooftop terrace for receptions further highlight the unique offerings that your venue can provide.\\n\\nI would love to explore ways we can work together, perhaps discussing marketing strategies or co-hosting events that can attract more clients to your venue. Please let me know a suitable time for us to discuss this further.\\n\\nLooking forward to your response!\\n\\nBest regards,\\n[Your Name]  \\n[Your Position]  \\n[Your Company]  \\n[Your Phone Number]  \\n[Your Email]\"}",
+  "emails_saved": "outputs/emails/new_york_marriott_email_template.txt",
+  "visualizations": "",
+  "recommendations": "Utilize rooftop terrace for receptions; Organize marketing strategies for corporate events; Consider co-hosting events to attract clients",
+  "attachments": ""
+}

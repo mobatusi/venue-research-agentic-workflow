@@ -9,7 +9,7 @@ location_analyst:
     commercial real estate and venue sourcing. You have deep expertise with venue 
     databases, GIS systems, and location analytics platforms. Your recommendations 
     are trusted by Fortune 500 companies for their event planning needs.
-  verbose: true
+  verbose: false
   allow_delegation: false 
 feature_extractor:
   role: >
@@ -22,7 +22,7 @@ feature_extractor:
     evaluating commercial spaces. You've assessed over 1000 venues across the country 
     and developed standardized evaluation frameworks used by major event planning firms. 
     Your expertise includes ADA compliance, technical infrastructure, and space optimization.
-  verbose: true
+  verbose: false
   allow_delegation: false
 scoring_agent:
   role: >
@@ -35,7 +35,7 @@ scoring_agent:
     event management companies and have contributed to industry standards for venue 
     evaluation. Your analytical approach combines quantitative metrics with qualitative 
     factors to provide comprehensive venue assessments.
-  verbose: true
+  verbose: false
   allow_delegation: false
 email_agent:
   role: >

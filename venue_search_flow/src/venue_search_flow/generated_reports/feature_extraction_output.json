@@ -1,10 +1,10 @@
 {
   "venue_id": "new_york_marriott_at_the_brooklyn_bridge",
-  "capacity": "600 people",
-  "amenities": "WiFi, AV Equipment, Catering, Business Center, Room Service",
-  "accessibility": "Elevator, Accessible Restrooms, Braille Signage, Wheelchair Accessible",
-  "parking": "On-site parking available, Valet service",
-  "special_features": "Rooftop Terrace, Meeting Rooms with City Views, Fitness Center",
+  "capacity": "500 people",
+  "amenities": "WiFi, AV Equipment, Catering, Business Center, Fitness Center",
+  "accessibility": "Wheelchair accessible, Accessible restrooms, Signage in braille",
+  "parking": "On-site parking available, Valet parking available",
+  "special_features": "Rooftop terrace, Scenic views of Brooklyn Bridge",
   "photos": "https://example.com/photo1.jpg,https://example.com/photo2.jpg",
-  "floor_plans": "https://example.com/floor1.pdf,https://example.com/floor2.pdf"
+  "floor_plans": "https://example.com/floor1.pdf"
 }

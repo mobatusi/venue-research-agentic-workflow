@@ -1,0 +1,10 @@
+{
+  "venues_found": 1,
+  "emails_generated": 1,
+  "venues_data": "{\"venue_id\": \"new_york_marriott_at_the_brooklyn_bridge\", \"venue_score\": 88.0, \"key_features\": \"Large Capacity,Central Location\"}",
+  "emails_data": "{\"recipient\": \"contact@brooklynmarriott.com\", \"subject\": \"Partnership Opportunity with New York Marriott at the Brooklyn Bridge\", \"body\": \"Dear Venue Manager,\\n\\nI hope this message finds you well. My name is [Your Name], and I am reaching out to explore potential partnership opportunities with the New York Marriott at the Brooklyn Bridge. With your venue\u2019s impressive total score of 88.0, it's clear that it's a prime location for hosting large conferences and events.\\n\\nI wanted to highlight that your venue's central location and high amenities score demonstrate its suitability for various professional gatherings. Additionally, the rooftop lounge you offer provides a unique setting for memorable events.\\n\\nI would love the opportunity to discuss ways we can work together to enhance the visibility and booking potential of your venue. Please let me know a convenient time for you to connect further.\\n\\nLooking forward to your response.\\n\\nBest regards,\\n\\n[Your Name]  \\n[Your Title]  \\n[Your Company]  \\n[Your Phone Number]  \\n[Your Email]\"}",
+  "emails_saved": "outputs/emails/new_york_marriott_email_2024.txt",
+  "visualizations": "",
+  "recommendations": "Consider enhancing marketing efforts focusing on conference planners; Highlight unique venue features in promotional materials.",
+  "attachments": ""
+}
