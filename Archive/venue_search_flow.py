@@ -114,6 +114,7 @@ class VenueSearchFlow:
 
     async def analyze_location(self, address: str, radius_km: float = 5.0) -> List[VenueBasicInfo]:
         """Start the flow by analyzing the specified location"""
+        print("\n=== Starting Location Analysis ===")
         print(f"Starting venue search for location: {address} with radius {radius_km}km")
         
         task = self._create_task('location_analysis', address=address, radius_km=radius_km)

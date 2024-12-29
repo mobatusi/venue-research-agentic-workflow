@@ -4,3 +4,4 @@ python-dotenv
 langchain
 langchain-openai
 pyyaml
+streamlit>=1.30.0

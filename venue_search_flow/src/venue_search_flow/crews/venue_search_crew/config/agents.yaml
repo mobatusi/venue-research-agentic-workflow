@@ -49,7 +49,7 @@ email_agent:
     negotiated with high-end venues across multiple markets and understand the nuances 
     of professional venue correspondence. Your email campaigns have consistently 
     achieved above-industry response rates.
-  verbose: true
+  verbose: false
   allow_delegation: false
 reporting_agent:
   role: >
@@ -62,5 +62,5 @@ reporting_agent:
     helped major corporations optimize their venue selection processes. Your reports 
     are known for combining detailed analytics with actionable insights, making complex 
     data accessible to stakeholders.
-  verbose: true
+  verbose: false
   allow_delegation: false
