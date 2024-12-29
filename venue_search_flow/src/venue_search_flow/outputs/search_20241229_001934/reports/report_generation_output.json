@@ -1,0 +1,10 @@
+{
+  "venues_found": 1,
+  "emails_generated": 1,
+  "venues_data": "{\"venue_id\": \"new_york_marriott_at_the_brooklyn_bridge\", \"venue_score\": 75.0, \"key_features\": \"Great location for city events,Enhancements needed in amenities and accessibility\"}",
+  "emails_data": "{\"recipient\": \"contact@marriott.com\", \"subject\": \"Partnership Opportunity with New York Marriott at the Brooklyn Bridge\", \"body\": \"Dear Venue Manager,\\n\\nI hope this message finds you well. I am reaching out to explore potential partnership opportunities with the New York Marriott at the Brooklyn Bridge. Given the venue's excellent location and the positive feedback regarding its suitability for city events, we believe there is a significant chance for collaboration that would benefit both parties.\\n\\nWhile your location score is commendable, there are opportunities to enhance the amenities and accessibility features, which could further elevate the guest experience. We would love to discuss strategies to address these areas in a mutually beneficial partnership.\\n\\nCould we schedule a time to connect and discuss this further?\\n\\nLooking forward to your response.\\n\\nBest regards,\\n[Your Name]\\n[Your Position]\\n[Your Company]\\n[Your Contact Information]\"}",
+  "emails_saved": "outputs/search_20241229_001934/emails/email_to_marriott_at_brooklyn_bridge.txt",
+  "visualizations": "",
+  "recommendations": "Enhance amenities; Improve accessibility features",
+  "attachments": ""
+}

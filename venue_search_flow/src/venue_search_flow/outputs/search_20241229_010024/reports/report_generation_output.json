@@ -1,0 +1,10 @@
+{
+  "venues_found": 1,
+  "emails_generated": 1,
+  "venues_data": "{\"venue_id\": \"brooklyn_marriott_le_image\", \"venue_score\": 82.5, \"key_features\": \"Great choice for intimate weddings, Outdoor ceremony space\"}",
+  "emails_data": "{\"recipient\": \"contact@brooklynmarriott.com\", \"subject\": \"Partnership Opportunity\", \"body\": \"Dear Venue Manager,\\n\\nI hope this message finds you well. I wanted to reach out to discuss a potential partnership that could enhance both our offerings in the event space sector.\\n\\nWith a total score of 82.5, we believe the Brooklyn Marriott Le Image stands out as a premier venue, especially for intimate weddings. The outdoor ceremony space you offer is a key feature worth promoting more, as it can attract couples looking for a unique setting on their special day. \\n\\nWe would love the opportunity to collaborate and find ways to leverage our strengths.\\n\\nLooking forward to your thoughts.\\n\\nBest regards,\\n\\n[Your Name]\\n[Your Position]\\n[Your Company]\\n[Your Contact Information]\"}",
+  "emails_saved": "emails/partnership_brooklyn_marriott.txt",
+  "visualizations": "",
+  "recommendations": "Promote outdoor ceremony space more; Consider targeted marketing for intimate weddings.",
+  "attachments": ""
+}

@@ -287,7 +287,7 @@ def main():
         # OpenAI API Key input
         openai_key_input = st.text_input(
             "OpenAI API Key",
-            # value=os.getenv("OPENAI_API_KEY", ""),
+            value=os.getenv("OPENAI_API_KEY", ""),
             type="password",
             placeholder="Enter your OpenAI API key",
             help="Required for AI-powered analysis and content generation",
@@ -297,7 +297,7 @@ def main():
         # Serper API Key input
         serper_key_input = st.text_input(
             "Serper API Key",
-            # value=os.getenv("SERPER_API_KEY", ""),
+            value=os.getenv("SERPER_API_KEY", ""),
             type="password",
             placeholder="Enter your Serper API key",
             help="Required for web search functionality",

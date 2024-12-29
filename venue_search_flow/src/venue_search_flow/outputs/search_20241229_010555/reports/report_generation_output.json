@@ -1,0 +1,10 @@
+{
+  "venues_found": 1,
+  "emails_generated": 1,
+  "venues_data": "{\"venue_id\": \"the_old_stone_house\", \"venue_score\": 82.5, \"key_features\": \"Great for community events,High accessibility\"}",
+  "emails_data": "{\"recipient\": \"contact@theoldstonehouse.com\", \"subject\": \"Exploring Collaboration Opportunities\", \"body\": \"Dear Venue Manager,\\n\\nI hope this message finds you well. I am reaching out to explore potential collaboration opportunities with The Old Stone House. With its inviting atmosphere and impressive amenities, I believe we can create memorable experiences for event attendees together.\\n\\nGiven the venue's high accessibility and favorable community reviews, I am keen to discuss how we can leverage these strengths for upcoming events. Please let me know a convenient time for a conversation.\\n\\nLooking forward to your response.\\n\\nBest regards,\\n\\n[Your Name]  \\nSenior Venue Communications Specialist\"}",
+  "emails_saved": "outputs/emails/email_to_the_old_stone_house.txt",
+  "visualizations": "",
+  "recommendations": "Consider additional accessibility improvements; Highlight community-focused events in marketing materials",
+  "attachments": ""
+}

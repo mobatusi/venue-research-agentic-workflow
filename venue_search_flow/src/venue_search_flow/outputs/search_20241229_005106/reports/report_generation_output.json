@@ -1,0 +1,10 @@
+{
+  "venues_found": 1,
+  "emails_generated": 1,
+  "venues_data": "{\"venue_id\": \"the_tillary_hotel_brooklyn\", \"venue_score\": 78.0, \"key_features\": \"Beer Garden,Accessible Parking\"}",
+  "emails_data": "{\"recipient\": \"contact@tillaryhotel.com\", \"subject\": \"Collaboration Proposal for The Tillary Hotel Brooklyn\", \"body\": \"Dear Venue Manager,\\n\\nI hope this email finds you well. I am reaching out to discuss potential collaboration opportunities with The Tillary Hotel Brooklyn, which has a commendable venue score of 78.0, positioning it as a great choice for smaller gatherings.\\n\\nThe unique features of your hotel, including the beer garden, can provide a memorable backdrop for social events. I believe there is a fantastic synergy waiting to be tapped into between our services.\\n\\nI would love the chance to discuss this further at your convenience. Please let me know when you would be available to chat.\\n\\nThank you for your time, and I look forward to your response.\\n\\nBest regards,\\n\\n[Your Name]\\n[Your Position]\\n[Your Contact Information]\"}",
+  "emails_saved": "generated_emails/the_tillary_hotel_brooklyn_email.txt",
+  "visualizations": "",
+  "recommendations": "Consider promoting the venue's beer garden as a unique event space; Utilize accessible parking in marketing materials; Target smaller gatherings as key promotional opportunities.",
+  "attachments": ""
+}

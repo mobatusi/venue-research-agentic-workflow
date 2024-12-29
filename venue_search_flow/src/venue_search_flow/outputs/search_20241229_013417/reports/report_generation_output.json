@@ -1,0 +1,10 @@
+{
+  "venues_found": 1,
+  "emails_generated": 1,
+  "venues_data": "{\"venue_id\": \"new_york_marriott_at_the_brooklyn_bridge\", \"venue_score\": 88.5, \"key_features\": \"Ideal for large gatherings,Stunning city views,Exceptional accessibility\"}",
+  "emails_data": "{\"recipient\": \"contact@marriottbrooklyn.com\", \"subject\": \"Exclusive Partnership Proposal\", \"body\": \"Dear Venue Manager,\\n\\nI hope this message finds you well. My name is [Your Name], and I am reaching out on behalf of [Your Company]. We specialize in enhancing collaboration with premium venues like the New York Marriott at the Brooklyn Bridge.\\n\\nI was impressed to see your high score of 88.5, particularly in location and amenities, making your venue an ideal choice for large gatherings.\\n\\nGiven your venue\u2019s remarkable attributes, including stunning city views and exceptional accessibility, I believe a partnership could yield significant benefits for both parties.\\n\\nI would like to schedule a call to discuss potential collaboration opportunities. Please let me know your availability in the coming weeks.\\n\\nLooking forward to your response.\\n\\nBest regards,\\n[Your Name]\\n[Your Position]\\n[Your Company]\\n[Your Phone Number]\\n[Your Email]\"}",
+  "emails_saved": "outputs/emails/email_20241229_001.json",
+  "visualizations": "",
+  "recommendations": "Consider enhancing marketing strategies to emphasize location and amenities; Explore partnerships with local businesses for joint promotions.",
+  "attachments": ""
+}

@@ -1,0 +1,10 @@
+{
+  "venues_found": 1,
+  "emails_generated": 1,
+  "venues_data": "{\"venue_id\": \"new_york_marriott_at_the_brooklyn_bridge\", \"venue_score\": 92.0, \"key_features\": \"Ideal for large corporate gatherings, Highlight rooftop terrace for evening events\"}",
+  "emails_data": "{\"recipient\": \"info@brooklynmarriott.com\", \"subject\": \"Elevate Your Venue's Visibility\", \"body\": \"Dear Venue Manager,\\n\\nI hope this message finds you well. I am reaching out to explore potential collaboration opportunities between our organizations. The New York Marriott at the Brooklyn Bridge stands out as a premier venue ideal for large corporate gatherings, and I'd love to discuss how we can enhance your venue's visibility through tailored marketing strategies.\\n\\nAdditionally, I believe your stunning rooftop terrace can be a key selling point for evening events, enticing clients seeking a beautiful backdrop for their gatherings.\\n\\nI look forward to the possibility of working together to unlock new opportunities for your venue. Please let me know a suitable time for us to connect.\\n\\nBest regards,\\n[Your Name]\\nSenior Venue Communications Specialist\"}",
+  "emails_saved": "outputs/emails/email_to_brooklyn_marriott_20241229_003430.txt",
+  "visualizations": "",
+  "recommendations": "Leverage rooftop terrace for social media marketing; Schedule a follow-up call on 2024-01-05 to discuss collaboration opportunities;",
+  "attachments": ""
+}

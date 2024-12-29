@@ -1,0 +1,10 @@
+{
+  "venues_found": 1,
+  "emails_generated": 1,
+  "venues_data": "{\"venue_id\": \"new_york_marriott_at_the_brooklyn_bridge\", \"venue_score\": 88.0, \"key_features\": \"Ideal for corporate and social events, Rooftop terrace for receptions, Timely parking arrangements\"}",
+  "emails_data": "{\"recipient\": \"contact@ny_marriott.com\", \"subject\": \"Strategic Partnership Opportunity with New York Marriott at the Brooklyn Bridge\", \"body\": \"Dear Venue Manager,\\n\\nI hope this message finds you well. I am reaching out to discuss a potential partnership that could greatly enhance our mutual interests. The New York Marriott at the Brooklyn Bridge stands out as an ideal venue for both corporate and social events. With its stunning rooftop terrace perfect for receptions, and our commitment to ensuring a seamless experience for guests\u2014including timely parking arrangements\u2014we believe this collaboration could be beneficial.\\n\\nLet's explore how we can work together to create memorable experiences for our clients. \\n\\nI look forward to the possibility of collaborating with you.\\n\\nBest regards,\\n\\n[Your Name]\\n[Your Position]\\n[Your Company]\\n[Your Contact Information]\"}",
+  "emails_saved": "outputs/search_20241229_003638/emails/email_to_ny_marriott.txt",
+  "visualizations": "",
+  "recommendations": "Promote the venue's rooftop terrace for summer events; Highlight timely parking arrangements in marketing materials; Consider offering special packages for corporate clients.",
+  "attachments": ""
+}

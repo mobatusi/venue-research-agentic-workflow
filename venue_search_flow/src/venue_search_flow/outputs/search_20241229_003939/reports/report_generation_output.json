@@ -1,0 +1,10 @@
+{
+  "venues_found": 1,
+  "emails_generated": 1,
+  "venues_data": "{\"venue_id\": \"new_york_marriott_at_the_brooklyn_bridge\", \"venue_score\": 88.0, \"key_features\": \"Ideal for large conferences,Proximity to local attractions,Enhanced on-site event support services\"}",
+  "emails_data": "{\"recipient\": \"contact@marriotbrooklynbridge.com\", \"subject\": \"Strategic Partnership Inquiry\", \"body\": \"Dear Venue Manager,\\n\\nI hope this message finds you well. We are reaching out to express our interest in establishing a strategic partnership with the New York Marriott at the Brooklyn Bridge. Our analysis highlights your venue as an ideal location for large conferences, especially given its proximity to local attractions. We believe that collaborating could enhance the on-site event support services you offer.\\n\\nWe would love to explore how we can work together for mutual benefit and drive significant success for both parties.\\n\\nLooking forward to your response.\\n\\nWarm regards,\\n\\n[Your Name]  \\nSenior Venue Communications Specialist\"}",
+  "emails_saved": "outputs/search_20241229_003939/emails/strategic_partnership_inquiry_new_york_marriott_at_the_brooklyn_bridge.txt",
+  "visualizations": "",
+  "recommendations": "Continue outreach for collaboration; Host informational webinars at the venue; Promote local attractions to potential clients",
+  "attachments": ""
+}
