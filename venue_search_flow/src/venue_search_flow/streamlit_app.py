@@ -220,12 +220,13 @@ def main():
         openai_key = os.getenv("OPENAI_API_KEY")
         serper_key = os.getenv("SERPER_API_KEY")
         
-        if not openai_key and not st.session_state.get('openai_key_input'):
+        # Check if either key is missing from both env and session state
+        if not (openai_key or st.session_state.get('openai_key_input')):
             st.warning("⚠️ OpenAI API key not found. Please enter it in the sidebar.")
             api_keys_set = False
         
-        if not serper_key:
-            st.warning("⚠️ Serper API key not found. Please set the SERPER_API_KEY environment variable.")
+        if not (serper_key or st.session_state.get('serper_key_input')):
+            st.warning("⚠️ Serper API key not found. Please enter it in the sidebar.")
             api_keys_set = False
 
     with col2:
@@ -234,10 +235,22 @@ def main():
         progress_bar = st.progress(0.0, "Ready to start")
 
     # Search button - placed below both columns
-    if st.button("🔍 Start Search", disabled=not api_keys_set or not address, type="primary"):
+    search_disabled = not api_keys_set or not address or not (
+        openai_key or st.session_state.get('openai_key_input', '').strip()
+    ) or not (
+        serper_key or st.session_state.get('serper_key_input', '').strip()
+    )
+    
+    if st.button("🔍 Start Search", disabled=search_disabled, type="primary"):
         if address and api_keys_set:
             try:
                 with st.spinner("Searching for venues..."):
+                    # Set API keys from session state if available
+                    if st.session_state.get('openai_key_input'):
+                        os.environ["OPENAI_API_KEY"] = st.session_state.openai_key_input
+                    if st.session_state.get('serper_key_input'):
+                        os.environ["SERPER_API_KEY"] = st.session_state.serper_key_input
+                    
                     # Execute search with user inputs
                     result = kickoff(
                         address=address,
@@ -272,19 +285,41 @@ def main():
             Make sure you have set up your API keys before starting.
             """)
 
-        # OpenAI API Key input
+        # API Keys Configuration
         st.subheader("API Configuration")
+        
+        # OpenAI API Key input
         openai_key_input = st.text_input(
             "OpenAI API Key",
+            value=os.getenv("OPENAI_API_KEY", ""),
             type="password",
             placeholder="Enter your OpenAI API key",
-            help="Enter your OpenAI API key to use this tool",
+            help="Required for AI-powered analysis and content generation",
             key="openai_key_input"
         )
         
-        if openai_key_input:
-            os.environ["OPENAI_API_KEY"] = openai_key_input
-            st.success("OpenAI API key set! ✅")
+        # Serper API Key input
+        serper_key_input = st.text_input(
+            "Serper API Key",
+            value=os.getenv("SERPER_API_KEY", ""),
+            type="password",
+            placeholder="Enter your Serper API key",
+            help="Required for web search functionality",
+            key="serper_key_input"
+        )
+        
+        # Show API configuration status
+        if openai_key_input or serper_key_input:
+            st.write("**API Configuration Status:**")
+            if openai_key_input:
+                st.success("✅ OpenAI API key set")
+            else:
+                st.error("❌ OpenAI API key missing")
+                
+            if serper_key_input:
+                st.success("✅ Serper API key set")
+            else:
+                st.error("❌ Serper API key missing")
 
 if __name__ == "__main__":
     main()
