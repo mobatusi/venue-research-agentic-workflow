@@ -150,7 +150,6 @@ def display_report_section():
                                 st.write("**Content:**")
                                 st.text_area("", email.get('body', 'N/A'), height=200, key=f"email_{email.get('venue_id')}")
                 except Exception as e:
-                    st.warning("Displaying raw email data:")
                     try:
                         # Try to parse the raw email data
                         if isinstance(report_data["emails_data"], str):

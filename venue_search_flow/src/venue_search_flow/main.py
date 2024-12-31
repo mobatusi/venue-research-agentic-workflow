@@ -142,17 +142,36 @@ class VenueSearchFlow(Flow[VenueSearchState]):
         
         self.update_progress("location_analysis", 0.2)
         self.logger.info(f"Starting crew with state: {crew._state}")
-        result = crew.crew(
-            address=self.state.address, 
-            radius_km=self.state.radius_km
-        ).kickoff()
-
-        # Process the results from each task
-        self.logger.info("Search completed, processing results")
         
-        # Each task returns a Pydantic model
-        if hasattr(result, 'tasks_outputs') and result.tasks_outputs:
+        try:
+            # Execute the crew
+            crew_instance = crew.crew(
+                address=self.state.address, 
+                radius_km=self.state.radius_km
+            )
+            if not crew_instance:
+                self.logger.error("Failed to create crew instance")
+                return
+                
+            result = crew_instance.kickoff()
+            if not result:
+                self.logger.error("Crew execution failed - no result returned")
+                return
+                
+            self.logger.info("Crew execution completed successfully")
+            
+            # Process the results from each task
+            self.logger.info("Processing results")
+            
+            if not hasattr(result, 'tasks_outputs'):
+                self.logger.error("No task outputs in result")
+                return
+                
             self.logger.info(f"Processing {len(result.tasks_outputs)} task outputs")
+            
+            # Track if we've processed a report
+            report_processed = False
+            
             for task_output in result.tasks_outputs:
                 try:
                     # Convert task output to dict if it's a string
@@ -200,23 +219,16 @@ class VenueSearchFlow(Flow[VenueSearchState]):
                     elif isinstance(task_output, dict) and all(k in task_output for k in ["venue_id", "recipient", "subject", "body"]):
                         template = EmailTemplate(**task_output)
                         self.state.email_templates.append(template.dict())
-                        # Save email to file
-                        email_path = crew.emails_dir / f"{template.venue_id}_email.txt"
-                        with open(email_path, "w") as f:
-                            f.write(template.body)
-                        self.logger.info(f"Saved email for venue: {template.venue_id}")
+                        self.logger.info(f"Added email for venue: {template.venue_id}")
                     
                     # Handle ReportDocument (from agent's final answer)
                     elif isinstance(task_output, dict) and all(k in task_output for k in ["venues_found", "venues_data", "emails_data"]):
                         try:
                             report = ReportDocument(**task_output)
                             self.state.report = report
+                            report_processed = True
                             self.update_progress("report_generation", 0.9)
                             self.logger.info("Added report document from agent's final answer")
-                            # Save the raw agent output for reference
-                            raw_output_path = output_dir / "reports" / "agent_output.json"
-                            with open(raw_output_path, "w") as f:
-                                json.dump(task_output, f, indent=2)
                         except Exception as e:
                             self.logger.error(f"Failed to process agent's final answer: {str(e)}")
                 
@@ -228,6 +240,39 @@ class VenueSearchFlow(Flow[VenueSearchState]):
                     continue
             
             self.logger.info(f"Processed all task outputs. Found {len(self.state.venues)} venues and {len(self.state.email_templates)} emails")
+            
+            # If we haven't processed a report yet, try to get it from the crew's state
+            if not report_processed and hasattr(crew, '_state'):
+                crew_report = crew._state.get('report')
+                if isinstance(crew_report, dict):
+                    try:
+                        self.state.report = ReportDocument(**crew_report)
+                        self.logger.info("Retrieved report from crew state")
+                        report_processed = True
+                    except Exception as e:
+                        self.logger.error(f"Failed to get report from crew state: {str(e)}")
+                else:
+                    self.logger.error(f"Crew state report has invalid type: {type(crew_report)}")
+            
+            # If we still don't have a report, try to read it from the file
+            if not report_processed:
+                try:
+                    report_path = output_dir / "reports" / "report_generation_output.json"
+                    if report_path.exists():
+                        with open(report_path) as f:
+                            report_data = json.load(f)
+                            self.state.report = ReportDocument(**report_data)
+                            self.logger.info("Retrieved report from file")
+                            report_processed = True
+                except Exception as e:
+                    self.logger.error(f"Failed to read report from file: {str(e)}")
+            
+            if not report_processed:
+                self.logger.error("Failed to process or find report data")
+                
+        except Exception as e:
+            self.logger.error(f"Error during crew execution: {str(e)}")
+            raise
 
     @listen(execute_search)
     def save_report(self):

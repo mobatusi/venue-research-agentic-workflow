@@ -1,9 +1,9 @@
 {
   "name": "New York Marriott at the Brooklyn Bridge",
   "type": "hotel",
-  "address": "333 Adams Street, Brooklyn, NY 11201, United States",
-  "distance_km": 0.3,
-  "website": "https://www.marriott.com/en-us/hotels/nycbk-new-york-marriott-at-the-brooklyn-bridge/overview/",
-  "phone": "+1 718-246-7000",
+  "address": "333 Adams Street, Brooklyn, NY, United States",
+  "distance_km": 0.5,
+  "website": "https://www.tripadvisor.ca/Hotel_Review-g60827-d99466-Reviews-New_York_Marriott_at_the_Brooklyn_Bridge-Brooklyn_New_York.html",
+  "phone": "",
   "email": ""
 }
