@@ -3,6 +3,7 @@ from crewai.project import CrewBase, agent, crew, task
 from crewai_tools import SerperDevTool, ScrapeWebsiteTool
 from typing import Dict, List
 import os
+import logging
 from venue_search_flow.models.venue_models import (
     VenueBasicInfo,
     VenueFeatures,
@@ -24,7 +25,10 @@ class VenueSearchCrew:
     agents_config = os.path.join(base_path, "config", "agents.yaml")
     tasks_config = os.path.join(base_path, "config", "tasks.yaml")
 
-    def __init__(self):
+    def __init__(self, logger=None):
+        # Set up logger
+        self.logger = logger or logging.getLogger(__name__)
+        
         # Initialize state with default values
         self._state = {
             "address": "",  # Will be set from main.py
@@ -51,6 +55,13 @@ class VenueSearchCrew:
         
         self.search_tool = SerperDevTool()
         self.web_tool = ScrapeWebsiteTool()
+
+    def _save_task_output(self, task_name: str, output_data: dict) -> None:
+        """Save task output to JSON file"""
+        output_path = Path(self.reports_dir) / f"{task_name}_output.json"
+        with open(output_path, "w") as f:
+            json.dump(output_data, f, indent=2)
+        self.logger.info(f"Saved {task_name} output to {output_path}")
 
     @agent
     def location_analyst(self) -> Agent:
@@ -87,43 +98,36 @@ class VenueSearchCrew:
             config=self.agents_config["reporting_agent"],
         )
 
-    def _save_task_output(self, task_name: str, output_data: dict) -> None:
-        """Save task output to JSON file"""
-        output_path = Path(self.reports_dir) / f"{task_name}_output.json"
-        with open(output_path, "w") as f:
-            json.dump(output_data, f, indent=2)
-        print(f"Saved {task_name} output to {output_path}")
-
     @task
     def analyze_location(self) -> Task:
         """Creates the Location Analysis Task"""
-        print("\n=== Starting Location Analysis ===")
-        print(f"State at start of analyze_location: {self._state}")
+        self.logger.info("\n=== Starting Location Analysis ===")
+        self.logger.info(f"State at start of analyze_location: {self._state}")
         
         # Pre-compute the output path
         output_path = str(self.reports_dir / "location_analysis_output.json")
         
         def process_output(task_output):
             """Process and save the task output"""
-            print(f"Processing location analysis output: {type(task_output)}")
+            self.logger.info(f"Processing location analysis output: {type(task_output)}")
             try:
                 # Get raw output from TaskOutput
                 output_data = task_output.raw
-                print(f"Raw output: {output_data}")
+                self.logger.info(f"Raw output: {output_data}")
                 
                 # Convert string to dict if needed
                 if isinstance(output_data, str):
                     try:
                         output_data = json.loads(output_data)
                     except json.JSONDecodeError:
-                        print(f"Failed to parse output as JSON: {output_data[:100]}...")
+                        self.logger.error(f"Failed to parse output as JSON: {output_data[:100]}...")
                         return output_data
                 
                 # Save the output
                 if isinstance(output_data, dict):
                     with open(output_path, 'w') as f:
                         json.dump(output_data, f, indent=2)
-                    print(f"Saved location analysis output to {output_path}")
+                    self.logger.info(f"Saved location analysis output to {output_path}")
                     
                     # Update state
                     venue_info = {
@@ -136,21 +140,21 @@ class VenueSearchCrew:
                         "email": output_data.get("email", "")
                     }
                     self._state["venues"].append(venue_info)
-                    print(f"Added venue to state: {venue_info['name']}")
+                    self.logger.info(f"Added venue to state: {venue_info['name']}")
                 else:
-                    print(f"Unexpected output type after parsing: {type(output_data)}")
-                    print(f"Output data: {output_data}")
+                    self.logger.error(f"Unexpected output type after parsing: {type(output_data)}")
+                    self.logger.error(f"Output data: {output_data}")
                 
                 return output_data
             except Exception as e:
-                print(f"Error processing location output: {str(e)}")
-                print(f"Task output attributes available: {dir(task_output)}")
+                self.logger.error(f"Error processing location output: {str(e)}")
+                self.logger.error(f"Task output attributes available: {dir(task_output)}")
                 if hasattr(task_output, 'raw'):
-                    print(f"Raw output: {task_output.raw}")
+                    self.logger.error(f"Raw output: {task_output.raw}")
                 if hasattr(task_output, 'json_dict'):
-                    print(f"JSON dict: {task_output.json_dict}")
+                    self.logger.error(f"JSON dict: {task_output.json_dict}")
                 if hasattr(task_output, 'pydantic'):
-                    print(f"Pydantic: {task_output.pydantic}")
+                    self.logger.error(f"Pydantic: {task_output.pydantic}")
                 raise
         
         task = Task(
@@ -190,39 +194,39 @@ class VenueSearchCrew:
             context=[],  # First task doesn't need context from other tasks
             callback=process_output  # Add callback to process output
         )
-        print(f"State at end of analyze_location: {self._state}")
+        self.logger.info(f"State at end of analyze_location: {self._state}")
         return task
 
     @task
     def extract_features(self) -> Task:
         """Creates the Feature Extraction Task"""
-        print("\n=== Starting Feature Extraction ===")
-        print("Analyzing venue features and amenities...")
+        self.logger.info("\n=== Starting Feature Extraction ===")
+        self.logger.info("Analyzing venue features and amenities...")
         
         # Pre-compute the output path
         output_path = str(self.reports_dir / "feature_extraction_output.json")
         
         def process_output(task_output):
             """Process and save the task output"""
-            print(f"Processing feature extraction output: {type(task_output)}")
+            self.logger.info(f"Processing feature extraction output: {type(task_output)}")
             try:
                 # Get raw output from TaskOutput
                 output_data = task_output.raw
-                print(f"Raw output: {output_data}")
+                self.logger.info(f"Raw output: {output_data}")
                 
                 # Convert string to dict if needed
                 if isinstance(output_data, str):
                     try:
                         output_data = json.loads(output_data)
                     except json.JSONDecodeError:
-                        print(f"Failed to parse output as JSON: {output_data[:100]}...")
+                        self.logger.error(f"Failed to parse output as JSON: {output_data[:100]}...")
                         return output_data
                 
                 # Save the output
                 if isinstance(output_data, dict):
                     with open(output_path, 'w') as f:
                         json.dump(output_data, f, indent=2)
-                    print(f"Saved feature extraction output to {output_path}")
+                    self.logger.info(f"Saved feature extraction output to {output_path}")
                     
                     # Update state with features
                     feature_info = {
@@ -236,21 +240,21 @@ class VenueSearchCrew:
                         "floor_plans": output_data.get("floor_plans", "")
                     }
                     self._state["features"].append(feature_info)
-                    print(f"Added features for venue: {feature_info['venue_id']}")
+                    self.logger.info(f"Added features for venue: {feature_info['venue_id']}")
                 else:
-                    print(f"Unexpected output type after parsing: {type(output_data)}")
-                    print(f"Output data: {output_data}")
+                    self.logger.error(f"Unexpected output type after parsing: {type(output_data)}")
+                    self.logger.error(f"Output data: {output_data}")
                 
                 return output_data
             except Exception as e:
-                print(f"Error processing feature extraction output: {str(e)}")
-                print(f"Task output attributes available: {dir(task_output)}")
+                self.logger.error(f"Error processing feature extraction output: {str(e)}")
+                self.logger.error(f"Task output attributes available: {dir(task_output)}")
                 if hasattr(task_output, 'raw'):
-                    print(f"Raw output: {task_output.raw}")
+                    self.logger.error(f"Raw output: {task_output.raw}")
                 if hasattr(task_output, 'json_dict'):
-                    print(f"JSON dict: {task_output.json_dict}")
+                    self.logger.error(f"JSON dict: {task_output.json_dict}")
                 if hasattr(task_output, 'pydantic'):
-                    print(f"Pydantic: {task_output.pydantic}")
+                    self.logger.error(f"Pydantic: {task_output.pydantic}")
                 raise
         
         return Task(
@@ -296,33 +300,33 @@ class VenueSearchCrew:
     @task
     def score_venues(self) -> Task:
         """Creates the Venue Scoring Task"""
-        print("\n=== Starting Venue Scoring ===")
-        print("Evaluating venues based on criteria...")
+        self.logger.info("\n=== Starting Venue Scoring ===")
+        self.logger.info("Evaluating venues based on criteria...")
         
         # Pre-compute the output path
         output_path = str(self.reports_dir / "venue_scoring_output.json")
         
         def process_output(task_output):
             """Process and save the task output"""
-            print(f"Processing venue scoring output: {type(task_output)}")
+            self.logger.info(f"Processing venue scoring output: {type(task_output)}")
             try:
                 # Get raw output from TaskOutput
                 output_data = task_output.raw
-                print(f"Raw output: {output_data}")
+                self.logger.info(f"Raw output: {output_data}")
                 
                 # Convert string to dict if needed
                 if isinstance(output_data, str):
                     try:
                         output_data = json.loads(output_data)
                     except json.JSONDecodeError:
-                        print(f"Failed to parse output as JSON: {output_data[:100]}...")
+                        self.logger.error(f"Failed to parse output as JSON: {output_data[:100]}...")
                         return output_data
                 
                 # Save the output
                 if isinstance(output_data, dict):
                     with open(output_path, 'w') as f:
                         json.dump(output_data, f, indent=2)
-                    print(f"Saved venue scoring output to {output_path}")
+                    self.logger.info(f"Saved venue scoring output to {output_path}")
                     
                     # Update state with scores
                     score_info = {
@@ -334,21 +338,21 @@ class VenueSearchCrew:
                         "recommendations": output_data.get("recommendations", "")
                     }
                     self._state["scores"].append(score_info)
-                    print(f"Added scores for venue: {score_info['venue_id']}")
+                    self.logger.info(f"Added scores for venue: {score_info['venue_id']}")
                 else:
-                    print(f"Unexpected output type after parsing: {type(output_data)}")
-                    print(f"Output data: {output_data}")
+                    self.logger.error(f"Unexpected output type after parsing: {type(output_data)}")
+                    self.logger.error(f"Output data: {output_data}")
                 
                 return output_data
             except Exception as e:
-                print(f"Error processing venue scoring output: {str(e)}")
-                print(f"Task output attributes available: {dir(task_output)}")
+                self.logger.error(f"Error processing venue scoring output: {str(e)}")
+                self.logger.error(f"Task output attributes available: {dir(task_output)}")
                 if hasattr(task_output, 'raw'):
-                    print(f"Raw output: {task_output.raw}")
+                    self.logger.error(f"Raw output: {task_output.raw}")
                 if hasattr(task_output, 'json_dict'):
-                    print(f"JSON dict: {task_output.json_dict}")
+                    self.logger.error(f"JSON dict: {task_output.json_dict}")
                 if hasattr(task_output, 'pydantic'):
-                    print(f"Pydantic: {task_output.pydantic}")
+                    self.logger.error(f"Pydantic: {task_output.pydantic}")
                 raise
         
         return Task(
@@ -389,39 +393,39 @@ class VenueSearchCrew:
     @task
     def generate_emails(self) -> Task:
         """Creates the Email Generation Task"""
-        print("\n=== Starting Email Generation ===")
-        print("Preparing email templates for venues...")
+        self.logger.info("\n=== Starting Email Generation ===")
+        self.logger.info("Preparing email templates for venues...")
         
         # Pre-compute the output path
         output_path = str(self.reports_dir / "email_generation_output.json")
         
         def process_output(task_output):
             """Process and save the task output"""
-            print(f"Processing email generation output: {type(task_output)}")
+            self.logger.info(f"Processing email generation output: {type(task_output)}")
             try:
                 # Get raw output from TaskOutput
                 output_data = task_output.raw
-                print(f"Raw output: {output_data}")
+                self.logger.info(f"Raw output: {output_data}")
                 
                 # Convert string to dict if needed
                 if isinstance(output_data, str):
                     try:
                         output_data = json.loads(output_data)
                     except json.JSONDecodeError:
-                        print(f"Failed to parse output as JSON: {output_data[:100]}...")
+                        self.logger.error(f"Failed to parse output as JSON: {output_data[:100]}...")
                         return output_data
                 
                 # Save the output
                 if isinstance(output_data, dict):
                     with open(output_path, 'w') as f:
                         json.dump(output_data, f, indent=2)
-                    print(f"Saved email generation output to {output_path}")
+                    self.logger.info(f"Saved email generation output to {output_path}")
                     
                     # Save email body to separate file
                     email_file = self.emails_dir / f"{output_data.get('venue_id', 'unknown')}_email.txt"
                     with open(email_file, 'w') as f:
                         f.write(output_data.get('body', ''))
-                    print(f"Saved email body to {email_file}")
+                    self.logger.info(f"Saved email body to {email_file}")
                     
                     # Update state with email info
                     email_info = {
@@ -434,21 +438,21 @@ class VenueSearchCrew:
                         "key_features": output_data.get("key_features", "")
                     }
                     self._state["emails"].append(email_info)
-                    print(f"Added email for venue: {email_info['venue_id']}")
+                    self.logger.info(f"Added email for venue: {email_info['venue_id']}")
                 else:
-                    print(f"Unexpected output type after parsing: {type(output_data)}")
-                    print(f"Output data: {output_data}")
+                    self.logger.error(f"Unexpected output type after parsing: {type(output_data)}")
+                    self.logger.error(f"Output data: {output_data}")
                 
                 return output_data
             except Exception as e:
-                print(f"Error processing email generation output: {str(e)}")
-                print(f"Task output attributes available: {dir(task_output)}")
+                self.logger.error(f"Error processing email generation output: {str(e)}")
+                self.logger.error(f"Task output attributes available: {dir(task_output)}")
                 if hasattr(task_output, 'raw'):
-                    print(f"Raw output: {task_output.raw}")
+                    self.logger.error(f"Raw output: {task_output.raw}")
                 if hasattr(task_output, 'json_dict'):
-                    print(f"JSON dict: {task_output.json_dict}")
+                    self.logger.error(f"JSON dict: {task_output.json_dict}")
                 if hasattr(task_output, 'pydantic'):
-                    print(f"Pydantic: {task_output.pydantic}")
+                    self.logger.error(f"Pydantic: {task_output.pydantic}")
                 raise
         
         return Task(
@@ -495,51 +499,51 @@ class VenueSearchCrew:
     @task
     def generate_report(self) -> Task:
         """Creates the Report Generation Task"""
-        print("\n=== Starting Report Generation ===")
-        print("Compiling final report with all data...")
+        self.logger.info("\n=== Starting Report Generation ===")
+        self.logger.info("Compiling final report with all data...")
         
         # Pre-compute the output path
         output_path = str(self.reports_dir / "report_generation_output.json")
         
         def process_output(task_output):
             """Process and save the task output"""
-            print(f"Processing report generation output: {type(task_output)}")
+            self.logger.info(f"Processing report generation output: {type(task_output)}")
             try:
                 # Get raw output from TaskOutput
                 output_data = task_output.raw
-                print(f"Raw output: {output_data}")
+                self.logger.info(f"Raw output: {output_data}")
                 
                 # Convert string to dict if needed
                 if isinstance(output_data, str):
                     try:
                         output_data = json.loads(output_data)
                     except json.JSONDecodeError:
-                        print(f"Failed to parse output as JSON: {output_data[:100]}...")
+                        self.logger.error(f"Failed to parse output as JSON: {output_data[:100]}...")
                         return output_data
                 
                 # Save the output
                 if isinstance(output_data, dict):
                     with open(output_path, 'w') as f:
                         json.dump(output_data, f, indent=2)
-                    print(f"Saved report generation output to {output_path}")
+                    self.logger.info(f"Saved report generation output to {output_path}")
                     
                     # Update state with report data
                     self._state["report"] = output_data
-                    print(f"Added report to state with {output_data['venues_found']} venues and {output_data['emails_generated']} emails")
+                    self.logger.info(f"Added report to state with {output_data['venues_found']} venues and {output_data['emails_generated']} emails")
                 else:
-                    print(f"Unexpected output type after parsing: {type(output_data)}")
-                    print(f"Output data: {output_data}")
+                    self.logger.error(f"Unexpected output type after parsing: {type(output_data)}")
+                    self.logger.error(f"Output data: {output_data}")
                 
                 return output_data
             except Exception as e:
-                print(f"Error processing report generation output: {str(e)}")
-                print(f"Task output attributes available: {dir(task_output)}")
+                self.logger.error(f"Error processing report generation output: {str(e)}")
+                self.logger.error(f"Task output attributes available: {dir(task_output)}")
                 if hasattr(task_output, 'raw'):
-                    print(f"Raw output: {task_output.raw}")
+                    self.logger.error(f"Raw output: {task_output.raw}")
                 if hasattr(task_output, 'json_dict'):
-                    print(f"JSON dict: {task_output.json_dict}")
+                    self.logger.error(f"JSON dict: {task_output.json_dict}")
                 if hasattr(task_output, 'pydantic'):
-                    print(f"Pydantic: {task_output.pydantic}")
+                    self.logger.error(f"Pydantic: {task_output.pydantic}")
                 raise
         
         return Task(
@@ -599,10 +603,10 @@ class VenueSearchCrew:
     @crew
     def crew(self, address: str, radius_km: float = 0.5) -> Crew:
         """Creates the Venue Search Crew"""
-        print("\n=== Initializing Venue Search Crew ===")
-        print(f"Target Location: {address}")
-        print(f"Search Radius: {radius_km}km")
-        print(f"Initial state before update: {self._state}")
+        self.logger.info("\n=== Initializing Venue Search Crew ===")
+        self.logger.info(f"Target Location: {address}")
+        self.logger.info(f"Search Radius: {radius_km}km")
+        self.logger.info(f"Initial state before update: {self._state}")
         
         # Reset and set state before creating any tasks
         self._state = {
@@ -614,23 +618,23 @@ class VenueSearchCrew:
             "emails": [],
             "report": None
         }
-        print(f"State after update: {self._state}")
+        self.logger.info(f"State after update: {self._state}")
 
         # Create tasks in sequence with dependencies
-        print("\nSetting up workflow tasks...")
+        self.logger.info("\nSetting up workflow tasks...")
         
         # Create and store tasks after state is set
-        print("Creating analyze_location task...")
+        self.logger.info("Creating analyze_location task...")
         self.analyze_task = self.analyze_location()
-        print(f"State in crew after analyze_task creation: {self._state}")
+        self.logger.info(f"State in crew after analyze_task creation: {self._state}")
         
-        print("Creating remaining tasks...")
+        self.logger.info("Creating remaining tasks...")
         self.feature_task = self.extract_features()
         self.score_task = self.score_venues()
         self.email_task = self.generate_emails()
         self.report_task = self.generate_report()
 
-        print("All tasks configured, ready to start workflow\n")
+        self.logger.info("All tasks configured, ready to start workflow\n")
 
         # Create and return the crew
         crew_instance = Crew(
@@ -647,19 +651,19 @@ class VenueSearchCrew:
         
         # Update task descriptions with current state values
         try:
-            print("Updating analyze_location task description...")
-            print(f"Current state values: address='{self._state['address']}', radius_km={self._state['radius_km']}")
+            self.logger.info("Updating analyze_location task description...")
+            self.logger.info(f"Current state values: address='{self._state['address']}', radius_km={self._state['radius_km']}")
             self.analyze_task.description = self.analyze_task.description.format(
                 address=self._state["address"],
                 radius_km=self._state["radius_km"]
             )
-            print("Successfully updated task description")
+            self.logger.info("Successfully updated task description")
         except Exception as e:
-            print(f"Error updating task description: {str(e)}")
-            print(f"Current description: {self.analyze_task.description}")
+            self.logger.error(f"Error updating task description: {str(e)}")
+            self.logger.error(f"Current description: {self.analyze_task.description}")
             raise
         
-        print(f"Final state before returning crew: {self._state}")
+        self.logger.info(f"Final state before returning crew: {self._state}")
         return crew_instance
 
     # async def run(self, address: str, radius_km: float = 5.0) -> ReportDocument:

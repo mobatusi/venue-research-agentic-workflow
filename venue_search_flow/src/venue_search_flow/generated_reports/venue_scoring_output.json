@@ -1,8 +1,8 @@
 {
   "venue_id": "new_york_marriott_at_the_brooklyn_bridge",
-  "total_score": 88.5,
+  "total_score": 88.0,
   "location_score": 92.0,
-  "amenities_score": 90.0,
-  "accessibility_score": 85.0,
-  "recommendations": "Ideal for large gatherings; Enhance marketing to highlight city views; Consider early bookings"
+  "amenities_score": 85.0,
+  "accessibility_score": 90.0,
+  "recommendations": "Ideal for medium to large gatherings; Enhance signage for accessibility; Promote rooftop space for events"
 }

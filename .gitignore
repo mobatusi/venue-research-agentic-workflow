@@ -169,3 +169,11 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# folders
+venue_search_flow/src/venue_search_flow/outputs/
+venue_search_flow/src/venue_search_flow/generated_emails/
+venue_search_flow/src/venue_search_flow/generated_reports/
+._test_flow
+Generated Emails/
+test_flow/

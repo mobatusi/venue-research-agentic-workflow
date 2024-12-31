@@ -11,6 +11,7 @@ from venue_search_flow.models.venue_models import (
 )
 import os
 import json
+import logging
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List
@@ -42,6 +43,34 @@ class VenueSearchFlow(Flow[VenueSearchState]):
         # Create subdirectories
         (output_dir / "reports").mkdir(exist_ok=True)
         (output_dir / "emails").mkdir(exist_ok=True)
+        
+        # Set up logging
+        log_dir = output_dir / "logs"
+        log_dir.mkdir(exist_ok=True)
+        log_file = log_dir / "venue_search.log"
+        
+        # Configure logging with a new logger instance
+        self.logger = logging.getLogger(f"venue_search_{timestamp}")
+        self.logger.setLevel(logging.INFO)
+        
+        # Create file handler
+        file_handler = logging.FileHandler(log_file)
+        file_handler.setLevel(logging.INFO)
+        
+        # Create console handler
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.INFO)
+        
+        # Create formatter
+        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+        file_handler.setFormatter(formatter)
+        console_handler.setFormatter(formatter)
+        
+        # Add handlers to logger
+        self.logger.addHandler(file_handler)
+        self.logger.addHandler(console_handler)
+        
+        self.logger.info(f"Starting new venue search session at {timestamp}")
 
         # Set the state after flow initialization
         self.state.address = address
@@ -51,10 +80,13 @@ class VenueSearchFlow(Flow[VenueSearchState]):
         self.state.progress = 0.0
         self.state.venues = []
         self.state.email_templates = []
+        
+        self.logger.info(f"Initialized flow with address: {address} and radius: {radius_km}km")
 
     def _get_output_dir(self) -> Path:
         """Helper to get output directory as Path object"""
         if not self.state.output_dir:
+            self.logger.error("Output directory not set in state")
             raise ValueError("Output directory not set in state")
         return Path(self.state.output_dir) 
 
@@ -62,30 +94,32 @@ class VenueSearchFlow(Flow[VenueSearchState]):
         """Update progress in the state"""
         self.state.current_step = step
         self.state.progress = progress
-        print(f"Progress: {step} ({progress*100:.0f}%)")
+        self.logger.info(f"Progress: {step} ({progress*100:.0f}%)")
 
     @start()
     def initialize_search(self):
         """Initialize the search parameters"""
         if not self.state.output_dir:
+            self.logger.error("Output directory not set before initialization")
             raise ValueError("Output directory not set before initialization")
             
         self.update_progress("initialization", 0.1)
-        print(f"Starting venue search for location: {self.state.address} with radius {self.state.radius_km}km")
-        print(f"Output directory: {self.state.output_dir}")
+        self.logger.info(f"Starting venue search for location: {self.state.address} with radius {self.state.radius_km}km")
+        self.logger.info(f"Output directory: {self.state.output_dir}")
 
     @listen(initialize_search)
     def execute_search(self):
         """Execute the venue search workflow"""
-        print("Executing venue search workflow")
-        print(f"Flow state before crew creation: address={self.state.address}, radius={self.state.radius_km}")
+        self.logger.info("Executing venue search workflow")
+        self.logger.info(f"Flow state before crew creation: address={self.state.address}, radius={self.state.radius_km}")
         
         # Validate output directory
         if not self.state.output_dir:
+            self.logger.error("Output directory not set before execution")
             raise ValueError("Output directory not set before execution")
             
-        # Create crew with current state values
-        crew = VenueSearchCrew()
+        # Create crew with current state values and pass logger
+        crew = VenueSearchCrew(logger=self.logger)
         crew._state = {
             "address": self.state.address,
             "radius_km": self.state.radius_km,
@@ -95,7 +129,7 @@ class VenueSearchFlow(Flow[VenueSearchState]):
             "emails": [],
             "report": None
         }
-        print(f"Crew state after initialization: {crew._state}")
+        self.logger.info(f"Crew state after initialization: {crew._state}")
         
         # Set output directories
         output_dir = self._get_output_dir()
@@ -107,18 +141,18 @@ class VenueSearchFlow(Flow[VenueSearchState]):
         crew.reports_dir.mkdir(parents=True, exist_ok=True)
         
         self.update_progress("location_analysis", 0.2)
-        print(f"Starting crew with state: {crew._state}")
+        self.logger.info(f"Starting crew with state: {crew._state}")
         result = crew.crew(
             address=self.state.address, 
             radius_km=self.state.radius_km
         ).kickoff()
 
         # Process the results from each task
-        print("Search completed, processing results")
+        self.logger.info("Search completed, processing results")
         
         # Each task returns a Pydantic model
         if hasattr(result, 'tasks_outputs') and result.tasks_outputs:
-            print(f"Processing {len(result.tasks_outputs)} task outputs")
+            self.logger.info(f"Processing {len(result.tasks_outputs)} task outputs")
             for task_output in result.tasks_outputs:
                 try:
                     # Convert task output to dict if it's a string
@@ -126,10 +160,10 @@ class VenueSearchFlow(Flow[VenueSearchState]):
                         try:
                             task_output = json.loads(task_output)
                         except json.JSONDecodeError:
-                            print(f"Failed to parse task output as JSON: {task_output[:100]}...")
+                            self.logger.error(f"Failed to parse task output as JSON: {task_output[:100]}...")
                             continue
                     
-                    print(f"Processing task output: {type(task_output)}")
+                    self.logger.info(f"Processing task output: {type(task_output)}")
                     
                     # Handle VenueBasicInfo
                     if isinstance(task_output, dict) and all(k in task_output for k in ["name", "type", "address"]):
@@ -139,7 +173,7 @@ class VenueSearchFlow(Flow[VenueSearchState]):
                             "features": {},
                             "score": {}
                         })
-                        print(f"Added venue: {venue_info.name}")
+                        self.logger.info(f"Added venue: {venue_info.name}")
                         self.update_progress("location_analysis", 0.4)
                     
                     # Handle VenueFeatures
@@ -149,7 +183,7 @@ class VenueSearchFlow(Flow[VenueSearchState]):
                         for venue in self.state.venues:
                             if venue["basic_info"]["name"].lower().replace(" ", "_") == venue_id:
                                 venue["features"] = features.dict()
-                                print(f"Added features for venue: {venue_id}")
+                                self.logger.info(f"Added features for venue: {venue_id}")
                         self.update_progress("feature_extraction", 0.6)
                     
                     # Handle VenueScore
@@ -159,7 +193,7 @@ class VenueSearchFlow(Flow[VenueSearchState]):
                         for venue in self.state.venues:
                             if venue["basic_info"]["name"].lower().replace(" ", "_") == venue_id:
                                 venue["score"] = score.dict()
-                                print(f"Added score for venue: {venue_id}")
+                                self.logger.info(f"Added score for venue: {venue_id}")
                         self.update_progress("scoring", 0.8)
                     
                     # Handle EmailTemplate
@@ -170,7 +204,7 @@ class VenueSearchFlow(Flow[VenueSearchState]):
                         email_path = crew.emails_dir / f"{template.venue_id}_email.txt"
                         with open(email_path, "w") as f:
                             f.write(template.body)
-                        print(f"Saved email for venue: {template.venue_id}")
+                        self.logger.info(f"Saved email for venue: {template.venue_id}")
                     
                     # Handle ReportDocument (from agent's final answer)
                     elif isinstance(task_output, dict) and all(k in task_output for k in ["venues_found", "venues_data", "emails_data"]):
@@ -178,95 +212,50 @@ class VenueSearchFlow(Flow[VenueSearchState]):
                             report = ReportDocument(**task_output)
                             self.state.report = report
                             self.update_progress("report_generation", 0.9)
-                            print("Added report document from agent's final answer")
+                            self.logger.info("Added report document from agent's final answer")
                             # Save the raw agent output for reference
                             raw_output_path = output_dir / "reports" / "agent_output.json"
                             with open(raw_output_path, "w") as f:
                                 json.dump(task_output, f, indent=2)
                         except Exception as e:
-                            print(f"Failed to process agent's final answer: {str(e)}")
+                            self.logger.error(f"Failed to process agent's final answer: {str(e)}")
                 
                 except Exception as e:
-                    print(f"Error processing task output: {str(e)}")
-                    print(f"Task output type: {type(task_output)}")
+                    self.logger.error(f"Error processing task output: {str(e)}")
+                    self.logger.error(f"Task output type: {type(task_output)}")
                     if isinstance(task_output, dict):
-                        print(f"Task output keys: {task_output.keys()}")
+                        self.logger.error(f"Task output keys: {task_output.keys()}")
                     continue
             
-            print(f"Processed all task outputs. Found {len(self.state.venues)} venues and {len(self.state.email_templates)} emails")
+            self.logger.info(f"Processed all task outputs. Found {len(self.state.venues)} venues and {len(self.state.email_templates)} emails")
 
     @listen(execute_search)
     def save_report(self):
         """Save the final report"""
         self.update_progress("report_generation", 0.9)
-        print("Saving venue search report")
+        self.logger.info("Saving venue search report")
         
-        # Always generate a fresh report with actual data
-        print("Generating report with actual data...")
-        
-        # Convert venues to JSON string, ensuring we have all data
-        venues_data = []
-        for venue in self.state.venues:
-            venue_data = {
-                "basic_info": venue["basic_info"],
-                "features": venue.get("features", {}),
-                "score": venue.get("score", {})
+        # The report data should already be in self.state.report from the crew's output
+        if not self.state.report:
+            self.logger.error("No report data found in state")
+            return {
+                "output_dir": self.state.output_dir,
+                "current_step": "error",
+                "progress": 0.0
             }
-            venues_data.append(venue_data)
-        venues_json = json.dumps(venues_data)
         
-        # Convert email templates to JSON string
-        emails_json = json.dumps(self.state.email_templates)
+        # Log report summary
+        self.logger.info(f"Report summary:")
+        self.logger.info(f"- Venues found: {self.state.report.venues_found}")
+        self.logger.info(f"- Emails generated: {self.state.report.emails_generated}")
+        if self.state.report.recommendations:
+            self.logger.info(f"- Recommendations: {self.state.report.recommendations}")
         
-        # Get email file paths
-        email_paths = []
-        for template in self.state.email_templates:
-            email_file = f"{template['venue_id']}_email.txt"
-            email_path = self._get_output_dir() / "emails" / email_file
-            if email_path.exists():
-                email_paths.append(email_file)
-        
-        # Collect all recommendations from venue scores
-        all_recommendations = []
-        for venue in self.state.venues:
-            if "score" in venue and venue["score"].get("recommendations"):
-                recs = venue["score"]["recommendations"].split(";")
-                all_recommendations.extend([rec.strip() for rec in recs if rec.strip()])
-        
-        # Create or update report
-        report = ReportDocument(
-            venues_found=len(self.state.venues),
-            emails_generated=len(self.state.email_templates),
-            venues_data=venues_json,
-            emails_data=emails_json,
-            emails_saved=",".join(email_paths),
-            visualizations="",  # No visualizations yet
-            recommendations=";".join(all_recommendations) if all_recommendations else "No specific recommendations",
-            attachments=""  # No attachments yet
-        )
-        
-        # Save report summary
-        output_dir = self._get_output_dir()
-        report_path = output_dir / "reports" / "search_report.json"
-        
-        # Print debug information
-        print(f"Found {len(self.state.venues)} venues")
-        print(f"Generated {len(self.state.email_templates)} emails")
-        print(f"Recommendations: {';'.join(all_recommendations) if all_recommendations else 'None'}")
-        
-        with open(report_path, "w") as f:
-            json.dump(report.dict(), f, indent=2)
-        
-        print(f"Report saved to {report_path}")
         self.update_progress("completed", 1.0)
-        
-        # Update state with the new report
-        self.state.report = report
         
         # Return as a dictionary that will be converted to a FlowOutput
         return {
             "output_dir": self.state.output_dir,
-            "report_path": str(report_path),
             "current_step": self.state.current_step,
             "progress": self.state.progress
         }
@@ -280,7 +269,11 @@ def kickoff(address: str, radius_km: float = 0.5) -> dict:
     # Initialize and run the flow
     flow = VenueSearchFlow(address=address, radius_km=radius_km)
     result = flow.kickoff()
-    with open("flow_output.json", "w") as f:
+    
+    # Save flow output
+    output_dir = Path(flow.state.output_dir)
+    flow_output_path = output_dir / "flow_output.json"
+    with open(flow_output_path, "w") as f:
         json.dump(result, f, indent=2)
     
     # Return the output paths and progress
@@ -297,5 +290,6 @@ def plot():
 
 if __name__ == "__main__":
     # This is just for testing the script directly
-    print("This script is meant to be imported by the Streamlit app.")
-    print("Please run the Streamlit app instead.")
+    logger = logging.getLogger(__name__)
+    logger.info("This script is meant to be imported by the Streamlit app.")
+    logger.info("Please run the Streamlit app instead.")
