@@ -1,10 +1,10 @@
 {
   "venue_id": "new_york_marriott_at_the_brooklyn_bridge",
-  "capacity": "666 rooms",
-  "amenities": "Free internet, Fitness Centre, Bar, Restaurant, Conference facilities, 24-hour front desk",
-  "accessibility": "Elevator, Accessible parking",
-  "parking": "Paid private parking on-site",
-  "special_features": "Pets allowed, Proximity to local attractions",
-  "photos": "",
-  "floor_plans": ""
+  "capacity": "500 people",
+  "amenities": "WiFi, AV Equipment, Catering, Business Center, Fitness Center, Swimming Pool, On-site Restaurant",
+  "accessibility": "Elevator, Ramps available, Accessible Restrooms, Braille signage",
+  "parking": "On-site parking available, Valet parking available",
+  "special_features": "Rooftop Event Space, Views of Manhattan, Conference Rooms",
+  "photos": "https://www.marriott.com/en-us/hotels/nycbk-new-york-marriott-at-the-brooklyn-bridge/gallery",
+  "floor_plans": "https://www.marriott.com/en-us/hotels/nycbk-new-york-marriott-at-the-brooklyn-bridge/meeting-event-rooms"
 }

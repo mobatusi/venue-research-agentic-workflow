@@ -20,6 +20,7 @@ class VenueSearchState(BaseModel):
     """State management for venue search workflow"""
     address: str = ""  # Will be populated from streamlit app
     radius_km: float = 0.0  # Will be populated from streamlit app
+    email_template: str = None  # Will be populated from streamlit app
     report: ReportDocument = None
     output_dir: str = None  # Keep as string for Pydantic serialization
     current_step: str = "initialization"
@@ -30,7 +31,7 @@ class VenueSearchState(BaseModel):
 class VenueSearchFlow(Flow[VenueSearchState]):
     """Flow for managing the venue search process"""
 
-    def __init__(self, address: str = "", radius_km: float = 0.5):
+    def __init__(self, address: str = "", radius_km: float = 0.5, email_template: str = None):
         # Initialize the flow first
         super().__init__()
         
@@ -75,6 +76,7 @@ class VenueSearchFlow(Flow[VenueSearchState]):
         # Set the state after flow initialization
         self.state.address = address
         self.state.radius_km = radius_km
+        self.state.email_template = email_template
         self.state.output_dir = str(output_dir)
         self.state.current_step = "initialization"
         self.state.progress = 0.0
@@ -123,6 +125,7 @@ class VenueSearchFlow(Flow[VenueSearchState]):
         crew._state = {
             "address": self.state.address,
             "radius_km": self.state.radius_km,
+            "email_template": self.state.email_template,
             "venues": [],
             "features": [],
             "scores": [],
@@ -147,7 +150,8 @@ class VenueSearchFlow(Flow[VenueSearchState]):
             # Execute the crew
             crew_instance = crew.crew(
                 address=self.state.address, 
-                radius_km=self.state.radius_km
+                radius_km=self.state.radius_km,
+                email_template=self.state.email_template
             )
             if not crew_instance:
                 self.logger.error("Failed to create crew instance")
@@ -218,7 +222,7 @@ class VenueSearchFlow(Flow[VenueSearchState]):
                     # Handle EmailTemplate
                     elif isinstance(task_output, dict) and all(k in task_output for k in ["venue_id", "recipient", "subject", "body"]):
                         template = EmailTemplate(**task_output)
-                        self.state.email_templates.append(template.dict())
+                        self.state.email_templates.append(template.model_dump())
                         self.logger.info(f"Added email for venue: {template.venue_id}")
                     
                     # Handle ReportDocument (from agent's final answer)
@@ -305,14 +309,14 @@ class VenueSearchFlow(Flow[VenueSearchState]):
             "progress": self.state.progress
         }
 
-def kickoff(address: str, radius_km: float = 0.5) -> dict:
+def kickoff(address: str, radius_km: float = 0.5, email_template: str = None) -> dict:
     """Execute the venue search workflow"""
     # Set API keys
     os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
     os.environ["SERPER_API_KEY"] = os.getenv("SERPER_API_KEY")
     
     # Initialize and run the flow
-    flow = VenueSearchFlow(address=address, radius_km=radius_km)
+    flow = VenueSearchFlow(address=address, radius_km=radius_km, email_template=email_template)
     result = flow.kickoff()
     
     # Save flow output

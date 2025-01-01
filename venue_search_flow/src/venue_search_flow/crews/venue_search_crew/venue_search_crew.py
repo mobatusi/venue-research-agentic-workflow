@@ -399,6 +399,107 @@ class VenueSearchCrew:
         # Pre-compute the output path
         output_path = str(self.reports_dir / "email_generation_output.json")
         
+        # Get custom template from state and log it
+        custom_template = self._state.get('email_template')
+        self.logger.info(f"Custom template found in state: {bool(custom_template)}")
+        if custom_template:
+            self.logger.info("Template preview (first 100 chars): " + custom_template[:100] + "...")
+        
+        # Force the task to ignore YAML config by setting explicit task config
+        task_config = {
+            "description": None,  # Will be set below
+            "expected_output": None,  # Will be set below
+            "context": ["score_venues"],
+            "agent": "email_agent"
+        }
+        
+        template_instruction = """
+            Create a professional email for each venue following standard business email format.
+            Make sure to include all relevant venue details and maintain a professional tone.
+            
+            IMPORTANT: If any required information (like email or contact details) is not found,
+            use 'N/A' as the default value. Do not make up or guess missing information.
+        """
+        
+        # Prepare example output based on template
+        example_body = custom_template if custom_template else """Dear {contact_name},
+
+I am writing to inquire about hosting an event at {venue_name}. We are interested in your venue's facilities and would appreciate more information.
+
+Best regards,
+{sender_name}"""
+        
+        if custom_template:
+            template_instruction = f"""
+            IMPORTANT: You MUST use this EXACT template for the email body:
+
+{custom_template}
+
+            INSTRUCTIONS:
+            1. Use the template EXACTLY as provided above
+            2. Only replace the following placeholders with actual values:
+               - {{venue_name}} with the actual venue name
+               - {{contact_name}} with the appropriate contact person (use 'N/A' if not found)
+               - {{target_date}} with the specified event date
+               - {{target_time}} with the specified event time
+               - {{custom_message}} with the provided custom message
+               - {{sender_name}} with the provided sender name
+               - {{linkedin_link}} with the provided LinkedIn URL
+               - {{instagram_link}} with the provided Instagram URL
+               - {{tiktok_link}} with the provided TikTok URL
+            3. DO NOT modify any other part of the template
+            4. DO NOT add any additional content
+            5. DO NOT change the format or structure
+            6. Use 'N/A' for any missing information - DO NOT make up data
+            
+            Your task is to ONLY replace the placeholders while keeping everything else exactly the same.
+            """
+            self.logger.info("Using custom template with strict instructions")
+        
+        # Set task description
+        task_description = f"""
+        Generate emails for venues.
+        
+        Print a status update before generating each email.
+        
+        {template_instruction}
+        
+        For each venue:
+        1. Create an email using the instructions above
+        2. Save the email to a file in {str(self.emails_dir)}
+        3. Return a JSON object with:
+        - venue_id: Lowercase name with underscores (string)
+        - recipient: Email address from venue info, or 'N/A' if not found (string)
+        - subject: Email subject (string)
+        - body: Email content (string)
+        - follow_up_date: ISO date string (e.g., "2024-01-05T10:00:00Z")
+        - venue_score: Venue's total score (number)
+        - key_features: Comma-separated list of key features (string)
+        
+        After creating each email:
+        1. Print "Generated email for [venue_name]"
+        2. Print email subject and recipient
+        3. Save the email body to "{str(self.emails_dir)}/[venue_id]_email.txt"
+        4. Save the full output to {output_path}
+        """
+        
+        # Set expected output
+        task_expected_output = f"""
+        {{
+            "venue_id": "example_venue",
+            "recipient": "N/A",
+            "subject": "Event Space Inquiry - {{target_date}}",
+            "body": {json.dumps(example_body)},
+            "follow_up_date": "2024-01-05T10:00:00Z",
+            "venue_score": 85.5,
+            "key_features": "Large Capacity,Central Location"
+        }}
+        """
+        
+        # Update task config
+        task_config["description"] = task_description
+        task_config["expected_output"] = task_expected_output
+        
         def process_output(task_output):
             """Process and save the task output"""
             self.logger.info(f"Processing email generation output: {type(task_output)}")
@@ -406,6 +507,10 @@ class VenueSearchCrew:
                 # Get raw output from TaskOutput
                 output_data = task_output.raw
                 self.logger.info(f"Raw output: {output_data}")
+                
+                # Log the actual template being used
+                if isinstance(output_data, dict):
+                    self.logger.info("Email body preview: " + output_data.get('body', '')[:100] + "...")
                 
                 # Convert string to dict if needed
                 if isinstance(output_data, str):
@@ -417,6 +522,9 @@ class VenueSearchCrew:
                 
                 # Save the output
                 if isinstance(output_data, dict):
+                    # Ensure 'N/A' is used for missing values
+                    output_data['recipient'] = output_data.get('recipient') or 'N/A'
+                    
                     with open(output_path, 'w') as f:
                         json.dump(output_data, f, indent=2)
                     self.logger.info(f"Saved email generation output to {output_path}")
@@ -430,7 +538,7 @@ class VenueSearchCrew:
                     # Update state with email info
                     email_info = {
                         "venue_id": output_data.get("venue_id", ""),
-                        "recipient": output_data.get("recipient", ""),
+                        "recipient": output_data.get("recipient", "N/A"),  # Use N/A as default
                         "subject": output_data.get("subject", ""),
                         "body": output_data.get("body", ""),
                         "follow_up_date": output_data.get("follow_up_date", ""),
@@ -461,12 +569,14 @@ class VenueSearchCrew:
             
             Print a status update before generating each email.
             
+            {template_instruction}
+            
             For each venue:
-            1. Create an email using this format
+            1. Create an email using the instructions above
             2. Save the email to a file in {str(self.emails_dir)}
             3. Return a JSON object with:
             - venue_id: Lowercase name with underscores (string)
-            - recipient: Email address (string)
+            - recipient: Email address from venue info, or 'N/A' if not found (string)
             - subject: Email subject (string)
             - body: Email content (string)
             - follow_up_date: ISO date string (e.g., "2024-01-05T10:00:00Z")
@@ -480,16 +590,16 @@ class VenueSearchCrew:
             4. Save the full output to """ + output_path + """
             """,
             agent=self.email_agent(),
-            expected_output="""
-            {
+            expected_output=f"""
+            {{
                 "venue_id": "example_venue",
-                "recipient": "contact@venue.com",
-                "subject": "Partnership Opportunity",
-                "body": "Dear Venue Manager...",
+                "recipient": "N/A",
+                "subject": "Event Space Inquiry - {{target_date}}",
+                "body": {json.dumps(example_body)},
                 "follow_up_date": "2024-01-05T10:00:00Z",
                 "venue_score": 85.5,
                 "key_features": "Large Capacity,Central Location"
-            }
+            }}
             """,
             output_pydantic=EmailTemplate,
             context=[self.score_venues()],
@@ -601,7 +711,7 @@ class VenueSearchCrew:
         )
 
     @crew
-    def crew(self, address: str, radius_km: float = 0.5) -> Crew:
+    def crew(self, address: str, radius_km: float = 0.5, email_template: str = None) -> Crew:
         """Creates the Venue Search Crew"""
         self.logger.info("\n=== Initializing Venue Search Crew ===")
         self.logger.info(f"Target Location: {address}")
@@ -612,6 +722,7 @@ class VenueSearchCrew:
         self._state = {
             "address": address,
             "radius_km": radius_km,
+            "email_template": email_template,  # Add email_template to state
             "venues": [],
             "features": [],
             "scores": [],
@@ -651,16 +762,21 @@ class VenueSearchCrew:
         
         # Update task descriptions with current state values
         try:
-            self.logger.info("Updating analyze_location task description...")
-            self.logger.info(f"Current state values: address='{self._state['address']}', radius_km={self._state['radius_km']}")
+            self.logger.info("Updating task descriptions...")
+            self.logger.info(f"Current state values: address='{self._state['address']}', radius_km={self._state['radius_km']}, email_template={bool(self._state['email_template'])}")
+            
+            # Update analyze_location task description
             self.analyze_task.description = self.analyze_task.description.format(
                 address=self._state["address"],
                 radius_km=self._state["radius_km"]
             )
-            self.logger.info("Successfully updated task description")
+            self.logger.info("Successfully updated analyze_location task description")
+            
+            # No need to format email_task description as it's already handled in generate_emails
+            
+            self.logger.info("Successfully updated all task descriptions")
         except Exception as e:
-            self.logger.error(f"Error updating task description: {str(e)}")
-            self.logger.error(f"Current description: {self.analyze_task.description}")
+            self.logger.error(f"Error updating task descriptions: {str(e)}")
             raise
         
         self.logger.info(f"Final state before returning crew: {self._state}")

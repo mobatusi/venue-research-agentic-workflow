@@ -1,9 +1,9 @@
 {
   "venue_id": "new_york_marriott_at_the_brooklyn_bridge",
-  "recipient": "contact@newyorkmarriott.com",
-  "subject": "Partnership Opportunity",
-  "body": "Dear Venue Manager,\\n\\nI hope this message finds you well. I am reaching out to explore a potential partnership with the New York Marriott at the Brooklyn Bridge. With its ideal location and exceptional amenities, it stands out as a premier venue for large gatherings and special events.\\n\\nWe believe that collaborating with your venue can yield significant benefits, both in enhancing guest experiences and promoting local attractions. We are particularly impressed by your large capacity and commitment to accessibility, making your venue an excellent choice for a variety of gatherings.\\n\\nI would love to discuss this opportunity further and explore how we can work together to elevate our offerings. Please let me know a suitable time for you, and I can arrange a call or a visit.\\n\\nLooking forward to your response.\\n\\nBest regards,\\n[Your Name]\\n[Your Position]\\n[Your Company]\\n[Your Contact Information]",
+  "recipient": "N/A",
+  "subject": "Event Space Inquiry - {target_date}",
+  "body": "Dear Venue Manager,\n\nI am writing to inquire about hosting an event at the New York Marriott at the Brooklyn Bridge. We are interested in your venue's facilities and would appreciate more information.\n\nBest regards,\n[Your Name]",
   "follow_up_date": "2024-01-05T10:00:00Z",
-  "venue_score": 88.0,
-  "key_features": "Large Capacity,Accessibility,Prominent Location"
+  "venue_score": 88.5,
+  "key_features": "Ideal for large corporate functions, Utilize rooftop for unique events, Confirm AV equipment needs beforehand"
 }

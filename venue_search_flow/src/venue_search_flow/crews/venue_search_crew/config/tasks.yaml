@@ -15,7 +15,7 @@ extract_features:
 
 score_venues:
   description: >
-    Score venues based on features
+    Score and rank venues based on features
   expected_output: >
     Venue scores and rankings
   context: ["extract_features"]
@@ -23,40 +23,31 @@ score_venues:
 
 generate_emails:
   description: >
-    Generate outreach emails for top venues and save them to the 'generated_emails' folder.
-    Each email should be saved as a separate file with the venue name.
+    Generate professional outreach emails for top-scoring venues and save them to the 'emails' folder.
 
-    Use this exact email template structure:
+    If a custom email template is provided in {input_data[email_template]}, use it exactly as specified.
+    Otherwise, use the default professional email format that includes:
+    - Proper business email greeting
+    - Introduction and purpose
+    - Highlight of venue's key features and total score
+    - Specific areas of interest based on venue analysis
+    - Professional closing
+    - Sender details
 
-    1. Opening:
-       "Hello, I was interested in learning more about the venues that you have to offer for {specific_dates}. 
-       We host networking mixers throughout the country, and your venue caught our eye. 
-       We want to know more details about how we can make an event possible."
-
-    2. Social Media Links:
-       "Below is a link to our LinkedIn, Instagram, and TikTok profiles, which should give you an idea of the style of the events."
-       [Include relevant social media links]
-
-    3. Venue-Specific Interest:
-       - Mention 1-2 specific features of their venue that align with networking events
-       - Reference any relevant past events or similar gatherings they've hosted
-
-    4. Quick Questions:
-       - Typical capacity for networking events
-       - Available dates around {specific_dates}
-       - Basic pricing information for events
-       - Setup and breakdown times
-
-    5. Professional Closing:
-       - Thank them for their time
-       - Include contact information
-       - Mention looking forward to their response
-
-    Keep the tone casual but professional, similar to the example provided.
-    Personalize each email with specific venue features while maintaining the core template structure.
+    The email should maintain a professional tone while emphasizing the venue's unique strengths
+    identified during scoring. Include relevant details about capacity, amenities, and location
+    advantages that were noted during venue analysis.
 
   expected_output: >
-    List of generated email paths and their metadata
+    {
+      "venue_id": str,
+      "recipient": str, 
+      "subject": str,
+      "body": str,
+      "follow_up_date": str,
+      "venue_score": float,
+      "key_features": str
+    }
   context: ["score_venues"]
   agent: "email_agent"
 

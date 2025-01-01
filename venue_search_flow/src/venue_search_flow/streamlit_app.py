@@ -3,7 +3,8 @@ import os
 import json
 from pathlib import Path
 from venue_search_flow.main import kickoff
-import time
+from datetime import datetime, timedelta
+import datetime as dt
 
 def reset_progress():
     """Reset the progress status"""
@@ -132,53 +133,24 @@ def display_report_section():
             # Display generated emails
             if "emails_data" in report_data:
                 try:
-                    # Parse the emails_data string into a list of dictionaries
-                    emails_data = json.loads(report_data["emails_data"])
-                    if isinstance(emails_data, str):
-                        emails_data = json.loads(emails_data)  # Parse again if still a string
-                        
-                    if emails_data:
+                    # Try to parse the raw email data as list
+                    if isinstance(report_data["emails_data"], str):
+                        raw_email = [json.loads(report_data["emails_data"])]
+                    else:
+                        raw_email = [report_data["emails_data"]]
+                    if isinstance(raw_email, list):
+                        # Multiple emails format
                         st.subheader("📧 Generated Emails")
-                        for email in emails_data:
-                            if isinstance(email, str):
-                                email = json.loads(email)  # Parse if the email is a string
-                                
-                            with st.expander(f"📨 Email for {email.get('venue_id', 'Unknown Venue')}"):
+                        for idx, email in enumerate(raw_email):
+                            with st.expander(f"📨 Email {idx + 1}"):
                                 st.write(f"**Subject:** {email.get('subject', 'N/A')}")
                                 st.write(f"**Recipient:** {email.get('recipient', 'N/A')}")
                                 st.write(f"**Follow-up Date:** {email.get('follow_up_date', 'N/A')}")
                                 st.write("**Content:**")
-                                st.text_area("", email.get('body', 'N/A'), height=200, key=f"email_{email.get('venue_id')}")
-                except Exception as e:
-                    try:
-                        # Try to parse the raw email data
-                        if isinstance(report_data["emails_data"], str):
-                            raw_email = json.loads(report_data["emails_data"])
-                        else:
-                            raw_email = report_data["emails_data"]
-                            
-                        if isinstance(raw_email, dict):
-                            # Single email format
-                            st.subheader("📧 Generated Email")
-                            with st.expander("📨 Email Details"):
-                                st.write(f"**Subject:** {raw_email.get('subject', 'N/A')}")
-                                st.write(f"**Recipient:** {raw_email.get('recipient', 'N/A')}")
-                                st.write(f"**Follow-up Date:** {raw_email.get('follow_up_date', 'N/A')}")
-                                st.write("**Content:**")
-                                st.text_area("", raw_email.get('body', 'N/A'), height=200, key="raw_email")
-                        elif isinstance(raw_email, list):
-                            # Multiple emails format
-                            st.subheader("📧 Generated Emails")
-                            for idx, email in enumerate(raw_email):
-                                with st.expander(f"📨 Email {idx + 1}"):
-                                    st.write(f"**Subject:** {email.get('subject', 'N/A')}")
-                                    st.write(f"**Recipient:** {email.get('recipient', 'N/A')}")
-                                    st.write(f"**Follow-up Date:** {email.get('follow_up_date', 'N/A')}")
-                                    st.write("**Content:**")
-                                    st.text_area("", email.get('body', 'N/A'), height=200, key=f"raw_email_{idx}")
-                    except Exception as nested_e:
-                        st.error(f"Could not parse email data: {str(nested_e)}")
-                        st.json(report_data["emails_data"])
+                                st.text_area("", email.get('body', 'N/A'), height=200, key=f"raw_email_{idx}")
+                except Exception as nested_e:
+                    st.error(f"Could not parse email data: {str(nested_e)}")
+                    st.json(report_data["emails_data"])
         else:
             st.info("No report available yet. Start a search to generate a report.")
 
@@ -194,77 +166,6 @@ def main():
 
     # Create main layout
     col1, col2 = st.columns([2, 1])
-
-    with col1:
-        # Input fields with more descriptive labels and help text
-        address = st.text_input(
-            "Search Location",
-            value="333 Adams St, Brooklyn, NY 11201, United States",
-            help="Enter the full address to search around (e.g., street, city, state, country)",
-            key="address_input"
-        )
-        
-        radius_km = st.slider(
-            "Search Radius",
-            min_value=0.1,
-            max_value=1.0,
-            value=0.5,
-            step=0.1,
-            help="Select the radius (in kilometers) around the location to search for venues",
-            key="radius_input"
-        )
-
-    with col2:
-        # Progress tracking
-        st.write("### Progress")
-        progress_bar = st.progress(0.0, "Ready to start")
-
-    # API key validation
-    openai_key = os.getenv("OPENAI_API_KEY", "")
-    serper_key = os.getenv("SERPER_API_KEY", "")
-    openai_key_input = st.session_state.get('openai_key_input', "")
-    serper_key_input = st.session_state.get('serper_key_input', "")
-    
-    # Check if either key is missing or empty
-    has_openai_key = bool(openai_key_input.strip())  # Only consider session state input
-    has_serper_key = bool(serper_key_input.strip())  # Only consider session state input
-    
-    if not has_openai_key:
-        st.warning("⚠️ OpenAI API key not found. Please enter it in the sidebar.")
-    
-    if not has_serper_key:
-        st.warning("⚠️ Serper API key not found. Please enter it in the sidebar.")
-    
-    # Search button - placed below both columns
-    search_disabled = not address or not has_openai_key or not has_serper_key
-    
-    if st.button("🔍 Start Search", disabled=search_disabled, type="primary"):
-        if address and has_openai_key and has_serper_key:
-            try:
-                with st.spinner("Searching for venues..."):
-                    # Set API keys from session state
-                    os.environ["OPENAI_API_KEY"] = openai_key_input
-                    os.environ["SERPER_API_KEY"] = serper_key_input
-                    
-                    # Execute search with user inputs
-                    result = kickoff(
-                        address=address,
-                        radius_km=radius_km
-                    )
-                
-                # Update progress and state
-                st.session_state.output_dir = result['output_dir']
-                update_progress(progress_bar, result['current_step'], result['progress'])
-                
-                if result['current_step'] == 'completed':
-                    st.success("✅ Search completed successfully!")
-                
-            except Exception as e:
-                st.error(f"❌ An error occurred during the search: {str(e)}")
-                st.exception(e)
-
-    # Display report section
-    display_report_section()
 
     # Sidebar configuration
     with st.sidebar:
@@ -315,6 +216,270 @@ def main():
                 st.success("✅ Serper API key set")
             else:
                 st.error("❌ Serper API key missing")
+
+        # Email Template Configuration
+        st.subheader("Email Template")
+        use_custom_template = st.checkbox("Use Custom Email Template", 
+                                        help="Toggle to use your own email template instead of the default one",
+                                        key="use_custom_template")
+
+    with col1:
+        # Input fields with more descriptive labels and help text
+        address = st.text_input(
+            "Search Location",
+            value="333 Adams St, Brooklyn, NY 11201, United States",
+            help="Enter the full address to search around (e.g., street, city, state, country)",
+            key="address_input"
+        )
+        
+        radius_km = st.slider(
+            "Search Radius",
+            min_value=0.1,
+            max_value=1.0,
+            value=0.5,
+            step=0.1,
+            help="Select the radius (in kilometers) around the location to search for venues",
+            key="radius_input"
+        )
+
+    with col2:
+        # Progress tracking
+        st.write("### Progress")
+        progress_bar = st.progress(0.0, "Ready to start")
+
+    # API key validation
+    openai_key = os.getenv("OPENAI_API_KEY", "")
+    serper_key = os.getenv("SERPER_API_KEY", "")
+    
+    # Check if either key is missing or empty
+    has_openai_key = bool(openai_key_input.strip())  # Only consider session state input
+    has_serper_key = bool(serper_key_input.strip())  # Only consider session state input
+    
+    if not has_openai_key:
+        st.warning("⚠️ OpenAI API key not found. Please enter it in the sidebar.")
+    
+    if not has_serper_key:
+        st.warning("⚠️ Serper API key not found. Please enter it in the sidebar.")
+
+    if use_custom_template:
+        # Template Variables Form
+        st.subheader("Template Variables")
+        with st.form("template_variables"):
+            sender_name = st.text_input(
+                "Sender Name",
+                value=st.session_state.get('sender_name', 'John Smith'),
+                help="Your name as it will appear in the email",
+                key="sender_name_input"
+            )
+            
+            custom_message = st.text_area(
+                "Custom Message",
+                value=st.session_state.get('custom_message', 'We are planning a corporate event for 100 attendees, focusing on team building and professional development. We are particularly interested in venues that can accommodate both presentation-style seating and breakout session areas.'),
+                help="Additional details about your event or specific requirements",
+                height=100,
+                key="custom_message_input"
+            )
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                # Set default date to 3 months from now
+                default_date = datetime.now() + timedelta(days=90)
+                target_date = st.date_input(
+                    "Event Date",
+                    value=st.session_state.get('target_date', default_date),
+                    help="Target date for your event",
+                    key="target_date_input"
+                )
+            
+            with col2:
+                # Set default time to 2 PM
+                default_time = dt.time(14, 0)  # 2:00 PM
+                target_time = st.time_input(
+                    "Event Time",
+                    value=st.session_state.get('target_time', default_time),
+                    help="Target time for your event",
+                    key="target_time_input"
+                )
+            
+            st.subheader("Social Media Links")
+            linkedin_link = st.text_input(
+                "LinkedIn Profile",
+                value=st.session_state.get('linkedin_link', 'https://www.linkedin.com/in/your-profile'),
+                help="Your LinkedIn profile URL",
+                key="linkedin_link_input"
+            )
+            
+            instagram_link = st.text_input(
+                "Instagram Profile",
+                value=st.session_state.get('instagram_link', 'https://www.instagram.com/your-profile'),
+                help="Your Instagram profile URL",
+                key="instagram_link_input"
+            )
+            
+            tiktok_link = st.text_input(
+                "TikTok Profile",
+                value=st.session_state.get('tiktok_link', 'https://www.tiktok.com/@your-profile'),
+                help="Your TikTok profile URL",
+                key="tiktok_link_input"
+            )
+            
+            if st.form_submit_button("Save Template Variables"):
+                st.session_state.sender_name = sender_name
+                st.session_state.custom_message = custom_message
+                st.session_state.target_date = target_date
+                st.session_state.target_time = target_time
+                st.session_state.linkedin_link = linkedin_link
+                st.session_state.instagram_link = instagram_link
+                st.session_state.tiktok_link = tiktok_link
+                
+                # Update the template with current values
+                try:
+                    # Format date and time
+                    date_str = target_date.strftime('%Y-%m-%d') if target_date else '[EVENT DATE]'
+                    time_str = target_time.strftime('%I:%M %p') if target_time else '[EVENT TIME]'
+                    
+                    # Update the template in session state with current values
+                    current_template = st.session_state.get('custom_template', '')
+                    if current_template:
+                        updated_template = current_template.format(
+                            sender_name=sender_name,
+                            custom_message=custom_message,
+                            target_date=date_str,
+                            target_time=time_str,
+                            linkedin_link=linkedin_link or '[LinkedIn Profile]',
+                            instagram_link=instagram_link or '[Instagram Profile]',
+                            tiktok_link=tiktok_link or '[TikTok Profile]',
+                            contact_name='[Venue Contact]',
+                            venue_name='[Venue Name]'
+                        )
+                        st.session_state.custom_template = updated_template
+                    st.success("✅ Template variables saved and preview updated!")
+                except Exception as e:
+                    st.error(f"Could not update template preview: {str(e)}")
+                    st.info("Make sure your template includes all the required placeholders and they are properly formatted.")
+
+        custom_template = st.text_area(
+            "Custom Email Template",
+            value=st.session_state.get('custom_template', """Dear {contact_name},
+
+I hope this email finds you well. I am reaching out regarding potential venue space at {venue_name} for an event on {target_date} at {target_time}.
+
+{custom_message}
+
+I would greatly appreciate the opportunity to discuss:
+- Available event spaces and capacity
+- Pricing and packages
+- Catering options
+- Audio/visual capabilities
+- Available dates
+                                           
+Below is a link to our LinkedIn, Instagram, and TikTok profiles, which should give you an idea of the style of the events. 
+- LinkedIn: {linkedin_link}
+- Instagram: {instagram_link}
+- TikTok: {tiktok_link}
+
+Please let me know when would be a good time to connect.
+
+Best regards,
+{sender_name}"""),
+            height=300,
+            help="Use placeholders like {venue_name}, {contact_name}, {custom_message}, {sender_name}, {target_date}, {target_time}, {linkedin_link}, {instagram_link}, {tiktok_link} in your template. The template will be updated with your values when you save the variables above.",
+            key="custom_template"
+        )
+
+        if custom_template != st.session_state.get('custom_template', ''):
+            st.session_state.custom_template = custom_template
+            st.info("Template updated. Save the template variables above to see it with your values.")
+    else:
+        st.info("Using default system email template")
+
+    # Search button - placed below both columns
+    search_disabled = not address or not has_openai_key or not has_serper_key
+    
+    if st.button("🔍 Start Search", disabled=search_disabled, type="primary"):
+        if address and has_openai_key and has_serper_key:
+            try:
+                with st.spinner("Searching for venues..."):
+                    # Set API keys from session state
+                    os.environ["OPENAI_API_KEY"] = openai_key_input
+                    os.environ["SERPER_API_KEY"] = serper_key_input
+                    
+                    # Prepare email template with variables if custom template is used
+                    final_template = None
+                    if use_custom_template:
+                        template = st.session_state.get('custom_template', '')
+                        if template:
+                            # Format date and time
+                            date_str = st.session_state.get('target_date', '').strftime('%Y-%m-%d') if st.session_state.get('target_date') else ''
+                            time_str = st.session_state.get('target_time', '').strftime('%I:%M %p') if st.session_state.get('target_time') else ''
+                            
+                            # Replace variables in template
+                            final_template = template.format(
+                                sender_name=st.session_state.get('sender_name', ''),
+                                custom_message=st.session_state.get('custom_message', ''),
+                                target_date=date_str,
+                                target_time=time_str,
+                                linkedin_link=st.session_state.get('linkedin_link', ''),
+                                instagram_link=st.session_state.get('instagram_link', ''),
+                                tiktok_link=st.session_state.get('tiktok_link', ''),
+                                contact_name='{contact_name}',  # Keep these as placeholders
+                                venue_name='{venue_name}'      # for the kickoff function
+                            )
+                    
+                    # Execute search with user inputs
+                    result = kickoff(
+                        address=address,
+                        radius_km=radius_km,
+                        email_template=final_template if use_custom_template else None
+                    )
+                
+                # Update progress and state
+                st.session_state.output_dir = result['output_dir']
+                update_progress(progress_bar, result['current_step'], result['progress'])
+                
+                if result['current_step'] == 'completed':
+                    st.success("✅ Search completed successfully!")
+                
+            except Exception as e:
+                st.error(f"❌ An error occurred during the search: {str(e)}")
+                st.exception(e)
+            
+    # Download buttons for generated files
+    if st.session_state.get('output_dir'):
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            # Email download button
+            email_path = os.path.join(st.session_state.output_dir, "emails")
+            if os.path.exists(email_path):
+                email_files = [f for f in os.listdir(email_path) if f.endswith('.txt')]
+                if email_files:
+                    with open(os.path.join(email_path, email_files[0]), 'r') as f:
+                        email_content = f.read()
+                    st.download_button(
+                        label="📥 Download Generated Email",
+                        data=email_content,
+                        file_name="venue_outreach_email.txt",
+                        mime="text/plain"
+                    )
+        
+        with col2:
+            # Report download button
+            report_path = os.path.join(st.session_state.output_dir, "reports")
+            if os.path.exists(report_path):
+                report_files = [f for f in os.listdir(report_path) if f.endswith('.json')]
+                if report_files:
+                    with open(os.path.join(report_path, report_files[0]), 'r') as f:
+                        report_content = f.read()
+                    st.download_button(
+                        label="📥 Download Generated Report",
+                        data=report_content,
+                        file_name="venue_analysis_report.json",
+                        mime="application/json"
+                    )
+
+    # Display report section
+    display_report_section()
 
 if __name__ == "__main__":
     main()

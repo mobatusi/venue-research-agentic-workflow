@@ -2,7 +2,7 @@
 name = "venue_search_flow"
 version = "0.1.0"
 description = "venue_search_flow using crewAI"
-authors = [{ name = "Your Name", email = "you@example.com" }]
+authors = [{ name = "Dolu Obatusin", email = "dolu.obatusin@gmail.com" }]
 requires-python = ">=3.10,<=3.13"
 dependencies = [
     "crewai[tools]>=0.86.0,<1.0.0",

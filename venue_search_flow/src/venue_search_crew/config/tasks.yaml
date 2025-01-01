@@ -1,0 +1,38 @@
+generate_emails:
+  description: >
+    Generate professional outreach emails for top-scoring venues.
+
+    IMPORTANT: If a custom email template exists in the state, you MUST use it exactly as provided,
+    only replacing the following placeholders:
+    - {venue_name} with the actual venue name
+    - {contact_name} with the appropriate contact person
+    - {target_date} with the specified event date
+    - {target_time} with the specified event time
+    - {custom_message} with the provided custom message
+    - {sender_name} with the provided sender name
+    - {linkedin_link} with the provided LinkedIn URL
+    - {instagram_link} with the provided Instagram URL
+    - {tiktok_link} with the provided TikTok URL
+
+    DO NOT modify any other part of the template or add additional content.
+
+    If no custom template exists, create a professional email that includes:
+    - Proper business email greeting
+    - Introduction and purpose
+    - Highlight of venue's key features and total score
+    - Specific areas of interest based on venue analysis
+    - Professional closing
+    - Sender details
+
+  expected_output: >
+    {
+      "venue_id": "example_venue",
+      "recipient": "contact@venue.com",
+      "subject": "Event Space Inquiry",
+      "body": "Dear {contact_name},\n\nI hope this email finds you well...",
+      "follow_up_date": "2024-01-05T10:00:00Z",
+      "venue_score": 85.5,
+      "key_features": "Large Capacity,Central Location"
+    }
+  context: ["score_venues"]
+  agent: "email_agent" 
