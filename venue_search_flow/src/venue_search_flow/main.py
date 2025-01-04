@@ -83,7 +83,7 @@ class VenueSearchFlow(Flow[VenueSearchState]):
         self.state.venues = []
         self.state.email_templates = []
         
-        self.logger.info(f"Initialized flow with address: {address} and radius: {radius_km}km")
+        self.logger.info(f"Initialized flow with address: {address}, radius: {radius_km}km, and email_template: {email_template}")
 
     def _get_output_dir(self) -> Path:
         """Helper to get output directory as Path object"""
@@ -106,7 +106,7 @@ class VenueSearchFlow(Flow[VenueSearchState]):
             raise ValueError("Output directory not set before initialization")
             
         self.update_progress("initialization", 0.1)
-        self.logger.info(f"Starting venue search for location: {self.state.address} with radius {self.state.radius_km}km")
+        self.logger.info(f"Starting venue search for location: {self.state.address} with radius {self.state.radius_km}km and email_template: {self.state.email_template}")
         self.logger.info(f"Output directory: {self.state.output_dir}")
 
     @listen(initialize_search)
