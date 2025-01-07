@@ -5,13 +5,13 @@ analyze_location:
   context: []
   agent: "location_analyst"
 
-# extract_features:
-#   description: >
-#     Extract features from identified venues
-#   expected_output: >
-#     Detailed venue features
-#   context: ["analyze_location"]
-#   agent: "feature_extractor"
+extract_features:
+  description: >
+    Extract features from identified venues
+  expected_output: >
+    Detailed venue features
+  context: ["analyze_location"]
+  agent: "feature_extractor"
 
 # score_venues:
 #   description: >

@@ -168,6 +168,30 @@ class VenueSearchCrew:
                     }
                     self._add_venue_to_state(venue_info)
             
+            elif task_name == "extract_features" and output_data:
+                # Handle list or single feature set
+                features_list = output_data if isinstance(output_data, list) else [output_data]
+                
+                # Process each feature set
+                for feature_data in features_list:
+                    if not isinstance(feature_data, dict):
+                        self.logger.error(f"Invalid feature data type: {type(feature_data)}")
+                        continue
+                        
+                    feature_info = {
+                        "venue_id": feature_data.get("venue_id", ""),
+                        "capacity": feature_data.get("capacity", ""),
+                        "amenities": feature_data.get("amenities", ""),
+                        "accessibility": feature_data.get("accessibility", ""),
+                        "parking": feature_data.get("parking", ""),
+                        "special_features": feature_data.get("special_features", ""),
+                        "photos": feature_data.get("photos", ""),
+                        "floor_plans": feature_data.get("floor_plans", "")
+                    }
+                    # Add to features list in state
+                    self._state["features"].append(feature_info)
+                    self.logger.info(f"Added features for venue: {feature_info['venue_id']}")
+            
             self.logger.info(f"Current state after {task_name}: {json.dumps(self._state, indent=2)}")
             
         except Exception as e:
@@ -209,12 +233,16 @@ class VenueSearchCrew:
             allow_delegation=False
         ) 
 
-    # @agent
-    # def feature_extractor(self) -> Agent:
-    #     """Creates the Feature Extraction Agent"""
-    #     return Agent(
-    #         config=self.agents_config["feature_extractor"],
-    #     )
+    @agent
+    def feature_extractor(self) -> Agent:
+        """Creates the Feature Extraction Agent"""
+        return Agent(
+            role="Venue Facilities Assessment Expert",
+            goal="Conduct comprehensive analysis of venue facilities and amenities using professional assessment frameworks",
+            backstory="You are a certified venue facilities assessor with extensive experience in evaluating commercial spaces. You've assessed over 1000 venues across the country and developed standardized evaluation frameworks used by major event planning firms. Your expertise includes ADA compliance, technical infrastructure, and space optimization.",
+            verbose=False,
+            allow_delegation=False
+        )
 
     # @agent
     # def scoring_agent(self) -> Agent:
@@ -244,7 +272,7 @@ class VenueSearchCrew:
         self.logger.info("\n=== Starting Location Analysis ===")
         self.logger.info(f"Initial state at start of analyze_location: {json.dumps(self._state, indent=2)}")
         
-        # Pre-compute the output path - use analyze_location_output.json
+        # Pre-compute the output path
         output_path = str(self.reports_dir / "analyze_location_output.json")
         
         # Format the task description with current state values
@@ -267,145 +295,103 @@ class VenueSearchCrew:
         2. For each venue, print its name and distance
         3. Save your output to {output_path}
         """
-        
-        task = Task(
+
+        expected_output = """
+        [
+            {{
+                "name": "Example Venue 1",
+                "type": "hotel",
+                "address": "123 Main St, City, State",
+                "distance_km": 0.5,
+                "website": "https://example.com",
+                "phone": "+1-555-0123",
+                "email": "contact@example.com"
+            }}
+        ]
+        """
+
+        return Task(
             description=description,
             agent=self.location_analyst(),
             tools=[self.search_tool],
-            expected_output="""
-            [
-                {
-                    "name": "Example Venue 1",
-                    "type": "hotel",
-                    "address": "123 Main St, City, State",
-                    "distance_km": 0.5,
-                    "website": "https://example.com",
-                    "phone": "+1-555-0123",
-                    "email": "contact@example.com"
-                },
-                {
-                    "name": "Example Venue 2",
-                    "type": "event_space",
-                    "address": "456 Event St, City, State",
-                    "distance_km": 0.8,
-                    "website": "https://example2.com",
-                    "phone": "+1-555-0124",
-                    "email": "contact@example2.com"
-                }
-            ]
-            """,
+            expected_output=expected_output,
             output_pydantic=VenueBasicInfo,
-            callback=self._create_task_callback("analyze_location"),
-            # Remove output_file parameter to avoid duplicate file creation
+            callback=self._create_task_callback("analyze_location")
         )
-                    
-        self.logger.info(f"Created analyze_location task: {task}")
-        self.logger.info(f"State at end of analyze_location creation: {json.dumps(self._state, indent=2)}")
-        return task
 
-    # @task
-    # def extract_features(self) -> Task:
-    #     """Creates the Feature Extraction Task"""
-    #     self.logger.info("\n=== Starting Feature Extraction ===")
-    #     self.logger.info(f"State at start of extract_features: {self._state}")
+    @task
+    def extract_features(self) -> Task:
+        """Creates the Feature Extraction Task"""
+        self.logger.info("\n=== Starting Feature Extraction ===")
+        self.logger.info(f"State at start of extract_features: {json.dumps(self._state, indent=2)}")
         
-    #     # Pre-compute the output path
-    #     output_path = str(self.reports_dir / "feature_extraction_output.json")
+        # Pre-compute the output path
+        output_path = str(self.reports_dir / "extract_features_output.json")
         
-    #     def process_output(task_output):
-    #         """Process and save the task output"""
-    #         self.logger.info("--------------------------------")
-    #         self.logger.info(f"Processing feature extraction output: {type(task_output)}")
-    #         try:
-    #             # Get raw output from TaskOutput
-    #             output_data = task_output.raw
-    #             self.logger.info(f"Raw output: {output_data}")
-                
-    #             # Convert string to dict if needed
-    #             if isinstance(output_data, str):
-    #                 try:
-    #                     output_data = json.loads(output_data)
-    #                 except json.JSONDecodeError:
-    #                     self.logger.error(f"Failed to parse output as JSON: {output_data[:100]}...")
-    #                     return output_data
-                
-    #             # Save the output
-    #             if isinstance(output_data, dict):
-    #                 with open(output_path, 'w') as f:
-    #                     json.dump(output_data, f, indent=2)
-    #                 self.logger.info(f"Saved feature extraction output to {output_path}")
-                    
-    #                 # Update state with features
-    #                 feature_info = {
-    #                     "venue_id": output_data.get("venue_id", ""),
-    #                     "capacity": output_data.get("capacity", ""),
-    #                     "amenities": output_data.get("amenities", ""),
-    #                     "accessibility": output_data.get("accessibility", ""),
-    #                     "parking": output_data.get("parking", ""),
-    #                     "special_features": output_data.get("special_features", ""),
-    #                     "photos": output_data.get("photos", ""),
-    #                     "floor_plans": output_data.get("floor_plans", "")
-    #                 }
-    #                 self._state["features"].append(feature_info)
-    #                 self.logger.info(f"Added features for venue: {feature_info['venue_id']}")
-    #             else:
-    #                 self.logger.error(f"Unexpected output type after parsing: {type(output_data)}")
-    #                 self.logger.error(f"Output data: {output_data}")
-                
-    #             return output_data
-    #         except Exception as e:
-    #             self.logger.error(f"Error processing feature extraction output: {str(e)}")
-    #             self.logger.error(f"Task output attributes available: {dir(task_output)}")
-    #             if hasattr(task_output, 'raw'):
-    #                 self.logger.error(f"Raw output: {task_output.raw}")
-    #             if hasattr(task_output, 'json_dict'):
-    #                 self.logger.error(f"JSON dict: {task_output.json_dict}")
-    #             if hasattr(task_output, 'pydantic'):
-    #                 self.logger.error(f"Pydantic: {task_output.pydantic}")
-    #             raise
+        # Create venue list for task description
+        venue_list = "\n".join([
+            f"- {venue['name']} ({venue['type']}) at {venue['address']}"
+            for venue in self._state["venues"]
+        ])
         
-    #     task = Task(
-    #         description=f"""
-    #         Extract features for each venue.
-            
-    #         Print a status update before analyzing each venue.
-            
-    #         Return a JSON object with:
-    #         - venue_id: Lowercase name with underscores (string)
-    #         - capacity: Venue capacity (string)
-    #         - amenities: Comma-separated list of amenities (string)
-    #         - accessibility: Comma-separated list of accessibility features (string)
-    #         - parking: Parking information (string)
-    #         - special_features: Comma-separated list of special features (string)
-    #         - photos: Comma-separated list of photo URLs (string)
-    #         - floor_plans: Comma-separated list of floor plan URLs (string)
+        # Get venue websites for task description
+        venue_websites = [venue['website'] for venue in self._state['venues'] if venue['website']]
+        websites_str = ', '.join(venue_websites) if venue_websites else "No websites available"
+        
+        description = f"""
+        Extract features for the following venues:
+        {venue_list}
+        
+        For EACH venue, analyze their website and available information to extract:
+        - venue_id: Convert venue name to lowercase with underscores
+        - capacity: Research and specify the venue capacity
+        - amenities: List all available amenities
+        - accessibility: List all accessibility features
+        - parking: Detail parking information
+        - special_features: List any unique or notable features
+        - photos: Find and list photo URLs if available
+        - floor_plans: Find and list floor plan URLs if available
 
-    #         After analyzing each venue:
-    #         1. Print "Analyzed features for [venue_name]:"
-    #         2. Print key features found
-    #         3. Save output to """ + output_path + """
-    #         """,
-    #         agent=self.feature_extractor(),
-    #         tools=[self.web_tool],
-    #         expected_output="""
-    #         {
-    #             "venue_id": "example_venue",
-    #             "capacity": "500 people",
-    #             "amenities": "WiFi, AV Equipment, Catering",
-    #             "accessibility": "Elevator, Ramps available",
-    #             "parking": "On-site parking available",
-    #             "special_features": "Rooftop Access, Ocean View",
-    #             "photos": "https://example.com/photo1.jpg,https://example.com/photo2.jpg",
-    #             "floor_plans": "https://example.com/floor1.pdf"
-    #         }
-    #         """,
-    #         output_pydantic=VenueFeatures,
-    #         context=[self.analyze_location()],
-    #         callback=process_output  # Add callback to process output
-    #     )
-    #     self.logger.info(f"Extract Features Task: {task}")
-    #     self.logger.info(f"State at end of extract_features: {self._state}")
-    #     return task
+        Return a JSON array where each object contains:
+        - venue_id: Lowercase name with underscores (string)
+        - capacity: Venue capacity (string)
+        - amenities: Comma-separated list of amenities (string)
+        - accessibility: Comma-separated list of accessibility features (string)
+        - parking: Parking information (string)
+        - special_features: Comma-separated list of special features (string)
+        - photos: Comma-separated list of photo URLs (string)
+        - floor_plans: Comma-separated list of floor plan URLs (string)
+
+        For each venue:
+        1. Print "Analyzing features for [venue_name]"
+        2. Use the venue's website ({websites_str}) to gather information
+        3. Print key features found
+        4. Save the complete output to {output_path}
+        """
+
+        expected_output = """
+        [
+            {{
+                "venue_id": "example_venue_1",
+                "capacity": "500 people",
+                "amenities": "WiFi, AV Equipment, Catering",
+                "accessibility": "Elevator, Ramps available",
+                "parking": "On-site parking available",
+                "special_features": "Rooftop Access, Ocean View",
+                "photos": "https://example.com/photo1.jpg,https://example.com/photo2.jpg",
+                "floor_plans": "https://example.com/floor1.pdf"
+            }}
+        ]
+        """
+
+        return Task(
+            description=description,
+            agent=self.feature_extractor(),
+            tools=[self.web_tool],
+            expected_output=expected_output,
+            output_pydantic=VenueFeatures,
+            callback=self._create_task_callback("extract_features")
+        )
 
     # @task
     # def score_venues(self) -> Task:
@@ -727,49 +713,62 @@ class VenueSearchCrew:
     #     return task
 
     @crew
-    def crew(self, address: str, radius_km: float = 0.5, email_template: str = None) -> Crew:
+    def crew(self) -> Crew:
         """Creates the Venue Search Crew"""
-        # Initialize state first
-        self.initialize_state(address, radius_km, email_template)
-        
-        # Verify state initialization
-        if not self._state.get("address"):
-            self.logger.error("Failed to initialize state with address")
-            raise ValueError("Failed to initialize crew state: address is required")
-        
-        # Create tasks in sequence with dependencies
         self.logger.info("\nSetting up workflow tasks...")
         
-        # Create and store tasks after state is set
+        # Create analyze_location task first
         self.logger.info("Creating analyze_location task...")
-        self.analyze_task = self.analyze_location()
-        self.logger.info(f"State in crew after analyze_task creation: {self._state}")
+        analyze_task = self.analyze_location()
+        
+        # Create extract_features task with analyze_task as context
+        self.logger.info("Creating extract_features task...")
+        feature_task = self.extract_features()
+        # Set analyze_task as context for feature_task
+        feature_task.context = [analyze_task]
         
         self.logger.info("All tasks configured, ready to start workflow\n")
 
         # Create and return the crew
         crew_instance = Crew(
+            agents=[
+                self.location_analyst(),
+                self.feature_extractor()
+            ],
             tasks=[
-                self.analyze_task,
+                analyze_task,
+                feature_task
             ],
             process=Process.sequential,
             verbose=True
         )
         
-        # Ensure all tasks have access to current state
-        for task in crew_instance.tasks:
-            if hasattr(task, '_state'):
-                task._state = self._state.copy()  # Use a copy to prevent shared state issues
-        
         self.logger.info(f"Final state before returning crew: {self._state}")
         return crew_instance
 
-    # async def run(self, address: str, radius_km: float = 5.0) -> ReportDocument:
-    #     """Execute the venue search workflow"""
-    #     crew_instance = self.crew(address, radius_km)
-    #     result = await crew_instance.kickoff()
+    def before_crew(self, inputs: dict) -> None:
+        """Initialize state before crew execution"""
+        self.logger.info("\n=== Initializing Crew State ===")
+        address = inputs.get('address')
+        radius_km = inputs.get('radius_km', 0.5)
+        email_template = inputs.get('email_template')
         
-    #     # Update state with results
-    #     self._state.update(result)
+        if not address:
+            raise ValueError("Address is required in inputs")
+            
+        # Initialize state with provided parameters
+        self.initialize_state(address, radius_km, email_template)
+        self.logger.info(f"Initialized state with inputs: {inputs}")
+        self.logger.info(f"Current state: {json.dumps(self._state, indent=2)}")
+
+    def after_crew(self, result: dict) -> None:
+        """Process results after crew execution"""
+        self.logger.info("\n=== Processing Crew Results ===")
+        self.logger.info(f"Crew execution completed with result: {json.dumps(result, indent=2)}")
+        self.logger.info(f"Final state: {json.dumps(self._state, indent=2)}")
         
-    #     return ReportDocument(**self._state["report"]) 
+        return {
+            'venues': self._state.get('venues', []),
+            'features': self._state.get('features', []),
+            'task_outputs': self._state.get('task_outputs', {})
+        } 

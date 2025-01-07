@@ -1,0 +1,24 @@
+score_venues:
+  description: >
+    Score and rank venues based on features.
+
+    Use industry-standard metrics and proprietary scoring algorithms to provide a score and reasoning. Consider key factors such as:
+    - Location
+    - Capacity
+    - Amenities
+    - Accessibility
+    - Parking
+    - Special features
+    - Photos
+    - Floor plans
+
+    Your final answer Must include:
+    - The venue's unique identifier
+    - The venue's score
+    - A score between 1 and 100. Don't use numbers like 100, 75, or 50. Instead, use specific numbers like 87, 63, or 42.
+    - A detailed reasoning explaining why you assigned this score.
+    {additional_instructions}
+    
+  expected_output: >
+    A very specific score from 1 to 100 for the venue, along with a detailed reasoning explaining why you assigned this score.
+  agent: scoring_agent
