@@ -177,3 +177,5 @@ venue_search_flow/src/venue_search_flow/generated_reports/
 ._test_flow
 Generated Emails/
 test_flow/
+
+._*
