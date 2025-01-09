@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import asyncio
 from typing import List
+import json
 
 from crewai.flow.flow import Flow, listen, or_, router, start
 from pydantic import BaseModel
@@ -39,7 +40,15 @@ class VenueScoreFlow(Flow[VenueScoreState]):
             .crew()
             .kickoff_async(inputs=search_inputs)
         )
-        self.state.venues.append(result.pydantic)
+        
+        # Assuming result.raw is a JSON string containing a list of venues
+        venues_data = json.loads(result.raw)
+        for venue_data in venues_data:
+            venue = Venue(**venue_data)  # Convert each item to a Pydantic model
+            self.state.venues.append(venue)
+        
+        # Return the state after processing
+        return self.state
 
 
 async def run_with_inputs(inputs: dict):
@@ -66,7 +75,10 @@ def run():
         "sender_email": "john.doe@example.com",
         "email_template": "Default template"
     }
-    asyncio.run(run_with_inputs(inputs))
+    result = asyncio.run(run_with_inputs(inputs))
+    # Write results to JSON file``
+    with open('venue_search_results.json', 'w') as f:
+        f.write(result.model_dump_json(indent=2))
 
 
 if __name__ == "__main__":

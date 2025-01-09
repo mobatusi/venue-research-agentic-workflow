@@ -1,0 +1,68 @@
+{
+  "input_data": {
+    "address": "1333 Adams St, Brooklyn, NY 11201, United States",
+    "radius_km": 0.5,
+    "event_date": "2024-06-01",
+    "linkedin_url": "https://linkedin.com/company/mycompany",
+    "instagram_url": "https://instagram.com/mycompany",
+    "tiktok_url": "https://tiktok.com/@mycompany",
+    "sender_name": "John Doe",
+    "sender_email": "john.doe@example.com",
+    "email_template": "Default template"
+  },
+  "venues": [
+    {
+      "id": "1",
+      "name": "Smack Mellon",
+      "type": "Art Space/Event Venue",
+      "address": "92 Plymouth St, Brooklyn, NY 11201",
+      "distance_km": 0.4,
+      "website": "https://smackmellon.org",
+      "phone": "(718) 834-8761",
+      "email": "info@smackmellon.org"
+    },
+    {
+      "id": "2",
+      "name": "New York Marriott at the Brooklyn Bridge",
+      "type": "Hotel/Event Space",
+      "address": "333 Adams St, Brooklyn, NY 11201",
+      "distance_km": 0.1,
+      "website": "https://www.marriott.com/en-us/hotels/nycbk-new-york-marriott-at-the-brooklyn-bridge/events/",
+      "phone": "+1-888-236-2427",
+      "email": ""
+    },
+    {
+      "id": "3",
+      "name": "The Dumbo Loft",
+      "type": "Event Space",
+      "address": "155 Water St, Brooklyn, NY 11201",
+      "distance_km": 0.5,
+      "website": "https://www.thedumboloft.com",
+      "phone": "(718) 855-1113",
+      "email": ""
+    },
+    {
+      "id": "4",
+      "name": "Hide Rooftop",
+      "type": "Rooftop Bar/Event Space",
+      "address": "100 Jay St, Brooklyn, NY 11201",
+      "distance_km": 0.5,
+      "website": "https://www.hiderooftop.com",
+      "phone": "(718) 222-3854",
+      "email": ""
+    },
+    {
+      "id": "5",
+      "name": "The Powerhouse Arena",
+      "type": "Event Space",
+      "address": "28 Adams St, Brooklyn, NY 11201",
+      "distance_km": 0.4,
+      "website": "https://www.powerhousearena.com/",
+      "phone": "(718) 666-3049",
+      "email": "info@powerhousearena.com"
+    }
+  ],
+  "venue_score": [],
+  "hydrated_venues": [],
+  "scored_venues_feedback": ""
+}

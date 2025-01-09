@@ -23,7 +23,7 @@ class VenueSearchCrew:
             description="""Search for venues near {address} within {radius_km} km radius.
             Return details about each venue including name, address, contact info.""",
             config=self.tasks_config["analyze_location"],
-            output_pydantic=Venue,
+            output_pydantic=Venue
         )
 
     @crew
