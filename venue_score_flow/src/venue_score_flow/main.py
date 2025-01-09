@@ -58,8 +58,8 @@ async def run_with_inputs(inputs: dict):
     
     flow = VenueScoreFlow()
     result = await flow.kickoff_async(inputs=initial_state.model_dump())
+    
     return result
-
 
 def run():
     """Run the flow with default inputs"""
@@ -76,9 +76,11 @@ def run():
         "email_template": "Default template"
     }
     result = asyncio.run(run_with_inputs(inputs))
+
     # Write results to JSON file``
     with open('venue_search_results.json', 'w') as f:
         f.write(result.model_dump_json(indent=2))
+    
 
 
 if __name__ == "__main__":
