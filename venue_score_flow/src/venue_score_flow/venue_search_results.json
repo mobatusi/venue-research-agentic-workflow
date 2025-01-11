@@ -7,98 +7,93 @@
     "instagram_url": "https://instagram.com/mycompany",
     "tiktok_url": "https://tiktok.com/@mycompany",
     "sender_name": "John Doe",
-    "sender_email": "dolu.obatusin@example.com",
+    "sender_email": "john.doe@example.com",
     "email_template": "Default template"
   },
   "venues": [
     {
       "id": "1",
-      "name": "Smack Mellon",
-      "type": "Art Gallery/Event Space",
-      "address": "92 Plymouth St, Brooklyn, NY 11201",
-      "distance_km": 0.4,
-      "website": "https://www.smackmellon.org",
-      "phone": "(718) 834-8761",
-      "email": "info@smackmellon.org",
-      "capacity": 250,
+      "name": "Hide Rooftop",
+      "type": "Event Space",
+      "address": "Hotel 50 Bowery, 50 Bowery, New York, NY 10013",
+      "distance_km": 0.3,
+      "website": "https://www.hiderooftop.com/",
+      "phone": "(212) 508-8000",
+      "email": "info@hiderooftop.com",
+      "capacity": 120,
       "amenities": [
-        "Art Exhibitions",
-        "Meeting Rooms",
-        "Event Hosting"
+        "Rooftop view",
+        "Full bar",
+        "WiFi"
       ],
-      "accessibility": 4.0,
-      "parking": "Street parking available",
-      "special_features": "Unique waterfront location",
-      "audio_visual": "Basic audio/visual equipment available",
-      "technology": "WiFi available",
-      "other": ""
+      "accessibility": 4.5,
+      "parking": "Valet available",
+      "special_features": "Scenic Manhattan skyline views",
+      "audio_visual": "AV equipment available",
+      "technology": "WiFi, projectors",
+      "other": "Outdoor seating"
     },
     {
       "id": "2",
-      "name": "Hide Rooftop",
-      "type": "Rooftop Bar/Event Space",
-      "address": "24 John St, Fl 20, New York, NY 10038",
-      "distance_km": 0.5,
-      "website": "https://hiderooftop.com/",
-      "phone": "(212) 234-1234",
-      "email": "",
-      "capacity": 300,
+      "name": "The Dumbo Loft",
+      "type": "Event Space",
+      "address": "155 Water St, Brooklyn, NY 11201",
+      "distance_km": 0.4,
+      "website": "https://www.thedumboloft.com/",
+      "phone": "(718) 222-5080",
+      "email": "info@thedumboloft.com",
+      "capacity": 200,
       "amenities": [
-        "Cocktails",
-        "Panoramic Views",
-        "Outdoor Seating"
+        "High ceilings",
+        "Exposed brick walls",
+        "Hardwood flooring"
       ],
-      "accessibility": 3.5,
-      "parking": "Valet parking available",
-      "special_features": "Stunning views of the skyline",
-      "audio_visual": "AV equipment available for events",
-      "technology": "WiFi available",
-      "other": ""
+      "accessibility": 4.2,
+      "parking": "Street parking available",
+      "special_features": "Historic building with modern amenities",
+      "audio_visual": "Sound system available",
+      "technology": "WiFi, projectors",
+      "other": "Flexible layout"
     },
     {
       "id": "3",
-      "name": "Felice Montague",
-      "type": "Italian Restaurant/Event Space",
-      "address": "80 Montague St, Brooklyn, NY 11201",
-      "distance_km": 0.3,
-      "website": "https://www.felicerestaurants.com/felice-montague/",
-      "phone": "(718) 243-1980",
-      "email": "",
-      "capacity": 200,
-      "amenities": [
-        "Private Dining",
-        "Catering Available"
-      ],
-      "accessibility": 4.0,
-      "parking": "Street parking available",
-      "special_features": "Authentic Italian cuisine",
-      "audio_visual": "Limited AV resources",
-      "technology": "WiFi available",
-      "other": "Cozy ambiance with a Tuscan vibe"
-    },
-    {
-      "id": "4",
-      "name": "Tobacco Warehouse",
-      "type": "Event Venue/Architectural Landmark",
-      "address": "26 New Dock St, Brooklyn, NY 11201",
+      "name": "Deity NYC",
+      "type": "Wedding Venue",
+      "address": "368 Atlantic Ave, Brooklyn, NY 11217",
       "distance_km": 0.5,
-      "website": "https://stannswarehouse.org/about-st-anns-warehouse/tobacco-warehouse/",
-      "phone": "(212) 625-3505",
-      "email": "",
-      "capacity": 300,
+      "website": "https://deitynyc.com/",
+      "phone": "(718) 624-0000",
+      "email": "info@deitynyc.com",
+      "capacity": 150,
       "amenities": [
-        "Waterfront Setting",
-        "Historic Architecture"
+        "All-inclusive packages",
+        "In-house catering"
       ],
       "accessibility": 4.0,
-      "parking": "Limited street parking",
-      "special_features": "Historic venue with scenic views",
-      "audio_visual": "Full AV support available",
-      "technology": "WiFi available",
-      "other": ""
+      "parking": "Nearby parking lots",
+      "special_features": "Beautifully designed space",
+      "audio_visual": "Full AV setup",
+      "technology": "WiFi included",
+      "other": "Expert event planning assistance"
     }
   ],
-  "venue_score": [],
+  "venue_score": [
+    {
+      "id": "venue_12345",
+      "score": 82.5,
+      "reason": "The venue has a good capacity of 250 attendees, making it suitable for medium-sized events. Its distance of 5 km from the city center is convenient for most guests. The venue offers excellent amenities including Wi-Fi, catering options, and breakout rooms. Accessibility is well addressed with ramps and appropriate signage for individuals with disabilities. There is ample parking available, which positively impacts guest experience. The audio-visual technology provided is modern and well-maintained, ensuring high-quality presentations. However, the venue lacks some advanced technological features like live-stream capabilities, which is why it did not receive a higher score. Overall, the combination of these factors leads to a solid score of 82.5."
+    },
+    {
+      "id": "VENUE123",
+      "score": 82.5,
+      "reason": "This venue scored 82.5 based on several key factors. The distance from the city center is 5 km, which is convenient for most attendees. It has a capacity of 300, allowing for a sizable audience, but with potential for bigger events to be hindered. The amenities available include Wi-Fi, catering services, and breakout rooms, which are considered essential for modern events. Accessibility is rated high due to compliant ramps and nearby public transport options. However, while parking is available, it is somewhat limited, which affects the score slightly. The audio-visual facilities are top-notch with high-definition projectors and sound systems, and the technology offered is modern and capable of supporting hybrid events. All these factors combined support a score of 82.5, reflecting a solid but not perfect venue assessment."
+    },
+    {
+      "id": "VENUE1234",
+      "score": 82.5,
+      "reason": "The venue, identified as VENUE1234, scores a 82.5 based on a comprehensive evaluation of several key factors. The venue is located only 2.5 km from the city center, making it highly accessible for both local and out-of-town attendees. It boasts a large capacity of 500 seats, which is optimal for medium-sized events. Additionally, the venue offers modern amenities such as high-speed Wi-Fi, comfortable seating, and catering services. Accessibility is well-covered with ramps and elevators, suitable for individuals with mobility challenges. Parking is ample, with provision for over 200 cars, which enhances its convenience for visitors. The audio-visual capabilities are top-notch, featuring a state-of-the-art sound system and projection equipment. However, the score is slightly dampened by the availability of technology; while it does offer basic tech support, more advanced options such as live streaming capabilities could further enhance the experience. Overall, VENUE1234 is a strong candidate for events, but has room for improvement in its tech offerings."
+    }
+  ],
   "hydrated_venues": [],
   "scored_venues_feedback": ""
 }

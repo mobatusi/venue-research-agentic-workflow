@@ -237,6 +237,7 @@ class VenueScoreFlow(Flow[VenueScoreState]):
             print(message)
         
         return self.state
+    
 async def run_with_inputs(inputs: dict):
     """Run the flow with given inputs"""
     input_data = InputData(**inputs)
@@ -245,20 +246,19 @@ async def run_with_inputs(inputs: dict):
     flow = VenueScoreFlow()
     result = await flow.kickoff_async(inputs=initial_state.model_dump())
     
-    # Check if result is empty or None
-    if not result:
-        print("No result returned from kickoff_async.")
+    # Check if result is a Pydantic model or JSON string
+    if isinstance(result, VenueScoreState):
+        return result
+    elif isinstance(result, str):
+        try:
+            result_data = json.loads(result)
+            return VenueScoreState(**result_data)
+        except json.JSONDecodeError as e:
+            print("Error decoding JSON:", e)
+            return None
+    else:
+        print("Unexpected result type:", type(result))
         return None
-    
-    # If result is a JSON string, parse it
-    try:
-        result_data = json.loads(result)
-        result = VenueScoreState(**result_data)
-    except json.JSONDecodeError as e:
-        print("Error decoding JSON:", e)
-        return None
-    
-    return result
 
 
 def run():
