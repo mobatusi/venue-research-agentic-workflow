@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel
 from datetime import datetime
 
@@ -22,7 +22,15 @@ class Venue(BaseModel):
     website: str
     phone: str
     email: str
-
+    capacity: int
+    amenities: List[str]
+    accessibility: float
+    parking: str
+    special_features: str
+    audio_visual: str
+    technology: str
+    other: str
+  
 class VenueScore(BaseModel):
     id: str
     score: float
@@ -39,3 +47,10 @@ class ScoredVenues(BaseModel):
     email: str
     score: float
     reason: str
+
+class VenueScoreState(BaseModel):
+    input_data: InputData | None = None
+    venues: List[Venue] = []
+    venue_score: List[VenueScore] = []
+    hydrated_venues: List[ScoredVenues] = []
+    scored_venues_feedback: str = ""

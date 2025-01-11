@@ -13,7 +13,7 @@ class VenueSearchCrew:
     @agent
     def location_analyst(self) -> Agent:
         return Agent(
-            config=self.agents_config["location_analyst_agent"],
+            config=self.agents_config["location_analyst"],
             tools=[SerperDevTool()],
         )
     

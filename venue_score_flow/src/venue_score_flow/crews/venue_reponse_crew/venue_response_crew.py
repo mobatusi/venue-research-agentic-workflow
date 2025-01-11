@@ -12,7 +12,7 @@ class VenueResponseCrew:
     @agent
     def email_agent(self) -> Agent:
         return Agent(
-            config=self.agents_config["email_agent"],
+            config=self.agents_config["email_followup"],
             verbose=True,
             allow_delegation=False,
         )
@@ -20,7 +20,7 @@ class VenueResponseCrew:
     @task
     def write_email_task(self) -> Task:
         return Task(
-            config=self.tasks_config["write_email"],
+            config=self.tasks_config["send_followup_email"],
             verbose=True,
         )
 

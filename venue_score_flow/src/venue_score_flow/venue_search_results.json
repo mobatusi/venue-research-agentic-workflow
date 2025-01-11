@@ -1,0 +1,104 @@
+{
+  "input_data": {
+    "address": "1333 Adams St, Brooklyn, NY 11201, United States",
+    "radius_km": 0.5,
+    "event_date": "2025-01-10",
+    "linkedin_url": "https://linkedin.com/company/mycompany",
+    "instagram_url": "https://instagram.com/mycompany",
+    "tiktok_url": "https://tiktok.com/@mycompany",
+    "sender_name": "John Doe",
+    "sender_email": "dolu.obatusin@example.com",
+    "email_template": "Default template"
+  },
+  "venues": [
+    {
+      "id": "1",
+      "name": "Smack Mellon",
+      "type": "Art Gallery/Event Space",
+      "address": "92 Plymouth St, Brooklyn, NY 11201",
+      "distance_km": 0.4,
+      "website": "https://www.smackmellon.org",
+      "phone": "(718) 834-8761",
+      "email": "info@smackmellon.org",
+      "capacity": 250,
+      "amenities": [
+        "Art Exhibitions",
+        "Meeting Rooms",
+        "Event Hosting"
+      ],
+      "accessibility": 4.0,
+      "parking": "Street parking available",
+      "special_features": "Unique waterfront location",
+      "audio_visual": "Basic audio/visual equipment available",
+      "technology": "WiFi available",
+      "other": ""
+    },
+    {
+      "id": "2",
+      "name": "Hide Rooftop",
+      "type": "Rooftop Bar/Event Space",
+      "address": "24 John St, Fl 20, New York, NY 10038",
+      "distance_km": 0.5,
+      "website": "https://hiderooftop.com/",
+      "phone": "(212) 234-1234",
+      "email": "",
+      "capacity": 300,
+      "amenities": [
+        "Cocktails",
+        "Panoramic Views",
+        "Outdoor Seating"
+      ],
+      "accessibility": 3.5,
+      "parking": "Valet parking available",
+      "special_features": "Stunning views of the skyline",
+      "audio_visual": "AV equipment available for events",
+      "technology": "WiFi available",
+      "other": ""
+    },
+    {
+      "id": "3",
+      "name": "Felice Montague",
+      "type": "Italian Restaurant/Event Space",
+      "address": "80 Montague St, Brooklyn, NY 11201",
+      "distance_km": 0.3,
+      "website": "https://www.felicerestaurants.com/felice-montague/",
+      "phone": "(718) 243-1980",
+      "email": "",
+      "capacity": 200,
+      "amenities": [
+        "Private Dining",
+        "Catering Available"
+      ],
+      "accessibility": 4.0,
+      "parking": "Street parking available",
+      "special_features": "Authentic Italian cuisine",
+      "audio_visual": "Limited AV resources",
+      "technology": "WiFi available",
+      "other": "Cozy ambiance with a Tuscan vibe"
+    },
+    {
+      "id": "4",
+      "name": "Tobacco Warehouse",
+      "type": "Event Venue/Architectural Landmark",
+      "address": "26 New Dock St, Brooklyn, NY 11201",
+      "distance_km": 0.5,
+      "website": "https://stannswarehouse.org/about-st-anns-warehouse/tobacco-warehouse/",
+      "phone": "(212) 625-3505",
+      "email": "",
+      "capacity": 300,
+      "amenities": [
+        "Waterfront Setting",
+        "Historic Architecture"
+      ],
+      "accessibility": 4.0,
+      "parking": "Limited street parking",
+      "special_features": "Historic venue with scenic views",
+      "audio_visual": "Full AV support available",
+      "technology": "WiFi available",
+      "other": ""
+    }
+  ],
+  "venue_score": [],
+  "hydrated_venues": [],
+  "scored_venues_feedback": ""
+}

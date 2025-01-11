@@ -8,8 +8,24 @@ send_followup_email:
     -----------------
     Venue ID: {venue_id}
     Name: {name}
-    Special Features: {special_features}
+    Type: {type}
+    Address: {address}
+    Distance: {distance_km}
+    Website: {website}
+    Phone: {phone}
+    Email: {email}
+    Capacity: {capacity}
+    Amenities: {amenities}
+    Accessibility: {accessibility}
+    Parking: {parking}
+    Audio Visual: {audio_visual}
+    Technology: {technology}
+    Other: {other}
+
+    EMAIL TEMPLATE
+    -----------------
+    {email_template}
 
   expected_output: >
-    A professional outreach email to the venue. 
+    A professional outreach email based on the venue's data and the email template. 
   agent: email_followup_agent
