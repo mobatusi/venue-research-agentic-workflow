@@ -4,7 +4,7 @@ from typing import List
 import json
 
 from crewai.flow.flow import Flow, listen, or_, router, start
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 from venue_score_flow.crews.venue_search_crew.venue_search_crew import VenueSearchCrew
 from venue_score_flow.crews.venue_score_crew.venue_score_crew import VenueScoreCrew
@@ -43,11 +43,28 @@ class VenueScoreFlow(Flow[VenueScoreState]):
             .kickoff_async(inputs=search_inputs)
         )
         
-        # Assuming result.raw is a JSON string containing a list of venues
-        venues_data = json.loads(result.raw)
+        # Debug: Print the raw result to inspect the JSON
+        print("Raw JSON result:", result.raw)
+        
+        try:
+            # Attempt to parse the JSON string
+            venues_data = json.loads(result.raw)
+        except json.JSONDecodeError as e:
+            # Handle JSON decoding errors
+            print("Error decoding JSON:", e)
+            return
+        
+        # Ensure venues_data is a list
+        if not isinstance(venues_data, list):
+            print("Expected a list of venues, got:", type(venues_data))
+            return
+        
         for venue_data in venues_data:
-            venue = Venue(**venue_data)  # Convert each item to a Pydantic model
-            self.state.venues.append(venue)
+            try:
+                venue = Venue(**venue_data)  # Convert each item to a Pydantic model
+                self.state.venues.append(venue)
+            except ValidationError as e:
+                print("Validation error for venue data:", e)
         
         # Return the state after processing
         # return self.state
@@ -91,25 +108,25 @@ class VenueScoreFlow(Flow[VenueScoreState]):
             task = asyncio.create_task(score_single_venue(venue))
             tasks.append(task)
 
-        candidate_scores = await asyncio.gather(*tasks)
-        print("Finished scoring leads: ", len(candidate_scores))
+        venue_scores = await asyncio.gather(*tasks)
+        print("Finished scoring leads: ", len(venue_scores))
 
     @router(score_venues)
     def human_in_the_loop(self):
         print("Finding the top 3 venues for human to review")
 
-        # Combine candidates with their scores using the helper function
+        # Combine venues with their scores using the helper function
         self.state.hydrated_venues = combine_venues_with_scores(
             self.state.venues, self.state.venue_score
         )
 
-        # Sort the scored candidates by their score in descending order
+        # Sort the scored venues by their score in descending order
         sorted_venues = sorted(
             self.state.hydrated_venues, key=lambda v: v.score, reverse=True
         )
         self.state.hydrated_venues = sorted_venues
 
-        # Select the top 3 candidates
+        # Select the top 3 venues
         top_venues = sorted_venues[:3]
 
         print("Here are the top 3 venues:")
@@ -163,10 +180,10 @@ class VenueScoreFlow(Flow[VenueScoreState]):
         output_dir.mkdir(parents=True, exist_ok=True)
 
         async def write_email(venue):
-            # Check if the candidate is among the top 3
+            # Check if the venue is among the top 3
             proceed_with_venue = venue.id in top_venue_ids
 
-            # Kick off the LeadResponseCrew for each candidate
+            # Kick off the VenueResponseCrew for each venue
             result = await (
                 VenueResponseCrew()
                 .crew()
@@ -204,11 +221,11 @@ class VenueScoreFlow(Flow[VenueScoreState]):
                 f.write(result.raw)
 
             # Return a message indicating the email was saved
-            return f"Email saved for {candidate.name} as {filename}"
+            return f"Email saved for {venue.name} as {filename}"
 
-        # Create tasks for all candidates
-        for candidate in self.state.hydrated_candidates:
-            task = asyncio.create_task(write_email(candidate))
+        # Create tasks for all venues
+        for venue in self.state.hydrated_venues:
+            task = asyncio.create_task(write_email(venue))
             tasks.append(task)
 
         # Run all email-writing tasks concurrently and collect results
@@ -228,10 +245,18 @@ async def run_with_inputs(inputs: dict):
     flow = VenueScoreFlow()
     result = await flow.kickoff_async(inputs=initial_state.model_dump())
     
+    # Check if result is empty or None
+    if not result:
+        print("No result returned from kickoff_async.")
+        return None
+    
     # If result is a JSON string, parse it
-    if isinstance(result, str):
+    try:
         result_data = json.loads(result)
         result = VenueScoreState(**result_data)
+    except json.JSONDecodeError as e:
+        print("Error decoding JSON:", e)
+        return None
     
     return result
 
