@@ -22,13 +22,13 @@ class VenueScoreCrew:
             config=self.tasks_config["score_venues"],
             output_pydantic=VenueScore,
         )
-
+    
     @crew
     def crew(self) -> Crew:
         """Creates the Venue Score Crew"""
         return Crew(
-            agents=self.agents,
-            tasks=self.tasks,
+            agents=[self.scoring_agent()],
+            tasks=[self.score_venues_task()],
             process=Process.sequential,
             verbose=True,
         )

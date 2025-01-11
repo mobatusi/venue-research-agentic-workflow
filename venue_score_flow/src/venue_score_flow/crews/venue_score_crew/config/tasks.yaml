@@ -1,18 +1,9 @@
 score_venues:
   description: >
-    Score and rank venues based on the provided venue data.
+    Score and rank the provided venue data.
 
-    Use your expertise to carefully assess the venue data and provide a score and reasoning. Consider key factors such as:
-    - distance_km
-    - capacity
-    - amenities
-    - accessibility
-    - parking
-    - audio_visual
-    - technology
-
+    Use your expertise to carefully assess the venue data and provide a score and reasoning. 
     Your final answer Must include:
-    - The venue's unique ID
     - A score between 1 and 100. Don't use numbers like 100, 75, or 50. Instead, use specific numbers like 87, 63, or 42.
     - A detailed reasoning explaining why you assigned this score.
     {additional_instructions}

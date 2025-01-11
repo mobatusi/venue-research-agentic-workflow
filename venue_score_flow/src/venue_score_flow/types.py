@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Dict
 from pydantic import BaseModel
 from datetime import datetime
 
@@ -32,7 +32,7 @@ class Venue(BaseModel):
     other: str
   
 class VenueScore(BaseModel):
-    id: str
+    name: str
     score: float
     reason: str
 
@@ -54,3 +54,4 @@ class VenueScoreState(BaseModel):
     venue_score: List[VenueScore] = []
     hydrated_venues: List[ScoredVenues] = []
     scored_venues_feedback: str = ""
+    generated_emails: Dict[str, str] = {}

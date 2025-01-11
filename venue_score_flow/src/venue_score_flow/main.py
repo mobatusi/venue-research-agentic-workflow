@@ -10,7 +10,8 @@ from venue_score_flow.crews.venue_search_crew.venue_search_crew import VenueSear
 from venue_score_flow.crews.venue_score_crew.venue_score_crew import VenueScoreCrew
 from venue_score_flow.crews.venue_reponse_crew.venue_response_crew import VenueResponseCrew
 from venue_score_flow.types import InputData, Venue, VenueScore, ScoredVenues, VenueScoreState
-from venue_score_flow.utils.venuUtils import combine_venues_with_scores
+from venue_score_flow.utils.venueUtils import combine_venues_with_scores
+from venue_score_flow.constants import EMAIL_TEMPLATE
 
 class VenueScoreState(BaseModel):
     input_data: InputData | None = None
@@ -18,6 +19,7 @@ class VenueScoreState(BaseModel):
     venue_score: List[VenueScore] = []
     hydrated_venues: List[ScoredVenues] = []
     scored_venues_feedback: str = ""
+    generated_emails: dict = {}
 
 
 class VenueScoreFlow(Flow[VenueScoreState]):
@@ -27,89 +29,93 @@ class VenueScoreFlow(Flow[VenueScoreState]):
     async def initialize_state(self) -> None:
         print("Initializing state")
         print("Input data:", self.state.input_data)
-
+    
     @listen(initialize_state)
     async def search_venues(self):
         print("Searching for venues")
-        # Unpack only the needed fields for venue search
         search_inputs = {
             "address": self.state.input_data.address,
             "radius_km": self.state.input_data.radius_km
         }
-        
+
         result = await (
             VenueSearchCrew()
             .crew()
             .kickoff_async(inputs=search_inputs)
         )
         
-        # Debug: Print the raw result to inspect the JSON
         print("Raw JSON result:", result.raw)
         
+        if not result.raw:
+            print("No data returned from venue search.")
+            return
+        
         try:
-            # Attempt to parse the JSON string
             venues_data = json.loads(result.raw)
         except json.JSONDecodeError as e:
-            # Handle JSON decoding errors
             print("Error decoding JSON:", e)
             return
         
-        # Ensure venues_data is a list
         if not isinstance(venues_data, list):
             print("Expected a list of venues, got:", type(venues_data))
             return
         
         for venue_data in venues_data:
-            try:
-                venue = Venue(**venue_data)  # Convert each item to a Pydantic model
-                self.state.venues.append(venue)
-            except ValidationError as e:
-                print("Validation error for venue data:", e)
-        
-        # Return the state after processing
-        # return self.state
-    
+            if isinstance(venue_data, dict):
+                try:
+                    venue = Venue(**venue_data)
+                    self.state.venues.append(venue)
+                except ValidationError as e:
+                    print("Validation error for venue data:", e)
+            else:
+                print("Unexpected data format for venue:", venue_data)
+
     @listen(or_(search_venues, "score_venues_feedback"))
     async def score_venues(self):
         print("Scoring venues")
         tasks = []
 
         async def score_single_venue(venue: Venue):
-            result = await (
-                VenueScoreCrew()
-                .crew()
-                .kickoff_async(
-                    inputs={
-                        "venue_id": venue.id,
-                        "name": venue.name,
-                        "type": venue.type,
-                        "address": venue.address,
-                        "distance_km": venue.distance_km,
-                        "website": venue.website,
-                        "phone": venue.phone,
-                        "email": venue.email,
-                        "capacity": venue.capacity,
-                        "amenities": venue.amenities,
-                        "accessibility": venue.accessibility,
-                        "parking": venue.parking,
-                        "special_features": venue.special_features,
-                        "audio_visual": venue.audio_visual,
-                        "technology": venue.technology,
-                        "other": venue.other,
-                        "additional_instructions": self.state.scored_venues_feedback,
-                    }
-                )
-            )
+            print(f"Scoring venue: {venue.name}")
+            venue_data = {
+                "venue_id": venue.id,
+                "name": venue.name,
+                "type": venue.type,
+                "distance_km": venue.distance_km,
+                "website": venue.website,
+                "phone": venue.phone,
+                "email": venue.email,
+                "capacity": venue.capacity,
+                "amenities": venue.amenities,
+                "accessibility": venue.accessibility,
+                "parking": venue.parking,
+                "special_features": venue.special_features,
+                "audio_visual": venue.audio_visual,
+                "technology": venue.technology,
+                "other": venue.other
+            }
 
-            self.state.venue_score.append(result.pydantic)
+            if hasattr(self.state, 'scored_venues_feedback'):
+                venue_data["additional_instructions"] = self.state.scored_venues_feedback
+
+            result = await VenueScoreCrew().crew().kickoff_async(inputs=venue_data)
+
+            if not result.pydantic:
+                print(f"Warning: No score generated for venue {venue.name}")
+                return None
+
+            print(f"Generated score for {venue.name}: {result.pydantic}")
+            return result.pydantic
 
         for venue in self.state.venues:
-            print("Scoring venue:", venue.name)
             task = asyncio.create_task(score_single_venue(venue))
             tasks.append(task)
 
         venue_scores = await asyncio.gather(*tasks)
-        print("Finished scoring leads: ", len(venue_scores))
+        self.state.venue_score = [score for score in venue_scores if score is not None]
+        
+        print(f"Successfully scored {len(self.state.venue_score)} venues")
+        print("Venue scores:", self.state.venue_score)
 
     @router(score_venues)
     def human_in_the_loop(self):
@@ -119,6 +125,9 @@ class VenueScoreFlow(Flow[VenueScoreState]):
         self.state.hydrated_venues = combine_venues_with_scores(
             self.state.venues, self.state.venue_score
         )
+
+        # Debug: Print the combined venues to ensure they are correct
+        print("Hydrated Venues:", self.state.hydrated_venues)
 
         # Sort the scored venues by their score in descending order
         sorted_venues = sorted(
@@ -132,7 +141,7 @@ class VenueScoreFlow(Flow[VenueScoreState]):
         print("Here are the top 3 venues:")
         for venue in top_venues:
             print(
-                f"ID: {venue.id}, Name: {venue.name}, Score: {venue.score}, Reason: {venue.reason}"
+                f"Name: {venue.name}, Score: {venue.score}, Reason: {venue.reason}"
             )
 
         # Present options to the user
@@ -168,8 +177,8 @@ class VenueScoreFlow(Flow[VenueScoreState]):
         print("Writing and saving emails for all leads.")
 
         # Determine the top 3 venues to proceed with
-        top_venue_ids = {
-            venue.id for venue in self.state.hydrated_venues[:3]
+        top_venue_names = {
+            venue.name for venue in self.state.hydrated_venues[:3]
         }
 
         tasks = []
@@ -181,7 +190,7 @@ class VenueScoreFlow(Flow[VenueScoreState]):
 
         async def write_email(venue):
             # Check if the venue is among the top 3
-            proceed_with_venue = venue.id in top_venue_ids
+            proceed_with_venue = venue.name in top_venue_names
 
             # Kick off the VenueResponseCrew for each venue
             result = await (
@@ -210,6 +219,9 @@ class VenueScoreFlow(Flow[VenueScoreState]):
                 )
             )
 
+            # Debug: Print the result to ensure it contains the expected data
+            print("Result from kickoff_async:", result)
+
             # Sanitize the venue's name to create a valid filename
             safe_name = re.sub(r"[^a-zA-Z0-9_\- ]", "", venue.name)
             filename = f"{safe_name}.txt"
@@ -219,6 +231,9 @@ class VenueScoreFlow(Flow[VenueScoreState]):
             file_path = output_dir / filename
             with open(file_path, "w", encoding="utf-8") as f:
                 f.write(result.raw)
+
+            # Store the email content in the state
+            self.state.generated_emails[venue.name] = result.raw
 
             # Return a message indicating the email was saved
             return f"Email saved for {venue.name} as {filename}"
@@ -232,9 +247,12 @@ class VenueScoreFlow(Flow[VenueScoreState]):
         email_results = await asyncio.gather(*tasks)
 
         # After all emails have been generated and saved
-        print("\nAll emails have been written and saved to 'email_responses' folder.")
-        for message in email_results:
-            print(message)
+        if email_results:
+            print("\nAll emails have been written and saved to 'email_responses' folder.")
+            for message in email_results:
+                print(message)
+        else:
+            print("No emails were written.")
         
         return self.state
     
@@ -273,13 +291,17 @@ def run():
         "tiktok_url": "https://tiktok.com/@mycompany",
         "sender_name": "John Doe",
         "sender_email": "john.doe@example.com",
-        "email_template": "Default template"
+        "email_template": EMAIL_TEMPLATE
     }
     result = asyncio.run(run_with_inputs(inputs))
 
-    # Write results to JSON file
-    with open('venue_search_results.json', 'w', encoding='utf-8') as f:
-        f.write(result.model_dump_json(indent=2))
+    # Ensure result is not None before writing
+    if result:
+        # Write results to JSON file
+        with open('venue_search_results.json', 'w', encoding='utf-8') as f:
+            f.write(result.model_dump_json(indent=2))
+    else:
+        print("No results to write to JSON.")
     
 
 

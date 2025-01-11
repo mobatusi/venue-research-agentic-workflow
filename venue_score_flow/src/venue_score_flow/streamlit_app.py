@@ -1,6 +1,7 @@
 import streamlit as st
 import asyncio
 from venue_score_flow.main import run_with_inputs
+from venue_score_flow.constants import EMAIL_TEMPLATE
 
 def main():
     st.title("Venue Research Agentic Workflow")
@@ -14,7 +15,7 @@ def main():
     tiktok_url = st.text_input("TikTok URL", "https://tiktok.com/@mycompany")
     sender_name = st.text_input("Sender Name", "John Doe")
     sender_email = st.text_input("Sender Email", "john.doe@example.com")
-    email_template = st.text_area("Email Template", "Default template")
+    email_template = st.text_area("Email Template", EMAIL_TEMPLATE)
 
     # Button to run the workflow
     if st.button("Run Venue Search"):
