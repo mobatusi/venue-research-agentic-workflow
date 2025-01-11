@@ -42,9 +42,9 @@ class ScoredVenues(BaseModel):
     type: str
     address: str
     distance_km: float
-    website: str
-    phone: str
-    email: str
+    website: Optional[str] = None
+    phone: Optional[str] = None
+    email: Optional[str] = None
     score: float
     reason: str
 

@@ -189,8 +189,6 @@ class VenueScoreFlow(Flow[VenueScoreState]):
         output_dir.mkdir(parents=True, exist_ok=True)
 
         async def write_email(venue):
-            # Check if the venue is among the top 3
-            proceed_with_venue = venue.name in top_venue_names
 
             # Kick off the VenueResponseCrew for each venue
             result = await (
@@ -206,15 +204,7 @@ class VenueScoreFlow(Flow[VenueScoreState]):
                         "website": venue.website,
                         "phone": venue.phone,
                         "email": venue.email,
-                        "capacity": venue.capacity,
-                        "amenities": venue.amenities,
-                        "accessibility": venue.accessibility,
-                        "parking": venue.parking,
-                        "audio_visual": venue.audio_visual,
-                        "technology": venue.technology,
-                        "other": venue.other,
-                        "email_template": self.state.email_template,
-                        "proceed_with_venue": proceed_with_venue,
+                        "email_template": EMAIL_TEMPLATE
                     }
                 )
             )
@@ -240,6 +230,7 @@ class VenueScoreFlow(Flow[VenueScoreState]):
 
         # Create tasks for all venues
         for venue in self.state.hydrated_venues:
+            print("Creating email writing task for venue:", venue)
             task = asyncio.create_task(write_email(venue))
             tasks.append(task)
 

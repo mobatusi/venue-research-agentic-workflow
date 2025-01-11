@@ -2,17 +2,141 @@
   "input_data": {
     "address": "1333 Adams St, Brooklyn, NY 11201, United States",
     "radius_km": 0.5,
-    "event_date": "2025-01-10",
+    "event_date": "2025-01-11",
     "linkedin_url": "https://linkedin.com/company/mycompany",
     "instagram_url": "https://instagram.com/mycompany",
     "tiktok_url": "https://tiktok.com/@mycompany",
     "sender_name": "John Doe",
     "sender_email": "john.doe@example.com",
-    "email_template": "Default template"
+    "email_template": "\nTo whom it may concern,\n\nI hope this email finds you well. I came across {venue_name} and I'm very interested in potentially hosting an event at your venue on {event_date}.\n\nI would love to discuss this further and learn more about:\n- Available dates in the coming months\n- Pricing for different event packages\n- Venue capacity and layout options\n- Available amenities and services\n\nCould we schedule a brief call or meeting to discuss these details?\n\nLooking forward to hearing from you.\n\nHere are our social media links to learn more about us:\n{linkedin_url}\n{instagram_url}\n{tiktok_url}\n\nBest regards,\n{sender_name}\n{sender_email}\n"
   },
-  "venues": [],
-  "venue_score": [],
-  "hydrated_venues": [],
+  "venues": [
+    {
+      "id": "1",
+      "name": "Hide Rooftop",
+      "type": "Rooftop bar/venue",
+      "address": "1000 Manhattan Ave, Brooklyn, NY 11201",
+      "distance_km": 0.4,
+      "website": "https://www.hiderooftop.com",
+      "phone": "718-555-1234",
+      "email": "info@hiderooftop.com",
+      "capacity": 150,
+      "amenities": [
+        "Rooftop view",
+        "Private lounge areas",
+        "Catering services"
+      ],
+      "accessibility": 3.0,
+      "parking": "Street parking available",
+      "special_features": "Stunning views of Manhattan skyline",
+      "audio_visual": "Sound system available",
+      "technology": "Wi-Fi available",
+      "other": "Outdoor space available for events"
+    },
+    {
+      "id": "2",
+      "name": "The Dumbo Loft",
+      "type": "Creative space",
+      "address": "155 Water St, Brooklyn, NY 11201",
+      "distance_km": 0.5,
+      "website": "https://www.thedumboloft.com",
+      "phone": "718-555-5678",
+      "email": "events@thedumboloft.com",
+      "capacity": 200,
+      "amenities": [
+        "High ceilings",
+        "Natural light",
+        "Exposed brick walls"
+      ],
+      "accessibility": 4.0,
+      "parking": "Nearby parking garage",
+      "special_features": "Historic building with modern amenities",
+      "audio_visual": "Projection screen available",
+      "technology": "AV equipment provided",
+      "other": "Includes outdoor terrace"
+    },
+    {
+      "id": "3",
+      "name": "26 Bridge",
+      "type": "Event venue",
+      "address": "26 Bridge St, Brooklyn, NY 11201",
+      "distance_km": 0.2,
+      "website": "https://www.26bridge.com",
+      "phone": "718-555-7890",
+      "email": "contact@26bridge.com",
+      "capacity": 375,
+      "amenities": [
+        "Full-service bar",
+        "Catering options",
+        "Spacious dining area"
+      ],
+      "accessibility": 2.5,
+      "parking": "Valet service available",
+      "special_features": "Large open floor plan for flexible setup",
+      "audio_visual": "Professional sound system",
+      "technology": "Fast Wi-Fi available",
+      "other": "Great for weddings and corporate events"
+    }
+  ],
+  "venue_score": [
+    {
+      "name": "Hide Rooftop",
+      "score": 82.5,
+      "reason": "Hide Rooftop offers an exceptional ambiance with stunning views and a stylish design, making it an attractive venue for events and gatherings. The staff is well-trained and provides excellent service, contributing to a positive guest experience. However, there are a few areas where improvement is needed, such as the limited menu options and occasional noise from nearby events that might interfere with conversations. Overall, the venue provides a solid experience, which justifies the score of 82.5."
+    },
+    {
+      "name": "The Dumbo Loft",
+      "score": 82.5,
+      "reason": "The Dumbo Loft has several commendable characteristics that contribute positively to its evaluation. The venue boasts a spacious layout, accommodating around 200 guests, which is ideal for both intimate gatherings and larger events. Its location in a trendy area of Brooklyn is attractive and easily accessible, adding to its appeal. The rustic yet modern aesthetic of the venue creates a unique atmosphere that many clients find appealing for various occasions, like weddings and corporate events. However, while the venue provides essential amenities such as AV equipment and in-house catering options, there are some limitations concerning parking availability and potential noise disturbances from the surrounding area during events. The overall aesthetic, space, and service quality are strong points; however, they are somewhat mitigated by the logistical challenges, leading to a score of 82.5 out of 100."
+    },
+    {
+      "name": "26 Bridge",
+      "score": 84.0,
+      "reason": "The venue 26 Bridge has a unique charm and excellent versatility for various events, from corporate meetings to social gatherings. The size of the space is adequately spacious, accommodating groups comfortably while maintaining a cozy atmosphere. It features modern amenities, including high-quality AV equipment and Wi-Fi, essential for business-oriented events. The décor is appealing, contributing to a pleasant aesthetic experience for attendees. However, the venue's accessibility could be improved, as parking options are somewhat limited and public transportation access requires a bit of a walk. Overall, the strengths in ambiance and functionality outweigh the drawbacks, leading to a solid score of 84."
+    }
+  ],
+  "hydrated_venues": [
+    {
+      "id": "3",
+      "name": "26 Bridge",
+      "type": "Event venue",
+      "address": "26 Bridge St, Brooklyn, NY 11201",
+      "distance_km": 0.2,
+      "website": "https://www.26bridge.com",
+      "phone": "718-555-7890",
+      "email": "contact@26bridge.com",
+      "score": 84.0,
+      "reason": "The venue 26 Bridge has a unique charm and excellent versatility for various events, from corporate meetings to social gatherings. The size of the space is adequately spacious, accommodating groups comfortably while maintaining a cozy atmosphere. It features modern amenities, including high-quality AV equipment and Wi-Fi, essential for business-oriented events. The décor is appealing, contributing to a pleasant aesthetic experience for attendees. However, the venue's accessibility could be improved, as parking options are somewhat limited and public transportation access requires a bit of a walk. Overall, the strengths in ambiance and functionality outweigh the drawbacks, leading to a solid score of 84."
+    },
+    {
+      "id": "1",
+      "name": "Hide Rooftop",
+      "type": "Rooftop bar/venue",
+      "address": "1000 Manhattan Ave, Brooklyn, NY 11201",
+      "distance_km": 0.4,
+      "website": "https://www.hiderooftop.com",
+      "phone": "718-555-1234",
+      "email": "info@hiderooftop.com",
+      "score": 82.5,
+      "reason": "Hide Rooftop offers an exceptional ambiance with stunning views and a stylish design, making it an attractive venue for events and gatherings. The staff is well-trained and provides excellent service, contributing to a positive guest experience. However, there are a few areas where improvement is needed, such as the limited menu options and occasional noise from nearby events that might interfere with conversations. Overall, the venue provides a solid experience, which justifies the score of 82.5."
+    },
+    {
+      "id": "2",
+      "name": "The Dumbo Loft",
+      "type": "Creative space",
+      "address": "155 Water St, Brooklyn, NY 11201",
+      "distance_km": 0.5,
+      "website": "https://www.thedumboloft.com",
+      "phone": "718-555-5678",
+      "email": "events@thedumboloft.com",
+      "score": 82.5,
+      "reason": "The Dumbo Loft has several commendable characteristics that contribute positively to its evaluation. The venue boasts a spacious layout, accommodating around 200 guests, which is ideal for both intimate gatherings and larger events. Its location in a trendy area of Brooklyn is attractive and easily accessible, adding to its appeal. The rustic yet modern aesthetic of the venue creates a unique atmosphere that many clients find appealing for various occasions, like weddings and corporate events. However, while the venue provides essential amenities such as AV equipment and in-house catering options, there are some limitations concerning parking availability and potential noise disturbances from the surrounding area during events. The overall aesthetic, space, and service quality are strong points; however, they are somewhat mitigated by the logistical challenges, leading to a score of 82.5 out of 100."
+    }
+  ],
   "scored_venues_feedback": "",
-  "generated_emails": {}
+  "generated_emails": {
+    "Hide Rooftop": "To whom it may concern,\n\nI hope this email finds you well. I came across The Grand Ballroom and I'm very interested in potentially hosting an event at your venue on April 15, 2024.\n\nI would love to discuss this further and learn more about:  \n- Available dates in the coming months  \n- Pricing for different event packages  \n- Venue capacity and layout options  \n- Available amenities and services  \n\nCould we schedule a brief call or meeting to discuss these details?\n\nLooking forward to hearing from you.\n\nHere are our social media links to learn more about us:  \n{linkedin_url}  \n{instagram_url}  \n{tiktok_url}  \n\nBest regards,  \nJohn Doe  \njohndoe@email.com",
+    "The Dumbo Loft": "To whom it may concern,  \n  \nI hope this email finds you well. I came across The Grand Event Center and I'm very interested in potentially hosting an event at your venue on March 15, 2024.  \n  \nI would love to discuss this further and learn more about:  \n- Available dates in the coming months  \n- Pricing for different event packages  \n- Venue capacity and layout options  \n- Available amenities and services  \n  \nCould we schedule a brief call or meeting to discuss these details?  \n  \nLooking forward to hearing from you.  \n  \nHere are our social media links to learn more about us:  \nhttps://www.linkedin.com/company/oureventcompany  \nhttps://www.instagram.com/oureventcompany  \nhttps://www.tiktok.com/@oureventcompany  \n  \nBest regards,  \nJohn Smith  \njohn.smith@oureventcompany.com",
+    "26 Bridge": "To whom it may concern,\n\nI hope this email finds you well. I came across The Grand Pavilion and I'm very interested in potentially hosting an event at your venue on September 15, 2023.\n\nI would love to discuss this further and learn more about:\n- Available dates in the coming months\n- Pricing for different event packages\n- Venue capacity and layout options\n- Available amenities and services\n\nCould we schedule a brief call or meeting to discuss these details?\n\nLooking forward to hearing from you.\n\nHere are our social media links to learn more about us:  \n[LinkedIn](https://www.linkedin.com)  \n[Instagram](https://www.instagram.com)  \n[TikTok](https://www.tiktok.com)\n\nBest regards,  \nJohn Doe  \njohndoe@email.com"
+  }
 }

@@ -10,15 +10,15 @@ class VenueResponseCrew:
     tasks_config = "config/tasks.yaml"
 
     @agent
-    def email_agent(self) -> Agent:
+    def email_followup_agent(self) -> Agent:
         return Agent(
-            config=self.agents_config["email_followup"],
+            config=self.agents_config["email_followup_agent"],
             verbose=True,
             allow_delegation=False,
         )
 
     @task
-    def write_email_task(self) -> Task:
+    def send_followup_email_task(self) -> Task:
         return Task(
             config=self.tasks_config["send_followup_email"],
             verbose=True,
@@ -26,10 +26,10 @@ class VenueResponseCrew:
 
     @crew
     def crew(self) -> Crew:
-        """Creates the Lead Response Crew"""
+        """Creates the Venue Response Crew"""
         return Crew(
-            agents=self.agents,
-            tasks=self.tasks,
+            agents=[self.email_followup_agent()],
+            tasks=[self.send_followup_email_task()],
             process=Process.sequential,
             verbose=True,
         )

@@ -2,25 +2,7 @@ send_followup_email:
   description: >
     Generate professional outreach emails for top-scoring venues and save them to the 'emails' folder.
 
-    You will use the venue's name, and the features that were extracted to generate the email.
-
-    VENUE DETAILS
-    -----------------
-    Venue ID: {venue_id}
-    Name: {name}
-    Type: {type}
-    Address: {address}
-    Distance: {distance_km}
-    Website: {website}
-    Phone: {phone}
-    Email: {email}
-    Capacity: {capacity}
-    Amenities: {amenities}
-    Accessibility: {accessibility}
-    Parking: {parking}
-    Audio Visual: {audio_visual}
-    Technology: {technology}
-    Other: {other}
+    You will use the venue's name, and the features that were extracted to generate the email using the following template.
 
     EMAIL TEMPLATE
     -----------------

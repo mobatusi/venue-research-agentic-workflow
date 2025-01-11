@@ -179,3 +179,4 @@ Generated Emails/
 test_flow/
 
 ._*
+venue_score_flow/src/venue_score_flow/email_responses/
