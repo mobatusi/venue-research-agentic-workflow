@@ -2,7 +2,7 @@
   "input_data": {
     "address": "1333 Adams St, Brooklyn, NY 11201, United States",
     "radius_km": 0.5,
-    "event_date": "2025-01-11",
+    "event_date": "2025-01-13",
     "linkedin_url": "https://linkedin.com/company/mycompany",
     "instagram_url": "https://instagram.com/mycompany",
     "tiktok_url": "https://tiktok.com/@mycompany",
@@ -14,129 +14,169 @@
     {
       "id": "1",
       "name": "Hide Rooftop",
-      "type": "Rooftop bar/venue",
-      "address": "1000 Manhattan Ave, Brooklyn, NY 11201",
+      "type": "Rooftop Bar/Events",
+      "address": "5 on the roof, 61 N 8th St, Brooklyn, NY 11249",
       "distance_km": 0.4,
       "website": "https://www.hiderooftop.com",
-      "phone": "718-555-1234",
-      "email": "info@hiderooftop.com",
-      "capacity": 150,
+      "phone": "718-243-1234",
+      "email": null,
+      "capacity": 100,
       "amenities": [
-        "Rooftop view",
-        "Private lounge areas",
-        "Catering services"
+        "Bar",
+        "City views",
+        "Outdoor seating"
       ],
-      "accessibility": 3.0,
+      "accessibility": 4.5,
       "parking": "Street parking available",
-      "special_features": "Stunning views of Manhattan skyline",
-      "audio_visual": "Sound system available",
+      "special_features": "Rooftop with scenic views of Manhattan",
+      "audio_visual": "Basic audio system available",
       "technology": "Wi-Fi available",
-      "other": "Outdoor space available for events"
+      "other": "Can host events year-round"
     },
     {
       "id": "2",
-      "name": "The Dumbo Loft",
-      "type": "Creative space",
-      "address": "155 Water St, Brooklyn, NY 11201",
-      "distance_km": 0.5,
-      "website": "https://www.thedumboloft.com",
-      "phone": "718-555-5678",
-      "email": "events@thedumboloft.com",
+      "name": "Smack Mellon",
+      "type": "Event Space/Art Gallery",
+      "address": "92 Plymouth St, Brooklyn, NY 11201",
+      "distance_km": 0.3,
+      "website": "https://smackmellon.org",
+      "phone": "718-834-8761",
+      "email": null,
       "capacity": 200,
       "amenities": [
-        "High ceilings",
-        "Natural light",
-        "Exposed brick walls"
+        "Gallery space",
+        "Restrooms",
+        "Loading dock"
       ],
-      "accessibility": 4.0,
-      "parking": "Nearby parking garage",
-      "special_features": "Historic building with modern amenities",
-      "audio_visual": "Projection screen available",
-      "technology": "AV equipment provided",
-      "other": "Includes outdoor terrace"
+      "accessibility": 3.5,
+      "parking": "Parking available offsite",
+      "special_features": "Located in an arts district with unique ambiance",
+      "audio_visual": "Projector and sound system available",
+      "technology": "High-speed Wi-Fi",
+      "other": "Ideal for private events and exhibitions"
     },
     {
       "id": "3",
+      "name": "The Tillary Hotel Brooklyn",
+      "type": "Hotel Event Space",
+      "address": "85 Flatbush Ave Ext, Brooklyn, NY 11201",
+      "distance_km": 0.4,
+      "website": "https://www.tillaryhotel.com",
+      "phone": "718-522-7600",
+      "email": null,
+      "capacity": 150,
+      "amenities": [
+        "Rooms available",
+        "Catering services",
+        "Free Wi-Fi"
+      ],
+      "accessibility": 4.0,
+      "parking": "Valet parking available",
+      "special_features": "Close proximity to transit",
+      "audio_visual": "AV equipment available for rent",
+      "technology": "Business center available",
+      "other": "Unique urban hotel setting for events"
+    },
+    {
+      "id": "4",
       "name": "26 Bridge",
-      "type": "Event venue",
+      "type": "Event Venue",
       "address": "26 Bridge St, Brooklyn, NY 11201",
-      "distance_km": 0.2,
+      "distance_km": 0.5,
       "website": "https://www.26bridge.com",
-      "phone": "718-555-7890",
-      "email": "contact@26bridge.com",
+      "phone": "718-484-1500",
+      "email": null,
       "capacity": 375,
       "amenities": [
-        "Full-service bar",
-        "Catering options",
-        "Spacious dining area"
+        "Dance floor",
+        "Catering kitchen",
+        "Bar service"
       ],
-      "accessibility": 2.5,
-      "parking": "Valet service available",
-      "special_features": "Large open floor plan for flexible setup",
-      "audio_visual": "Professional sound system",
-      "technology": "Fast Wi-Fi available",
-      "other": "Great for weddings and corporate events"
+      "accessibility": 4.5,
+      "parking": "Street parking available",
+      "special_features": "Versatile space for various events",
+      "audio_visual": "Sound system included",
+      "technology": "Wi-Fi available throughout venue",
+      "other": "Stylish decor with urban feel"
     }
   ],
   "venue_score": [
     {
       "name": "Hide Rooftop",
       "score": 82.5,
-      "reason": "Hide Rooftop offers an exceptional ambiance with stunning views and a stylish design, making it an attractive venue for events and gatherings. The staff is well-trained and provides excellent service, contributing to a positive guest experience. However, there are a few areas where improvement is needed, such as the limited menu options and occasional noise from nearby events that might interfere with conversations. Overall, the venue provides a solid experience, which justifies the score of 82.5."
+      "reason": "Hide Rooftop offers a unique and visually striking atmosphere, which significantly enhances the guest experience. The location is prime, providing stunning views that are a major draw. Additionally, the ambiance is stylish, effectively appealing to a trendy clientele. However, some areas need improvement, such as the wait time for service, which can occasionally increase during peak hours, affecting customer satisfaction. Another consideration is the menu variety, which, while high-quality, could benefit from more diverse options to cater to a wider audience. Overall, the strengths of Hide Rooftop outweigh its weaknesses, justifying a score of 82.5."
     },
     {
-      "name": "The Dumbo Loft",
-      "score": 82.5,
-      "reason": "The Dumbo Loft has several commendable characteristics that contribute positively to its evaluation. The venue boasts a spacious layout, accommodating around 200 guests, which is ideal for both intimate gatherings and larger events. Its location in a trendy area of Brooklyn is attractive and easily accessible, adding to its appeal. The rustic yet modern aesthetic of the venue creates a unique atmosphere that many clients find appealing for various occasions, like weddings and corporate events. However, while the venue provides essential amenities such as AV equipment and in-house catering options, there are some limitations concerning parking availability and potential noise disturbances from the surrounding area during events. The overall aesthetic, space, and service quality are strong points; however, they are somewhat mitigated by the logistical challenges, leading to a score of 82.5 out of 100."
+      "name": "Smack Mellon",
+      "score": 82.0,
+      "reason": "Smack Mellon scores an 82 due to its strong reputation for hosting diverse and innovative events. The venue's size and adaptable layout allow for a variety of performances and installations, making it attractive to both artists and audiences. Additionally, its commitment to supporting emerging artists and inclusive programming enhances its appeal. However, while it excels in community engagement, some logistical aspects, such as accessibility and parking options, could be improved to elevate the experience for all visitors. Overall, Smack Mellon's unique identity and focus on the arts contribute to a high score, reflecting its effective utilization as a cultural venue."
+    },
+    {
+      "name": "The Tillary Hotel Brooklyn",
+      "score": 82.0,
+      "reason": "The Tillary Hotel Brooklyn has a well-balanced combination of amenities, location, and ambiance. The venue is conveniently situated in a vibrant area, making it easily accessible and attractive for various events. The facilities are modern and well-maintained, offering both comfort and functionality. Staff responsiveness and service quality are commendable, contributing positively to the overall guest experience. However, the venue could improve on its parking arrangements, as limited space can be inconvenient for guests arriving by car. Additionally, while the decor is contemporary, it may lack a unique character that some clients often seek. Overall, an 82 reflects a strong offering with room for enhancement in specific areas."
     },
     {
       "name": "26 Bridge",
-      "score": 84.0,
-      "reason": "The venue 26 Bridge has a unique charm and excellent versatility for various events, from corporate meetings to social gatherings. The size of the space is adequately spacious, accommodating groups comfortably while maintaining a cozy atmosphere. It features modern amenities, including high-quality AV equipment and Wi-Fi, essential for business-oriented events. The décor is appealing, contributing to a pleasant aesthetic experience for attendees. However, the venue's accessibility could be improved, as parking options are somewhat limited and public transportation access requires a bit of a walk. Overall, the strengths in ambiance and functionality outweigh the drawbacks, leading to a solid score of 84."
+      "score": 82.0,
+      "reason": "The venue at 26 Bridge displays several strengths that contribute to its favorable score. Firstly, its location is strategic and easily accessible, making it a popular choice for various events. The space is well-designed, blending functionality with aesthetic appeal, and offers versatility for different types of gatherings, from corporate functions to social events. However, there are areas for improvement that prevent a higher score. Some attendees have noted that parking can be a challenge during peak times, which can cause frustration. Additionally, while the staff are generally friendly and accommodating, there have been occasional reports of slow service during busy events. Overall, the strengths outweigh the weaknesses, justifying an 82 as a solid score for this venue."
     }
   ],
   "hydrated_venues": [
     {
-      "id": "3",
-      "name": "26 Bridge",
-      "type": "Event venue",
-      "address": "26 Bridge St, Brooklyn, NY 11201",
-      "distance_km": 0.2,
-      "website": "https://www.26bridge.com",
-      "phone": "718-555-7890",
-      "email": "contact@26bridge.com",
-      "score": 84.0,
-      "reason": "The venue 26 Bridge has a unique charm and excellent versatility for various events, from corporate meetings to social gatherings. The size of the space is adequately spacious, accommodating groups comfortably while maintaining a cozy atmosphere. It features modern amenities, including high-quality AV equipment and Wi-Fi, essential for business-oriented events. The décor is appealing, contributing to a pleasant aesthetic experience for attendees. However, the venue's accessibility could be improved, as parking options are somewhat limited and public transportation access requires a bit of a walk. Overall, the strengths in ambiance and functionality outweigh the drawbacks, leading to a solid score of 84."
-    },
-    {
       "id": "1",
       "name": "Hide Rooftop",
-      "type": "Rooftop bar/venue",
-      "address": "1000 Manhattan Ave, Brooklyn, NY 11201",
+      "type": "Rooftop Bar/Events",
+      "address": "5 on the roof, 61 N 8th St, Brooklyn, NY 11249",
       "distance_km": 0.4,
       "website": "https://www.hiderooftop.com",
-      "phone": "718-555-1234",
-      "email": "info@hiderooftop.com",
+      "phone": "718-243-1234",
+      "email": "",
       "score": 82.5,
-      "reason": "Hide Rooftop offers an exceptional ambiance with stunning views and a stylish design, making it an attractive venue for events and gatherings. The staff is well-trained and provides excellent service, contributing to a positive guest experience. However, there are a few areas where improvement is needed, such as the limited menu options and occasional noise from nearby events that might interfere with conversations. Overall, the venue provides a solid experience, which justifies the score of 82.5."
+      "reason": "Hide Rooftop offers a unique and visually striking atmosphere, which significantly enhances the guest experience. The location is prime, providing stunning views that are a major draw. Additionally, the ambiance is stylish, effectively appealing to a trendy clientele. However, some areas need improvement, such as the wait time for service, which can occasionally increase during peak hours, affecting customer satisfaction. Another consideration is the menu variety, which, while high-quality, could benefit from more diverse options to cater to a wider audience. Overall, the strengths of Hide Rooftop outweigh its weaknesses, justifying a score of 82.5."
     },
     {
       "id": "2",
-      "name": "The Dumbo Loft",
-      "type": "Creative space",
-      "address": "155 Water St, Brooklyn, NY 11201",
+      "name": "Smack Mellon",
+      "type": "Event Space/Art Gallery",
+      "address": "92 Plymouth St, Brooklyn, NY 11201",
+      "distance_km": 0.3,
+      "website": "https://smackmellon.org",
+      "phone": "718-834-8761",
+      "email": "",
+      "score": 82.0,
+      "reason": "Smack Mellon scores an 82 due to its strong reputation for hosting diverse and innovative events. The venue's size and adaptable layout allow for a variety of performances and installations, making it attractive to both artists and audiences. Additionally, its commitment to supporting emerging artists and inclusive programming enhances its appeal. However, while it excels in community engagement, some logistical aspects, such as accessibility and parking options, could be improved to elevate the experience for all visitors. Overall, Smack Mellon's unique identity and focus on the arts contribute to a high score, reflecting its effective utilization as a cultural venue."
+    },
+    {
+      "id": "3",
+      "name": "The Tillary Hotel Brooklyn",
+      "type": "Hotel Event Space",
+      "address": "85 Flatbush Ave Ext, Brooklyn, NY 11201",
+      "distance_km": 0.4,
+      "website": "https://www.tillaryhotel.com",
+      "phone": "718-522-7600",
+      "email": "",
+      "score": 82.0,
+      "reason": "The Tillary Hotel Brooklyn has a well-balanced combination of amenities, location, and ambiance. The venue is conveniently situated in a vibrant area, making it easily accessible and attractive for various events. The facilities are modern and well-maintained, offering both comfort and functionality. Staff responsiveness and service quality are commendable, contributing positively to the overall guest experience. However, the venue could improve on its parking arrangements, as limited space can be inconvenient for guests arriving by car. Additionally, while the decor is contemporary, it may lack a unique character that some clients often seek. Overall, an 82 reflects a strong offering with room for enhancement in specific areas."
+    },
+    {
+      "id": "4",
+      "name": "26 Bridge",
+      "type": "Event Venue",
+      "address": "26 Bridge St, Brooklyn, NY 11201",
       "distance_km": 0.5,
-      "website": "https://www.thedumboloft.com",
-      "phone": "718-555-5678",
-      "email": "events@thedumboloft.com",
-      "score": 82.5,
-      "reason": "The Dumbo Loft has several commendable characteristics that contribute positively to its evaluation. The venue boasts a spacious layout, accommodating around 200 guests, which is ideal for both intimate gatherings and larger events. Its location in a trendy area of Brooklyn is attractive and easily accessible, adding to its appeal. The rustic yet modern aesthetic of the venue creates a unique atmosphere that many clients find appealing for various occasions, like weddings and corporate events. However, while the venue provides essential amenities such as AV equipment and in-house catering options, there are some limitations concerning parking availability and potential noise disturbances from the surrounding area during events. The overall aesthetic, space, and service quality are strong points; however, they are somewhat mitigated by the logistical challenges, leading to a score of 82.5 out of 100."
+      "website": "https://www.26bridge.com",
+      "phone": "718-484-1500",
+      "email": "",
+      "score": 82.0,
+      "reason": "The venue at 26 Bridge displays several strengths that contribute to its favorable score. Firstly, its location is strategic and easily accessible, making it a popular choice for various events. The space is well-designed, blending functionality with aesthetic appeal, and offers versatility for different types of gatherings, from corporate functions to social events. However, there are areas for improvement that prevent a higher score. Some attendees have noted that parking can be a challenge during peak times, which can cause frustration. Additionally, while the staff are generally friendly and accommodating, there have been occasional reports of slow service during busy events. Overall, the strengths outweigh the weaknesses, justifying an 82 as a solid score for this venue."
     }
   ],
   "scored_venues_feedback": "",
   "generated_emails": {
-    "Hide Rooftop": "To whom it may concern,\n\nI hope this email finds you well. I came across The Grand Ballroom and I'm very interested in potentially hosting an event at your venue on April 15, 2024.\n\nI would love to discuss this further and learn more about:  \n- Available dates in the coming months  \n- Pricing for different event packages  \n- Venue capacity and layout options  \n- Available amenities and services  \n\nCould we schedule a brief call or meeting to discuss these details?\n\nLooking forward to hearing from you.\n\nHere are our social media links to learn more about us:  \n{linkedin_url}  \n{instagram_url}  \n{tiktok_url}  \n\nBest regards,  \nJohn Doe  \njohndoe@email.com",
-    "The Dumbo Loft": "To whom it may concern,  \n  \nI hope this email finds you well. I came across The Grand Event Center and I'm very interested in potentially hosting an event at your venue on March 15, 2024.  \n  \nI would love to discuss this further and learn more about:  \n- Available dates in the coming months  \n- Pricing for different event packages  \n- Venue capacity and layout options  \n- Available amenities and services  \n  \nCould we schedule a brief call or meeting to discuss these details?  \n  \nLooking forward to hearing from you.  \n  \nHere are our social media links to learn more about us:  \nhttps://www.linkedin.com/company/oureventcompany  \nhttps://www.instagram.com/oureventcompany  \nhttps://www.tiktok.com/@oureventcompany  \n  \nBest regards,  \nJohn Smith  \njohn.smith@oureventcompany.com",
-    "26 Bridge": "To whom it may concern,\n\nI hope this email finds you well. I came across The Grand Pavilion and I'm very interested in potentially hosting an event at your venue on September 15, 2023.\n\nI would love to discuss this further and learn more about:\n- Available dates in the coming months\n- Pricing for different event packages\n- Venue capacity and layout options\n- Available amenities and services\n\nCould we schedule a brief call or meeting to discuss these details?\n\nLooking forward to hearing from you.\n\nHere are our social media links to learn more about us:  \n[LinkedIn](https://www.linkedin.com)  \n[Instagram](https://www.instagram.com)  \n[TikTok](https://www.tiktok.com)\n\nBest regards,  \nJohn Doe  \njohndoe@email.com"
+    "26 Bridge": "To whom it may concern,\n\nI hope this email finds you well. I came across The Grand Ballroom and I'm very interested in potentially hosting an event at your venue on March 15, 2024.\n\nI would love to discuss this further and learn more about:\n- Available dates in the coming months\n- Pricing for different event packages\n- Venue capacity and layout options\n- Available amenities and services\n\nCould we schedule a brief call or meeting to discuss these details?\n\nLooking forward to hearing from you.\n\nHere are our social media links to learn more about us:  \n[LinkedIn](https://www.linkedin.com)  \n[Instagram](https://www.instagram.com)  \n[TikTok](https://www.tiktok.com)  \n\nBest regards,  \nJohn Doe  \njohndoe@email.com",
+    "Hide Rooftop": "To whom it may concern,\n\nI hope this email finds you well. I came across The Grand Palace and I'm very interested in potentially hosting an event at your venue on September 15, 2024.\n\nI would love to discuss this further and learn more about:\n- Available dates in the coming months\n- Pricing for different event packages\n- Venue capacity and layout options\n- Available amenities and services\n\nCould we schedule a brief call or meeting to discuss these details?\n\nLooking forward to hearing from you.\n\nHere are our social media links to learn more about us:  \n[linkedin_url]  \n[instagram_url]  \n[tiktok_url]  \n\nBest regards,  \nJohn Doe  \njohn.doe@email.com",
+    "Smack Mellon": "To whom it may concern,\n\nI hope this email finds you well. I came across Riverside Grand and I'm very interested in potentially hosting an event at your venue on June 15, 2024.\n\nI would love to discuss this further and learn more about:\n- Available dates in the coming months\n- Pricing for different event packages\n- Venue capacity and layout options\n- Available amenities and services\n\nCould we schedule a brief call or meeting to discuss these details?\n\nLooking forward to hearing from you.\n\nHere are our social media links to learn more about us:  \nhttps://www.linkedin.com/company/ourcompany  \nhttps://www.instagram.com/ourcompany  \nhttps://www.tiktok.com/@ourcompany  \n\nBest regards,  \nJordan Smith  \njordan.smith@example.com",
+    "The Tillary Hotel Brooklyn": "To whom it may concern,\n\nI hope this email finds you well. I came across The Sapphire Pavilion and I'm very interested in potentially hosting an event at your venue on March 15, 2024.\n\nI would love to discuss this further and learn more about:  \n- Available dates in the coming months  \n- Pricing for different event packages  \n- Venue capacity and layout options  \n- Available amenities and services  \n\nCould we schedule a brief call or meeting to discuss these details?\n\nLooking forward to hearing from you.\n\nHere are our social media links to learn more about us:  \n[LinkedIn](https://www.linkedin.com)  \n[Instagram](https://www.instagram.com)  \n[TikTok](https://www.tiktok.com)  \n\nBest regards,  \nJohn Doe  \njohndoe@email.com"
   }
 }
