@@ -71,126 +71,72 @@ def main():
     email_template = st.session_state.get("email_template", EMAIL_TEMPLATE)  # Default email template
 
     # Collect user inputs
-    address = st.text_input(
-        "Search Location",
-        value="333 Adams St, Brooklyn, NY 11201, United States",
-        help="Enter the full address to search around (e.g., street, city, state, country)",
-        key="address_input"
-    )
-    
-    radius_km = st.slider(
-        "Search Radius",
-        min_value=0.1,
-        max_value=2.0,
-        value=0.5,
-        step=0.1,
-        help="Select the radius (in kilometers) around the location to search for venues",
-        key="radius_input"
-    )
-    
-    # Set default date to 3 months from now
-    default_date = datetime.now() + timedelta(days=90)
-    target_date = st.date_input(
-        "Event Date",
-        value=st.session_state.get('target_date', default_date),
-        help="Target date for your event",
-        key="target_date_input"
-    )
+    address = st.text_input("Search Location", "333 Adams St, Brooklyn, NY 11201, United States", key="address_input")
+    radius_km = st.slider("Search Radius", 0.1, 2.0, 0.5, key="radius_input")
+    event_date = st.date_input("Event Date", datetime.now() + timedelta(days=90), key="event_date_input")
+    event_time = st.time_input("Event Time", dt.time(14, 0), key="event_time_input")
+    sender_name = st.text_input("Sender Name", "John Doe", key="sender_name_input")
+    sender_email = st.text_input("Sender Email", "john.doe@example.com", key="sender_email_input")
 
-    # Set default time to 2 PM
-    default_time = dt.time(14, 0)  # 2:00 PM
-    target_time = st.time_input(
-        "Event Time",
-        value=st.session_state.get('target_time', default_time),
-        help="Target time for your event",
-        key="target_time_input"
-    )
-
-    # Format date and time
-    event_date = target_date.strftime('%Y-%m-%d') if target_date else '[EVENT DATE]'
-    event_time = target_time.strftime('%I:%M %p') if target_time else '[EVENT TIME]'
-
-    # Add sender name and email input fields
-    sender_name = st.text_input("Sender Name", sender_name)
-    sender_email = st.text_input("Sender Email", sender_email)
-                    
     # Use a checkbox to toggle the email template form
-    use_custom_template = st.checkbox("Use Custom Email Template", 
-                                       help="Toggle to use your own email template instead of the default one",
-                                       key="use_custom_template")   
+    use_custom_template = st.checkbox("Use Custom Email Template", key="use_custom_template")
 
     if use_custom_template:
-        # Show the form for custom email template input
-        with st.form("template_variables"):
-            st.subheader("Email Template Configuration")
-            
-            email_template = st.text_area("Email Template", email_template)
-            
-            # Add a submit button for the form
-            if st.form_submit_button("Save Template"):
-                st.session_state.email_template = email_template
-                st.success("✅ Template variables saved and preview updated!")
-
-    # Initialize social media links
-    linkedin_url = ""
-    instagram_url = ""
-    tiktok_url = ""
-
-    if use_custom_template:
-        # Show social media input fields only if using a custom template
+        # Show social media input fields
         st.subheader("Social Media Links")
-        linkedin_url = st.text_input("LinkedIn URL", "https://linkedin.com/company/mycompany")
-        instagram_url = st.text_input("Instagram URL", "https://instagram.com/mycompany")
-        tiktok_url = st.text_input("TikTok URL", "https://tiktok.com/@mycompany")
+        linkedin_url = st.text_input("LinkedIn URL", "https://linkedin.com/company/mycompany", key="linkedin_url_input")
+        instagram_url = st.text_input("Instagram URL", "https://instagram.com/mycompany", key="instagram_url_input")
+        tiktok_url = st.text_input("TikTok URL", "https://tiktok.com/@mycompany", key="tiktok_url_input")
 
-    # Search button - placed below both columns
-    search_disabled = not address or not event_date or not event_time or not sender_name or not sender_email or not email_template
-    
-    # Button to run the workflow
-    if st.button("🔍 Start Search", disabled=search_disabled, type="primary"):
-        if address and radius_km and event_date and event_time and sender_name and sender_email and email_template:
-            try:
-                with st.spinner("Searching for venues..."):
-                    inputs = {
-                        "address": address,
-                        "radius_km": radius_km,
-                        "event_date": event_date,
-                        "event_time": event_time,
-                        "linkedin_url": linkedin_url,
-                        "instagram_url": instagram_url,
-                        "tiktok_url": tiktok_url,
-                        "sender_name": sender_name,
-                        "sender_email": sender_email,
-                        "email_template": email_template
-                    }
+        # Replace placeholders in the email template dynamically
+        formatted_template = email_template
+        formatted_template = formatted_template.replace("{event_date}", event_date.strftime('%Y-%m-%d'))
+        formatted_template = formatted_template.replace("{sender_name}", sender_name)
+        formatted_template = formatted_template.replace("{sender_email}", sender_email)
+        formatted_template = formatted_template.replace("{linkedin_url}", linkedin_url)
+        formatted_template = formatted_template.replace("{instagram_url}", instagram_url)
+        formatted_template = formatted_template.replace("{tiktok_url}", tiktok_url)
 
-                    # Run the workflow and display results
-                    result = asyncio.run(run_with_inputs(inputs))
-                    if result:
-                        st.json(result.model_dump_json(indent=2))
 
-                        # Present options to the user based on the results
-                        options = ["Quit", "Redo lead scoring with additional feedback", "Proceed with writing emails to all venues"]
-                        choice = st.selectbox("Please choose an option:", options)
+        st.text_area("Email Template Preview", formatted_template, height=300)
 
-                        if choice == "Quit":
-                            st.write("Exiting the program.")
-                        elif choice == "Redo lead scoring with additional feedback":
-                            feedback = st.text_input("Please provide additional feedback:")
-                            if st.button("Submit Feedback"):
-                                # Handle feedback submission
-                                st.success("Feedback submitted.")
-                        elif choice == "Proceed with writing emails to all venues":
-                            st.write("Proceeding to write emails to all venues.")
-                            # Write results to JSON file after user confirms
-                            with open('venue_search_results.json', 'w', encoding='utf-8') as f:
-                                f.write(result.model_dump_json(indent=2))
-                            st.success("Results written to venue_search_results.json")
-                    else:
-                        st.error("Failed to retrieve results. Please check the agent configuration.")
-            except Exception as e:
-                st.error(f"❌ An error occurred during the search: {str(e)}")
-                st.exception(e)
+    # Search button
+    if st.button("🔍 Start Search"):
+        inputs = {
+            "address": address,
+            "radius_km": radius_km,
+            "event_date": event_date.strftime('%Y-%m-%d'),
+            "event_time": event_time.strftime('%I:%M %p'),
+            "sender_name": sender_name,
+            "sender_email": sender_email,
+            "email_template": formatted_template
+        }
+
+        # Run the workflow and display results
+        result = asyncio.run(run_with_inputs(inputs))
+        if result:
+            st.json(result.model_dump_json(indent=2))
+
+            # Present options to the user based on the results
+            options = ["Quit", "Redo lead scoring with additional feedback", "Proceed with writing emails to all venues"]
+            choice = st.selectbox("Please choose an option:", options)
+
+            if choice == "Quit":
+                st.write("Exiting the program.")
+            elif choice == "Redo lead scoring with additional feedback":
+                feedback = st.text_input("Please provide additional feedback:")
+                if st.button("Submit Feedback"):
+                    # Handle feedback submission
+                    st.success("Feedback submitted.")
+            elif choice == "Proceed with writing emails to all venues":
+                st.write("Proceeding to write emails to all venues.")
+                
+                # Write results to JSON file after user confirms
+                with open('venue_search_results.json', 'w', encoding='utf-8') as f:
+                    f.write(result.model_dump_json(indent=2))
+                st.success("Results written to venue_search_results.json")
+        else:
+            st.error("Failed to retrieve results. Please check the agent configuration.")
 
 if __name__ == "__main__":
     main()

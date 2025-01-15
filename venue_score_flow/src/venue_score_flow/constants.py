@@ -11,6 +11,11 @@ I would love to discuss this further and learn more about:
 
 Could we schedule a brief call or meeting to discuss these details? Looking forward to hearing from you.
 
+For more information about us, please view our social media profiles:
+- LinkedIn: {linkedin_url}
+- Instagram: {instagram_url}
+- TikTok: {tiktok_url}
+
 Best regards,
 {sender_name}
 {sender_email}
