@@ -23,7 +23,8 @@ def main():
             This tool helps you:
             1. 🔍 Search for venues around a specific location
             2. 📊 Analyze the venues found
-            3. 📧 Create outreach emails
+            3. 📝 Generate a detailed report
+            4. 📧 Create outreach emails
             
             Make sure you have set up your API keys before starting.
             """)
@@ -108,6 +109,10 @@ def main():
     # Format date and time
     event_date = target_date.strftime('%Y-%m-%d') if target_date else '[EVENT DATE]'
     event_time = target_time.strftime('%I:%M %p') if target_time else '[EVENT TIME]'
+
+    # Add sender name and email input fields
+    sender_name = st.text_input("Sender Name", sender_name)
+    sender_email = st.text_input("Sender Email", sender_email)
                     
     # Use a checkbox to toggle the email template form
     use_custom_template = st.checkbox("Use Custom Email Template", 
@@ -118,16 +123,25 @@ def main():
         # Show the form for custom email template input
         with st.form("template_variables"):
             st.subheader("Email Template Configuration")
-            sender_name = st.text_input("Sender Name", sender_name)
-            sender_email = st.text_input("Sender Email", sender_email)
+            
             email_template = st.text_area("Email Template", email_template)
             
             # Add a submit button for the form
             if st.form_submit_button("Save Template"):
-                st.session_state.sender_name = sender_name
-                st.session_state.sender_email = sender_email
                 st.session_state.email_template = email_template
                 st.success("✅ Template variables saved and preview updated!")
+
+    # Initialize social media links
+    linkedin_url = ""
+    instagram_url = ""
+    tiktok_url = ""
+
+    if use_custom_template:
+        # Show social media input fields only if using a custom template
+        st.subheader("Social Media Links")
+        linkedin_url = st.text_input("LinkedIn URL", "https://linkedin.com/company/mycompany")
+        instagram_url = st.text_input("Instagram URL", "https://instagram.com/mycompany")
+        tiktok_url = st.text_input("TikTok URL", "https://tiktok.com/@mycompany")
 
     # Search button - placed below both columns
     search_disabled = not address or not event_date or not event_time or not sender_name or not sender_email or not email_template
@@ -142,9 +156,9 @@ def main():
                         "radius_km": radius_km,
                         "event_date": event_date,
                         "event_time": event_time,
-                        "linkedin_url": st.text_input("LinkedIn URL", "https://linkedin.com/company/mycompany"),
-                        "instagram_url": st.text_input("Instagram URL", "https://instagram.com/mycompany"),
-                        "tiktok_url": st.text_input("TikTok URL", "https://tiktok.com/@mycompany"),
+                        "linkedin_url": linkedin_url,
+                        "instagram_url": instagram_url,
+                        "tiktok_url": tiktok_url,
                         "sender_name": sender_name,
                         "sender_email": sender_email,
                         "email_template": email_template
@@ -154,10 +168,24 @@ def main():
                     result = asyncio.run(run_with_inputs(inputs))
                     if result:
                         st.json(result.model_dump_json(indent=2))
-                        # Write results to JSON file
-                        with open('venue_search_results.json', 'w', encoding='utf-8') as f:
-                            f.write(result.model_dump_json(indent=2))
-                        st.success("Results written to venue_search_results.json")
+
+                        # Present options to the user based on the results
+                        options = ["Quit", "Redo lead scoring with additional feedback", "Proceed with writing emails to all venues"]
+                        choice = st.selectbox("Please choose an option:", options)
+
+                        if choice == "Quit":
+                            st.write("Exiting the program.")
+                        elif choice == "Redo lead scoring with additional feedback":
+                            feedback = st.text_input("Please provide additional feedback:")
+                            if st.button("Submit Feedback"):
+                                # Handle feedback submission
+                                st.success("Feedback submitted.")
+                        elif choice == "Proceed with writing emails to all venues":
+                            st.write("Proceeding to write emails to all venues.")
+                            # Write results to JSON file after user confirms
+                            with open('venue_search_results.json', 'w', encoding='utf-8') as f:
+                                f.write(result.model_dump_json(indent=2))
+                            st.success("Results written to venue_search_results.json")
                     else:
                         st.error("Failed to retrieve results. Please check the agent configuration.")
             except Exception as e:

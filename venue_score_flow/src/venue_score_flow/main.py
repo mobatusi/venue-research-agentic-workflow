@@ -2,6 +2,7 @@
 import asyncio
 from typing import List
 import json
+import streamlit as st
 
 from crewai.flow.flow import Flow, listen, or_, router, start
 from pydantic import BaseModel, ValidationError
@@ -44,7 +45,8 @@ class VenueScoreFlow(Flow[VenueScoreState]):
             .kickoff_async(inputs=search_inputs)
         )
         
-        print("Raw JSON result:", result.raw)
+        # Debug: Print the raw result before decoding
+        print("Raw result:", result.raw)
         
         if not result.raw:
             print("No data returned from venue search.")
@@ -56,7 +58,11 @@ class VenueScoreFlow(Flow[VenueScoreState]):
             print("Error decoding JSON:", e)
             return
         
-        if not isinstance(venues_data, list):
+        # Check if the result is a list or a single venue
+        if isinstance(venues_data, dict):
+            # If it's a single venue, wrap it in a list
+            venues_data = [venues_data]
+        elif not isinstance(venues_data, list):
             print("Expected a list of venues, got:", type(venues_data))
             return
         
@@ -144,11 +150,14 @@ class VenueScoreFlow(Flow[VenueScoreState]):
                 f"Name: {venue.name}, Score: {venue.score}, Reason: {venue.reason}"
             )
 
+        # Present options to the user using Streamlit
+        # options = ["Quit", "Redo lead scoring with additional feedback", "Proceed with writing emails to all venues"]
+        # choice = st.selectbox("Please choose an option:", options)
         # Present options to the user
         print("\nPlease choose an option:")
         print("1. Quit")
         print("2. Redo lead scoring with additional feedback")
-        print("3. Proceed with writing emails to all venues")
+        print("3. Proceed with writing emails to all leads")
 
         choice = input("Enter the number of your choice: ")
 
@@ -161,13 +170,29 @@ class VenueScoreFlow(Flow[VenueScoreState]):
             )
             self.state.scored_venues_feedback = feedback
             print("\nRe-running venue scoring with your feedback...")
-            return "score_venues"
+            return "score_venues_feedback"
         elif choice == "3":
             print("\nProceeding to write emails to all venues.")
             return "generate_emails"
         else:
             print("\nInvalid choice. Please try again.")
-            return "human_in_the_loop"    
+            return "human_in_the_loop"
+        
+        # if choice == "Quit":
+        #     st.write("Exiting the program.")
+        #     return  # You may want to handle exiting differently in Streamlit
+        # elif choice == "Redo lead scoring with additional feedback":
+        #     feedback = st.text_input("Please provide additional feedback on what you're looking for in venues:")
+        #     if st.button("Submit Feedback"):
+        #         self.state.scored_venues_feedback = feedback
+        #         print("\nRe-running venue scoring with your feedback...")
+        #         return "score_venues"
+        # elif choice == "Proceed with writing emails to all venues":
+        #     st.write("\nProceeding to write emails to all venues.")
+        #     return "generate_emails"
+        # else:
+        #     st.write("\nInvalid choice. Please try again.")
+        #     return "human_in_the_loop"    
     
     @listen("generate_emails")
     async def write_and_save_emails(self):
@@ -254,6 +279,9 @@ async def run_with_inputs(inputs: dict):
     
     flow = VenueScoreFlow()
     result = await flow.kickoff_async(inputs=initial_state.model_dump())
+    
+    # Debug: Check the type of the result
+    print("Result type:", type(result))
     
     # Check if result is a Pydantic model or JSON string
     if isinstance(result, VenueScoreState):

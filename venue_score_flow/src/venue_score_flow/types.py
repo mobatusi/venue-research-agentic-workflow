@@ -19,7 +19,7 @@ class Venue(BaseModel):
     type: str
     address: str
     distance_km: float
-    website: str
+    website: Optional[str] = None
     phone: Optional[str] = None
     email: Optional[str] = None
     capacity: int

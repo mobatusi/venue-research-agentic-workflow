@@ -14,7 +14,7 @@ class VenueSearchCrew:
     def location_analyst(self) -> Agent:
         return Agent(
             config=self.agents_config["location_analyst"],
-            tools=[SerperDevTool()],
+            tools=[SerperDevTool(), ScrapeWebsiteTool()],
         )
     
     @task

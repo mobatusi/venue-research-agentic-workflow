@@ -9,14 +9,7 @@ I would love to discuss this further and learn more about:
 - Venue capacity and layout options
 - Available amenities and services
 
-Could we schedule a brief call or meeting to discuss these details?
-
-Looking forward to hearing from you.
-
-Here are our social media links to learn more about us:
-{linkedin_url}
-{instagram_url}
-{tiktok_url}
+Could we schedule a brief call or meeting to discuss these details? Looking forward to hearing from you.
 
 Best regards,
 {sender_name}
