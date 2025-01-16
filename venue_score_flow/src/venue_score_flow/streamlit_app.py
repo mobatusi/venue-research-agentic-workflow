@@ -90,7 +90,8 @@ def main():
 
         # Replace placeholders in the email template dynamically
         formatted_template = email_template
-        formatted_template = formatted_template.replace("{event_date}", event_date.strftime('%Y-%m-%d'))
+        formatted_template = formatted_template.replace("{event_date}", event_date.strftime('%A %B %d, %Y'))
+        formatted_template = formatted_template.replace("{event_time}", event_time.strftime('%I:%M %p'))
         formatted_template = formatted_template.replace("{sender_name}", sender_name)
         formatted_template = formatted_template.replace("{sender_email}", sender_email)
         formatted_template = formatted_template.replace("{linkedin_url}", linkedin_url)

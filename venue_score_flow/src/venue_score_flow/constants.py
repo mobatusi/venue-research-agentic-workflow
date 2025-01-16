@@ -1,7 +1,7 @@
 EMAIL_TEMPLATE = """
-To whom it may concern,
+Dear {venue_name},
 
-I hope this email finds you well. I came across {venue_name} and I'm very interested in potentially hosting an event at your venue on {event_date}.
+I hope this email finds you well. I'm interested in potentially hosting an event on {event_date} at {event_time}.
 
 I would love to discuss this further and learn more about:
 - Available dates in the coming months
