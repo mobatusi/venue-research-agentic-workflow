@@ -123,7 +123,7 @@ class VenueScoreFlow(Flow[VenueScoreState]):
         print(f"Successfully scored {len(self.state.venue_score)} venues")
         print("Venue scores:", self.state.venue_score)
 
-    @router(score_venues)
+    # @router(score_venues)
     def human_in_the_loop(self):
         print("Finding the top 3 venues for human to review")
 
@@ -194,17 +194,30 @@ class VenueScoreFlow(Flow[VenueScoreState]):
         #     st.write("\nInvalid choice. Please try again.")
         #     return "human_in_the_loop"    
     
-    @listen("generate_emails")
+    @listen(score_venues)
+    def hydrate_venues(self):
+        print("Hydrating venues")
+
+        # Combine venues with their scores using the helper function
+        self.state.hydrated_venues = combine_venues_with_scores(
+            self.state.venues, self.state.venue_score
+        )
+
+        # Debug: Print the combined venues to ensure they are correct
+        print("Hydrated Venues:", self.state.hydrated_venues)
+
+        # Sort the scored venues by their score in descending order
+        sorted_venues = sorted(
+            self.state.hydrated_venues, key=lambda v: v.score, reverse=True
+        )
+        self.state.hydrated_venues = sorted_venues
+    
+    # @listen("hydrate_venues")
     async def write_and_save_emails(self):
         import re
         from pathlib import Path
 
         print("Writing and saving emails for all leads.")
-
-        # Determine the top 3 venues to proceed with
-        top_venue_names = {
-            venue.name for venue in self.state.hydrated_venues[:3]
-        }
 
         tasks = []
 
@@ -213,62 +226,62 @@ class VenueScoreFlow(Flow[VenueScoreState]):
         print("output_dir:", output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
 
-        async def write_email(venue):
-
-            # Kick off the VenueResponseCrew for each venue
-            result = await (
-                VenueResponseCrew()
-                .crew()
-                .kickoff_async(
-                    inputs={
-                        "venue_id": venue.id,
-                        "name": venue.name,
-                        "type": venue.type,
-                        "address": venue.address,
-                        "distance_km": venue.distance_km,
-                        "website": venue.website,
-                        "phone": venue.phone,
-                        "email": venue.email,
-                        "email_template": EMAIL_TEMPLATE
-                    }
+        if self.state.input_data.email_template != "":
+            async def write_email(venue):
+                # Kick off the VenueResponseCrew for each venue
+                result = await (
+                    VenueResponseCrew()
+                    .crew()
+                    .kickoff_async(
+                        inputs={
+                            "venue_id": venue.id,
+                            "name": venue.name,
+                            "type": venue.type,
+                            "address": venue.address,
+                            "distance_km": venue.distance_km,
+                            "website": venue.website,
+                            "phone": venue.phone,
+                            "email": venue.email,
+                            "email_template": self.state.input_data.email_template
+                        }
+                    )
                 )
-            )
 
-            # Debug: Print the result to ensure it contains the expected data
-            print("Result from kickoff_async:", result)
+                # Debug: Print the result to ensure it contains the expected data
+                print("Result from kickoff_async:", result)
 
-            # Sanitize the venue's name to create a valid filename
-            safe_name = re.sub(r"[^a-zA-Z0-9_\- ]", "", venue.name)
-            filename = f"{safe_name}.txt"
-            print("Filename:", filename)
+                # Sanitize the venue's name to create a valid filename
+                safe_name = re.sub(r"[^a-zA-Z0-9_\- ]", "", venue.name)
+                filename = f"{safe_name}.txt"
+                print("Filename:", filename)
 
-            # Write the email content to a text file
-            file_path = output_dir / filename
-            with open(file_path, "w", encoding="utf-8") as f:
-                f.write(result.raw)
+                # Write the email content to a text file
+                file_path = output_dir / filename
+                with open(file_path, "w", encoding="utf-8") as f:
+                    f.write(result.raw)
 
-            # Store the email content in the state
-            self.state.generated_emails[venue.name] = result.raw
+                # Store the email content in the state
+                self.state.generated_emails[venue.name] = result.raw
 
-            # Return a message indicating the email was saved
-            return f"Email saved for {venue.name} as {filename}"
+                # Return a message indicating the email was saved
+                return f"Email saved for {venue.name} as {filename}"
 
-        # Create tasks for all venues
-        for venue in self.state.hydrated_venues:
-            print("Creating email writing task for venue:", venue)
-            task = asyncio.create_task(write_email(venue))
-            tasks.append(task)
+            # Create tasks for all venues
+            for venue in self.state.hydrated_venues:
+                print("Creating email writing task for venue:", venue)
+                task = asyncio.create_task(write_email(venue))
+                tasks.append(task)
 
-        # Run all email-writing tasks concurrently and collect results
-        email_results = await asyncio.gather(*tasks)
+            # Run all email-writing tasks concurrently and collect results
+            email_results = await asyncio.gather(*tasks)
 
-        # After all emails have been generated and saved
-        if email_results:
-            print("\nAll emails have been written and saved to 'email_responses' folder.")
-            for message in email_results:
-                print(message)
-        else:
-            print("No emails were written.")
+            # After all emails have been generated and saved
+            if email_results:
+                print("\nAll emails have been written and saved to 'email_responses' folder.")
+                for message in email_results:
+                    print(message)
+            else:
+                print("No emails were written.")
         
         return self.state
     
