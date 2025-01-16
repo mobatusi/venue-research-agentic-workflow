@@ -22,9 +22,8 @@ def main():
             st.write("""
             This tool helps you:
             1. 🔍 Search for venues around a specific location
-            2. 📊 Analyze the venues found
-            3. 📝 Generate a detailed report
-            4. 📧 Create outreach emails
+            2. 📊 Score the venues found
+            3. 📧 Create outreach emails
             
             Make sure you have set up your API keys before starting.
             """)
