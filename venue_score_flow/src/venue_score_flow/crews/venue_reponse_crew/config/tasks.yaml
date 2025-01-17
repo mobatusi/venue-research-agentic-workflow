@@ -1,13 +1,17 @@
 send_followup_email:
   description: >
-    Generate professional outreach emails for top-scoring venues and save them to the 'emails' folder.
+    Generate a professional outreach email to inquire about venue availability and details for an event.
 
-    You will use the venue's name, address, and the features that were extracted to generate the email using the following template.
+    Using the provided venue information and event date/time, write an email asking about:
+    - Available dates around {event_date} at {event_time}
+    - Pricing for different event packages 
+    - Venue capacity and layout options
+    - Available amenities and services
 
-    EMAIL TEMPLATE
-    -----------------
-    {email_template}
+    The email should be personalized using:
+    - Venue details: {name}, {address} and extracted features
+    - Sender details: {sender_name}, {sender_email}
 
   expected_output: >
-    A professional outreach email based on the venue's data and the email template. 
+    A professional outreach email based on the venue's data, event date/time, and sender information.
   agent: email_followup_agent

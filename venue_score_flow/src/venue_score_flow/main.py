@@ -212,21 +212,22 @@ class VenueScoreFlow(Flow[VenueScoreState]):
         )
         self.state.hydrated_venues = sorted_venues
     
-    # @listen("hydrate_venues")
+    @listen("hydrate_venues")
     async def write_and_save_emails(self):
         import re
         from pathlib import Path
 
-        print("Writing and saving emails for all leads.")
+        # If the email template is empty, use the VenueResponseCrew to generate emails
+        if self.state.input_data.email_template == "":
+            print("Writing and saving emails for all leads.")
 
-        tasks = []
+            tasks = []
 
-        # Create the directory 'email_responses' if it doesn't exist
-        output_dir = Path(__file__).parent / "email_responses"
-        print("output_dir:", output_dir)
-        output_dir.mkdir(parents=True, exist_ok=True)
+            # Create the directory 'email_responses' if it doesn't exist
+            output_dir = Path(__file__).parent / "email_responses"
+            print("output_dir:", output_dir)
+            output_dir.mkdir(parents=True, exist_ok=True)
 
-        if self.state.input_data.email_template != "":
             async def write_email(venue):
                 # Kick off the VenueResponseCrew for each venue
                 result = await (
@@ -242,7 +243,10 @@ class VenueScoreFlow(Flow[VenueScoreState]):
                             "website": venue.website,
                             "phone": venue.phone,
                             "email": venue.email,
-                            "email_template": self.state.input_data.email_template
+                            "event_date": self.state.input_data.event_date,
+                            "event_time": self.state.input_data.event_time,
+                            "sender_name": self.state.input_data.sender_name,
+                            "sender_email": self.state.input_data.sender_email,
                         }
                     )
                 )

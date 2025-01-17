@@ -6,6 +6,7 @@ class InputData(BaseModel):
     address: str
     radius_km: float
     event_date: Optional[str] = None
+    event_time: Optional[str] = None
     linkedin_url: Optional[str] = None
     instagram_url: Optional[str] = None
     tiktok_url: Optional[str] = None

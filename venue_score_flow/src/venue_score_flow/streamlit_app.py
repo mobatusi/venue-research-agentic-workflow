@@ -5,6 +5,8 @@ from venue_score_flow.constants import EMAIL_TEMPLATE
 import os
 from datetime import datetime, timedelta
 import datetime as dt
+import re
+from pathlib import Path
 
 def main():
     st.set_page_config(
@@ -122,6 +124,20 @@ def main():
                 with open('venue_search_results.json', 'w', encoding='utf-8') as f:
                     f.write(result.model_dump_json(indent=2))
                 st.success("Results written to venue_search_results.json")
+
+                if formatted_template != "":
+                    # Create the directory 'email_responses' if it doesn't exist
+                    output_dir = Path(__file__).parent / "email_responses"
+                    print("output_dir:", output_dir)
+                    output_dir.mkdir(parents=True, exist_ok=True)
+
+                    # Use the venue names from the update the email template with the venue names
+                    for venue in result.hydrated_venues:
+                        formatted_template = formatted_template.replace("{venue_name}", venue.name)
+                        # Write emails to file
+                        with open(f'emails_{venue.name}.txt', 'w', encoding='utf-8') as f:
+                            f.write(formatted_template)
+                    st.success("Emails written to emails.txt")
             else:
                 st.error("Failed to retrieve results. Please check the agent configuration.")
 
