@@ -1,7 +1,7 @@
 from typing import Optional, List, Dict
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import datetime
-
+import uuid
 class InputData(BaseModel):
     address: str
     radius_km: float
@@ -15,44 +15,36 @@ class InputData(BaseModel):
     email_template: Optional[str] = None
     
 class Venue(BaseModel):
-    id: str
-    name: str
-    type: str
-    address: str
-    distance_km: float
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: Optional[str] = None
+    type: Optional[str] = None
+    address: Optional[str] = None
+    distance_km: Optional[float] = None
     website: Optional[str] = None
     phone: Optional[str] = None
     email: Optional[str] = None
-    capacity: int
-    amenities: List[str]
-    accessibility: float
-    parking: str
-    special_features: str
-    audio_visual: str
-    technology: str
-    other: str
+    capacity: Optional[int] = None
+    amenities: Optional[List[str]] = None
+    accessibility: Optional[float] = None
+    parking: Optional[str] = None
+    special_features: Optional[str] = None
+    audio_visual: Optional[str] = None
+    technology: Optional[str] = None
+    other: Optional[str] = None
   
 class VenueScore(BaseModel):
-    name: str
-    score: float
-    reason: str
+    name: Optional[str] = None
+    score: Optional[float] = None
+    reason: Optional[str] = None
 
 class ScoredVenues(BaseModel):
-    id: str
-    name: str
-    type: str
-    address: str
-    distance_km: float
+    id: Optional[str] = None
+    name: Optional[str] = None
+    type: Optional[str] = None
+    address: Optional[str] = None
+    distance_km: Optional[float] = None
     website: Optional[str] = None
     phone: Optional[str] = None
     email: Optional[str] = None
-    score: float
-    reason: str
-
-class VenueScoreState(BaseModel):
-    input_data: InputData | None = None
-    venues: List[Venue] = []
-    venue_score: List[VenueScore] = []
-    hydrated_venues: List[ScoredVenues] = []
-    scored_venues_feedback: str = ""
-    generated_emails: Dict[str, str] = {}
+    score: Optional[float] = None
+    reason: Optional[str] = None

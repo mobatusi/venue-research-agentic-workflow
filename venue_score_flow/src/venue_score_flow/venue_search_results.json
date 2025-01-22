@@ -1,64 +1,65 @@
 {
+  "id": "267b1d02-7d70-490c-8314-7ff5629e9680",
   "input_data": {
     "address": "333 Adams St, Brooklyn, NY 11201, United States",
     "radius_km": 0.5,
-    "event_date": "2025-04-17",
+    "event_date": "2025-04-22",
     "event_time": "2:00 PM",
     "linkedin_url": null,
     "instagram_url": null,
     "tiktok_url": null,
-    "sender_name": "John Doe",
-    "sender_email": "john.doe@example.com",
-    "email_template": ""
+    "sender_name": "Toni Obatusin",
+    "sender_email": "toni.obatusin@example.com",
+    "email_template": "\nDear {venue_name},\n\nI hope this email finds you well. I'm interested in potentially hosting an event on Tuesday April 22, 2025 at 2:00 PM.\n\nI would love to discuss this further and learn more about:\n- Available dates in the coming months\n- Pricing for different event packages\n- Venue capacity and layout options\n- Available amenities and services\n\nCould we schedule a brief call or meeting to discuss these details? Looking forward to hearing from you.\n\nFor more information about us, please view our social media profiles:\n- LinkedIn: https://linkedin.com/company/mycompany\n- Instagram: https://instagram.com/mycompany\n- TikTok: https://tiktok.com/@mycompany\n\nBest regards,\nToni Obatusin\ntoni.obatusin@example.com\n"
   },
   "venues": [
     {
       "id": "1",
       "name": "New York Marriott at the Brooklyn Bridge",
-      "type": "Hotel/Event Space",
-      "address": "333 Adams Street, Brooklyn, NY 11201, USA",
-      "distance_km": 0.0,
-      "website": "https://www.marriott.com/en-us/hotels/nycbk-new-york-marriott-at-the-brooklyn-bridge/events/",
-      "phone": "+1 718-246-7000",
+      "type": "Hotel/Resort",
+      "address": "333 Adams St, Brooklyn, NY 11201",
+      "distance_km": 0.5,
+      "website": "www.marriott.com",
+      "phone": "718-246-7000",
       "email": null,
       "capacity": 2010,
       "amenities": [
-        "Event Space",
-        "Catering",
-        "Audio-Visual Equipment",
-        "Wedding Services"
+        "On-site catering",
+        "Full-service business center",
+        "Indoor swimming pool",
+        "Wireless Internet",
+        "ADA/ACA Accessibility",
+        "Full Bar/Lounge"
       ],
-      "accessibility": 4.5,
-      "parking": "Valet and Self-Parking Available",
-      "special_features": "Grand Ballroom can accommodate large events",
-      "audio_visual": "Full range of audio-visual equipment available",
-      "technology": "High-Speed Internet Access, Teleconferencing, Videoconferencing",
-      "other": "Located near popular Brooklyn attractions"
+      "accessibility": null,
+      "parking": "Available on-site with additional costs.",
+      "special_features": "Versatile event spaces, including Grand Ballroom.",
+      "audio_visual": "AV equipment available including projectors and sound systems.",
+      "technology": "WiFi, teleconferencing services, and event management apps.",
+      "other": null
     }
   ],
   "venue_score": [
     {
       "name": "New York Marriott at the Brooklyn Bridge",
       "score": 82.0,
-      "reason": "The New York Marriott at the Brooklyn Bridge presents a well-rounded venue experience with excellent amenities and location. Its proximity to key attractions in Brooklyn and Manhattan adds significant value for event attendees. The facilities are well-maintained and spacious, providing a comfortable environment for various gatherings. However, some areas could benefit from modernization, particularly in terms of technology integrations for events and updated decor in meeting spaces. The staff is known for their professionalism and attentiveness, contributing positively to the overall experience. While the venue does not quite reach the level of outstanding, as it shows potential for enhancements, it firmly delivers on quality and service, which justifies an 82 score."
+      "reason": "The New York Marriott at the Brooklyn Bridge scores an 82 due to its outstanding location, close proximity to key attractions like the Brooklyn Bridge and Manhattan, and excellent amenities that cater to both business and leisure travelers. The venue offers well-appointed rooms with modern decor, extensive event spaces equipped with the latest technology, and a dedicated staff known for their high level of service. However, while the venue is well-maintained, some areas show slight signs of wear which prevents the score from being higher. Additionally, the on-site dining options, though varied, have received mixed reviews concerning quality and price point, which impacted the overall impression. In conclusion, an 82 is a strong score reflecting its many positive attributes while acknowledging areas for improvement."
     }
   ],
   "hydrated_venues": [
     {
       "id": "1",
       "name": "New York Marriott at the Brooklyn Bridge",
-      "type": "Hotel/Event Space",
-      "address": "333 Adams Street, Brooklyn, NY 11201, USA",
-      "distance_km": 0.0,
-      "website": "https://www.marriott.com/en-us/hotels/nycbk-new-york-marriott-at-the-brooklyn-bridge/events/",
-      "phone": "+1 718-246-7000",
+      "type": "Hotel/Resort",
+      "address": "333 Adams St, Brooklyn, NY 11201",
+      "distance_km": 0.5,
+      "website": "www.marriott.com",
+      "phone": "718-246-7000",
       "email": "",
       "score": 82.0,
-      "reason": "The New York Marriott at the Brooklyn Bridge presents a well-rounded venue experience with excellent amenities and location. Its proximity to key attractions in Brooklyn and Manhattan adds significant value for event attendees. The facilities are well-maintained and spacious, providing a comfortable environment for various gatherings. However, some areas could benefit from modernization, particularly in terms of technology integrations for events and updated decor in meeting spaces. The staff is known for their professionalism and attentiveness, contributing positively to the overall experience. While the venue does not quite reach the level of outstanding, as it shows potential for enhancements, it firmly delivers on quality and service, which justifies an 82 score."
+      "reason": "The New York Marriott at the Brooklyn Bridge scores an 82 due to its outstanding location, close proximity to key attractions like the Brooklyn Bridge and Manhattan, and excellent amenities that cater to both business and leisure travelers. The venue offers well-appointed rooms with modern decor, extensive event spaces equipped with the latest technology, and a dedicated staff known for their high level of service. However, while the venue is well-maintained, some areas show slight signs of wear which prevents the score from being higher. Additionally, the on-site dining options, though varied, have received mixed reviews concerning quality and price point, which impacted the overall impression. In conclusion, an 82 is a strong score reflecting its many positive attributes while acknowledging areas for improvement."
     }
   ],
-  "scored_venues_feedback": "",
-  "generated_emails": {
-    "New York Marriott at the Brooklyn Bridge": "Subject: Inquiry About Venue Availability for Upcoming Event\n\nDear New York Marriott at the Brooklyn Bridge Team,\n\nI hope this message finds you well! My name is John Doe, and I am reaching out to inquire about the availability of your stunning venue for a special event we are planning around April 17, 2025, at 2:00 PM.\n\nWe are particularly interested in understanding the following details:\n\n1. **Available Dates**: Are there any available dates near April 17, 2025, for our event?\n   \n2. **Pricing Information**: Could you provide details on the pricing for your various event packages?\n\n3. **Venue Capacity and Layout**: What is the maximum capacity of the venue, and what layout options do you offer?\n\n4. **Available Amenities and Services**: We would also appreciate information on any amenities and services you provide, such as audio-visual equipment, catering options, and parking availability.\n\nThe New York Marriott at the Brooklyn Bridge, with its prime location at 333 Adams Street, has caught our attention due to its combination of elegance and convenience, and we are excited about the possibility of hosting our event there.\n\nThank you for your assistance! I look forward to your prompt response so we can move forward with our planning.\n\nBest regards,\n\nJohn Doe  \njohn.doe@example.com"
-  }
+  "scored_venues_feedback": null,
+  "generated_emails": {}
 }

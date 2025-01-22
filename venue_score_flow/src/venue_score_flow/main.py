@@ -1,39 +1,47 @@
 #!/usr/bin/env python
 import asyncio
-from typing import List
+from typing import List, Optional, Dict
 import json
 import streamlit as st
 
 from crewai.flow.flow import Flow, listen, or_, router, start
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, ValidationError, Field
 
 from venue_score_flow.crews.venue_search_crew.venue_search_crew import VenueSearchCrew
 from venue_score_flow.crews.venue_score_crew.venue_score_crew import VenueScoreCrew
 from venue_score_flow.crews.venue_reponse_crew.venue_response_crew import VenueResponseCrew
-from venue_score_flow.types import InputData, Venue, VenueScore, ScoredVenues, VenueScoreState
+from venue_score_flow.types import InputData, Venue, VenueScore, ScoredVenues
 from venue_score_flow.utils.venueUtils import combine_venues_with_scores
 from venue_score_flow.constants import EMAIL_TEMPLATE
 
-class VenueScoreState(BaseModel):
-    input_data: InputData | None = None
-    venues: List[Venue] = []
-    venue_score: List[VenueScore] = []
-    hydrated_venues: List[ScoredVenues] = []
-    scored_venues_feedback: str = ""
-    generated_emails: dict = {}
+import uuid
 
+class VenueScoreState(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    input_data: InputData | None = None
+    venues: List[Venue] = Field(default_factory=list)
+    venue_score: List[VenueScore] = Field(default_factory=list)
+    hydrated_venues: List[ScoredVenues] = Field(default_factory=list)
+    scored_venues_feedback: Optional[str] = None
+    generated_emails: Dict[str, str] = Field(default_factory=dict)
 
 class VenueScoreFlow(Flow[VenueScoreState]):
     initial_state = VenueScoreState
 
     @start()
     async def initialize_state(self) -> None:
-        print("Initializing state")
+        print("1. Starting VenueScoreFlow")
         print("Input data:", self.state.input_data)
-    
-    @listen(initialize_state)
+
+    @listen("initialize_state")
     async def search_venues(self):
-        print("Searching for venues")
+        print("2. Searching for venues")
+        
+        # Ensure input_data is not None
+        if self.state.input_data is None:
+            print("Error: input_data is None")
+            return
+
         search_inputs = {
             "address": self.state.input_data.address,
             "radius_km": self.state.input_data.radius_km
@@ -53,12 +61,14 @@ class VenueScoreFlow(Flow[VenueScoreState]):
             return
         
         try:
-            venues_data = json.loads(result.raw)
+            # result.raw contains a list of venue dictionaries
+            venues_data = result.raw if isinstance(result.raw, list) else json.loads(result.raw)
+            print("venues_data:", venues_data)
         except json.JSONDecodeError as e:
             print("Error decoding JSON:", e)
             return
         
-        # Check if the result is a list or a single venue
+         # Check if the result is a list or a single venue
         if isinstance(venues_data, dict):
             # If it's a single venue, wrap it in a list
             venues_data = [venues_data]
@@ -76,8 +86,13 @@ class VenueScoreFlow(Flow[VenueScoreState]):
             else:
                 print("Unexpected data format for venue:", venue_data)
 
+        # Debug: Check the venues list after processing
+        print("Venues after processing:", self.state.venues)
+
     @listen(or_(search_venues, "score_venues_feedback"))
     async def score_venues(self):
+        print("3. score_venues triggered")  # Debugging line
+        print(f"Number of venues to score: {len(self.state.venues)}")  # Check number of venues
         print("Scoring venues")
         tasks = []
 
@@ -122,6 +137,8 @@ class VenueScoreFlow(Flow[VenueScoreState]):
         
         print(f"Successfully scored {len(self.state.venue_score)} venues")
         print("Venue scores:", self.state.venue_score)
+
+        return "hydrate_venues"
 
     # @router(score_venues)
     def human_in_the_loop(self):
@@ -195,8 +212,8 @@ class VenueScoreFlow(Flow[VenueScoreState]):
         #     return "human_in_the_loop"    
     
     @listen(score_venues)
-    def hydrate_venues(self):
-        print("Hydrating venues")
+    async def hydrate_venues(self):
+        print("4. Hydrating venues")
 
         # Combine venues with their scores using the helper function
         self.state.hydrated_venues = combine_venues_with_scores(
@@ -211,15 +228,15 @@ class VenueScoreFlow(Flow[VenueScoreState]):
             self.state.hydrated_venues, key=lambda v: v.score, reverse=True
         )
         self.state.hydrated_venues = sorted_venues
+        return "hydrate_venues"
     
     @listen("hydrate_venues")
     async def write_and_save_emails(self):
         import re
         from pathlib import Path
-
         # If the email template is empty, use the VenueResponseCrew to generate emails
         if self.state.input_data.email_template == "":
-            print("Writing and saving emails for all leads.")
+            print("5. Writing and saving emails for all leads.")
 
             tasks = []
 
@@ -291,14 +308,30 @@ class VenueScoreFlow(Flow[VenueScoreState]):
     
 async def run_with_inputs(inputs: dict):
     """Run the flow with given inputs"""
-    input_data = InputData(**inputs)
-    initial_state = VenueScoreState(input_data=input_data)
+    print("inputs:", inputs)
+    # Ensure that all required fields are present in the inputs
+    required_fields = ['address', 'radius_km', 'event_date', 'event_time', 'sender_name', 'sender_email']
+    if not all(key in inputs for key in required_fields):
+        print("Error: Missing required input fields.")
+        return None
+
+    # Create InputData instance
+    input_data = InputData(**inputs)  
+    # print("input_data:", input_data)  # Debugging output
+
+    # Ensure to provide a unique id for the state
+    initial_state = VenueScoreState(input_data=input_data)  # The id will be generated automatically
+    print("initial_state:", initial_state)
+    print("initial_state.model_dump():", initial_state.model_dump())
     
     flow = VenueScoreFlow()
-    result = await flow.kickoff_async(inputs=initial_state.model_dump())
+    flow._state = initial_state
+    print("flow.state:", flow.state)
+    result = await flow.kickoff_async()
     
-    # Debug: Check the type of the result
+    # Debug: Check the result type and content
     print("Result type:", type(result))
+    print("Result content:", result)
     
     # Check if result is a Pydantic model or JSON string
     if isinstance(result, VenueScoreState):
@@ -322,6 +355,7 @@ def run():
         "address": "1333 Adams St, Brooklyn, NY 11201, United States",
         "radius_km": 0.5,
         "event_date": "2024-06-01",
+        "event_time": "10:00 AM",
         "linkedin_url": "https://linkedin.com/company/mycompany",
         "instagram_url": "https://instagram.com/mycompany",
         "tiktok_url": "https://tiktok.com/@mycompany",
