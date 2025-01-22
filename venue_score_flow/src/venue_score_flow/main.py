@@ -3,9 +3,14 @@ import asyncio
 from typing import List, Optional, Dict
 import json
 import streamlit as st
+import sys
+import os
 
 from crewai.flow.flow import Flow, listen, or_, router, start
 from pydantic import BaseModel, ValidationError, Field
+
+# Add the src directory to the Python path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from venue_score_flow.crews.venue_search_crew.venue_search_crew import VenueSearchCrew
 from venue_score_flow.crews.venue_score_crew.venue_score_crew import VenueScoreCrew

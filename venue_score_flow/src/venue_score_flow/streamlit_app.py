@@ -7,11 +7,11 @@ from pathlib import Path
 
 import streamlit as st
 
-from venue_score_flow.main import run_with_inputs
-from venue_score_flow.constants import EMAIL_TEMPLATE
-
 # Add the src directory to the Python path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from venue_score_flow.main import run_with_inputs
+from venue_score_flow.constants import EMAIL_TEMPLATE
 
 # Only import pysqlite3 if running in Streamlit Cloud
 if 'STREAMLIT_RUNTIME' in os.environ:
