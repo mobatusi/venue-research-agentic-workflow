@@ -14,7 +14,12 @@ from venue_score_flow.main import run_with_inputs
 from venue_score_flow.constants import EMAIL_TEMPLATE
 
 # Only import pysqlite3 if running in Streamlit Cloud
-if 'STREAMLIT_RUNTIME' in os.environ:
+try:
+    import sqlite3
+    # Check if we're in Streamlit Cloud by attempting to use sqlite3
+    sqlite3.connect(':memory:')
+except sqlite3.OperationalError:
+    # If sqlite3 fails, we're likely in Streamlit Cloud and need pysqlite3
     __import__('pysqlite3')
     import sys
     sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
