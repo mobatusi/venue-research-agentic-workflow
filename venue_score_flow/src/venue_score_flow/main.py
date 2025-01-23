@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+__import__('pysqlite3')
+import sys
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
+
 import asyncio
 from typing import List, Optional, Dict
 import json
