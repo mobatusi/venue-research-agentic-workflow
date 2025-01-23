@@ -1,5 +1,5 @@
 {
-  "id": "267b1d02-7d70-490c-8314-7ff5629e9680",
+  "id": "6f0fc689-90b1-4cbe-8f09-e1aa65f6ced8",
   "input_data": {
     "address": "333 Adams St, Brooklyn, NY 11201, United States",
     "radius_km": 0.5,
@@ -8,58 +8,58 @@
     "linkedin_url": null,
     "instagram_url": null,
     "tiktok_url": null,
-    "sender_name": "Toni Obatusin",
-    "sender_email": "toni.obatusin@example.com",
-    "email_template": "\nDear {venue_name},\n\nI hope this email finds you well. I'm interested in potentially hosting an event on Tuesday April 22, 2025 at 2:00 PM.\n\nI would love to discuss this further and learn more about:\n- Available dates in the coming months\n- Pricing for different event packages\n- Venue capacity and layout options\n- Available amenities and services\n\nCould we schedule a brief call or meeting to discuss these details? Looking forward to hearing from you.\n\nFor more information about us, please view our social media profiles:\n- LinkedIn: https://linkedin.com/company/mycompany\n- Instagram: https://instagram.com/mycompany\n- TikTok: https://tiktok.com/@mycompany\n\nBest regards,\nToni Obatusin\ntoni.obatusin@example.com\n"
+    "sender_name": "John Doe",
+    "sender_email": "john.doe@example.com",
+    "email_template": ""
   },
   "venues": [
     {
       "id": "1",
       "name": "New York Marriott at the Brooklyn Bridge",
-      "type": "Hotel/Resort",
-      "address": "333 Adams St, Brooklyn, NY 11201",
-      "distance_km": 0.5,
-      "website": "www.marriott.com",
-      "phone": "718-246-7000",
-      "email": null,
+      "type": "Hotel",
+      "address": "333 Adams Street, Brooklyn, NY, USA, 11201",
+      "distance_km": 0.0,
+      "website": "https://www.marriott.com/en-us/hotels/nycbk-new-york-marriott-at-the-brooklyn-bridge/events/",
+      "phone": "+1-718-246-7000",
+      "email": "",
       "capacity": 2010,
       "amenities": [
-        "On-site catering",
-        "Full-service business center",
-        "Indoor swimming pool",
-        "Wireless Internet",
-        "ADA/ACA Accessibility",
-        "Full Bar/Lounge"
+        "Indoor Pool",
+        "Spa",
+        "Fitness Center",
+        "Restaurant"
       ],
-      "accessibility": null,
-      "parking": "Available on-site with additional costs.",
-      "special_features": "Versatile event spaces, including Grand Ballroom.",
-      "audio_visual": "AV equipment available including projectors and sound systems.",
-      "technology": "WiFi, teleconferencing services, and event management apps.",
-      "other": null
+      "accessibility": 4.5,
+      "parking": "Valet parking available",
+      "special_features": "Largest event space in Brooklyn",
+      "audio_visual": "Full audiovisual capabilities available",
+      "technology": "Video conferencing capabilities",
+      "other": "Located near popular Brooklyn attractions"
     }
   ],
   "venue_score": [
     {
       "name": "New York Marriott at the Brooklyn Bridge",
       "score": 82.0,
-      "reason": "The New York Marriott at the Brooklyn Bridge scores an 82 due to its outstanding location, close proximity to key attractions like the Brooklyn Bridge and Manhattan, and excellent amenities that cater to both business and leisure travelers. The venue offers well-appointed rooms with modern decor, extensive event spaces equipped with the latest technology, and a dedicated staff known for their high level of service. However, while the venue is well-maintained, some areas show slight signs of wear which prevents the score from being higher. Additionally, the on-site dining options, though varied, have received mixed reviews concerning quality and price point, which impacted the overall impression. In conclusion, an 82 is a strong score reflecting its many positive attributes while acknowledging areas for improvement."
+      "reason": "The New York Marriott at the Brooklyn Bridge presents a strong overall venue option, reflected in its comprehensive amenities and service offerings. Its location offers stunning views and convenient access to key attractions in Brooklyn and Manhattan. The event spaces are versatile, accommodating both large and small gatherings, while the staff is reported to be attentive and professional. The hotel's dining options are varied, contributing positively to the guest experience. However, feedback indicates that some areas could benefit from minor updates and improvements, particularly in the decor and room maintenance, which prevents a higher score. Overall, an 82 captures the venue's strengths while acknowledging areas for enhancement."
     }
   ],
   "hydrated_venues": [
     {
       "id": "1",
       "name": "New York Marriott at the Brooklyn Bridge",
-      "type": "Hotel/Resort",
-      "address": "333 Adams St, Brooklyn, NY 11201",
-      "distance_km": 0.5,
-      "website": "www.marriott.com",
-      "phone": "718-246-7000",
+      "type": "Hotel",
+      "address": "333 Adams Street, Brooklyn, NY, USA, 11201",
+      "distance_km": 0.0,
+      "website": "https://www.marriott.com/en-us/hotels/nycbk-new-york-marriott-at-the-brooklyn-bridge/events/",
+      "phone": "+1-718-246-7000",
       "email": "",
       "score": 82.0,
-      "reason": "The New York Marriott at the Brooklyn Bridge scores an 82 due to its outstanding location, close proximity to key attractions like the Brooklyn Bridge and Manhattan, and excellent amenities that cater to both business and leisure travelers. The venue offers well-appointed rooms with modern decor, extensive event spaces equipped with the latest technology, and a dedicated staff known for their high level of service. However, while the venue is well-maintained, some areas show slight signs of wear which prevents the score from being higher. Additionally, the on-site dining options, though varied, have received mixed reviews concerning quality and price point, which impacted the overall impression. In conclusion, an 82 is a strong score reflecting its many positive attributes while acknowledging areas for improvement."
+      "reason": "The New York Marriott at the Brooklyn Bridge presents a strong overall venue option, reflected in its comprehensive amenities and service offerings. Its location offers stunning views and convenient access to key attractions in Brooklyn and Manhattan. The event spaces are versatile, accommodating both large and small gatherings, while the staff is reported to be attentive and professional. The hotel's dining options are varied, contributing positively to the guest experience. However, feedback indicates that some areas could benefit from minor updates and improvements, particularly in the decor and room maintenance, which prevents a higher score. Overall, an 82 captures the venue's strengths while acknowledging areas for enhancement."
     }
   ],
   "scored_venues_feedback": null,
-  "generated_emails": {}
+  "generated_emails": {
+    "New York Marriott at the Brooklyn Bridge": "Subject: Inquiry Regarding Venue Availability for Event on April 22, 2025  \n\nDear New York Marriott at the Brooklyn Bridge Team,  \n\nI hope this message finds you well. My name is John Doe, and I am currently in the process of organizing a significant event scheduled for April 22, 2025, at 2:00 PM. I would love to gather more information regarding the New York Marriott at the Brooklyn Bridge as a potential venue for this occasion.  \n\nSpecifically, I would appreciate your insights on the following:  \n\n1. **Availability:** What dates around April 22, 2025, do you have available for hosting this event?  \n2. **Pricing:** Could you please provide details on the various event packages you offer and the associated pricing?  \n3. **Capacity and Layout:** What is the maximum capacity of your venue, and what layout options do you provide?  \n4. **Amenities and Services:** What amenities and services are available to support my event?  \n\nThe New York Marriott at the Brooklyn Bridge, with its prominent location at 333 Adams Street, undoubtedly stands out as a captivating choice, and I am eager to explore the potential for collaboration.  \n\nThank you for your time, and I look forward to your prompt response.  \n\nWarm regards,  \nJohn Doe  \n[john.doe@example.com](mailto:john.doe@example.com)  \n[Your Contact Number]"
+  }
 }
