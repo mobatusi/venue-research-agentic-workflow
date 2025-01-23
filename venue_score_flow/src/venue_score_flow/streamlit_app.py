@@ -1,28 +1,21 @@
 import os
-import re
 import sys
-import asyncio
-from datetime import datetime, timedelta
 from pathlib import Path
-
 import streamlit as st
+
+# Handle SQLite for Streamlit Cloud compatibility
+try:
+    import sqlite3
+    sqlite3.connect(':memory:')
+except sqlite3.OperationalError:
+    __import__('pysqlite3')
+    sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 # Add the src directory to the Python path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from venue_score_flow.main import run_with_inputs
 from venue_score_flow.constants import EMAIL_TEMPLATE
-
-# Only import pysqlite3 if running in Streamlit Cloud
-try:
-    import sqlite3
-    # Check if we're in Streamlit Cloud by attempting to use sqlite3
-    sqlite3.connect(':memory:')
-except sqlite3.OperationalError:
-    # If sqlite3 fails, we're likely in Streamlit Cloud and need pysqlite3
-    __import__('pysqlite3')
-    import sys
-    sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 def main():
     st.set_page_config(
