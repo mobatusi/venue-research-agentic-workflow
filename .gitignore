@@ -180,3 +180,4 @@ test_flow/
 
 ._*
 venue_score_flow/src/venue_score_flow/email_responses/
+venue_search_results.json

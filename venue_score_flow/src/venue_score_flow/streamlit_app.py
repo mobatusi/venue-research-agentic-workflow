@@ -19,7 +19,7 @@ from datetime import datetime, timedelta
 # Add the src directory to the Python path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from venue_score_flow.main import run_with_inputs
+from venue_score_flow.main import run_with_inputs, run
 from venue_score_flow.constants import EMAIL_TEMPLATE
 
 def main():
@@ -50,7 +50,7 @@ def main():
         # OpenAI API Key input
         openai_key_input = st.text_input(
             "OpenAI API Key",
-            value=os.getenv("OPENAI_API_KEY", ""),
+            value="",#mefZO5CkG0yRgCNo2YYYT3BlbkFJAMKVjx4P8o47XPNv6f3l
             type="password",
             placeholder="Enter your OpenAI API key",
             help="Required for AI-powered analysis and content generation",
@@ -60,13 +60,13 @@ def main():
         # Serper API Key input
         serper_key_input = st.text_input(
             "Serper API Key",
-            value=os.getenv("SERPER_API_KEY", ""),
+            value="",#4bd10f7c4f4ccfabaa01fc66a55df06adee828cf
             type="password",
             placeholder="Enter your Serper API key",
             help="Required for web search functionality",
             key="serper_key_input"
         )
-        
+
         # Show API configuration status
         if openai_key_input or serper_key_input:
             st.write("**API Configuration Status:**")
@@ -117,44 +117,51 @@ def main():
         st.text_area("Email Template Preview", formatted_template, height=300)
 
     # Search button
-    if st.button("🔍 Start Search"):
-        # Run the workflow and display results
-        with st.spinner("Searching for venues..."):
-            inputs = {
-                "address": address,
-                "radius_km": radius_km,
-                "event_date": event_date.strftime('%Y-%m-%d'),
-                "event_time": event_time,
-                "sender_name": sender_name,
-                "sender_email": sender_email,
-                "email_template": formatted_template,
-            }
-
+    # Disable search button if API keys are missing
+    search_button_disabled = not (openai_key_input and serper_key_input)
+    if search_button_disabled:
+        st.warning("⚠️ Please configure both OpenAI and Serper API keys before searching")
+    else:
+        if st.button("🔍 Start Search"):
             # Run the workflow and display results
-            result = asyncio.run(run_with_inputs(inputs))
-            if result:
-                st.json(result.model_dump_json(indent=2))
-                # Write results to JSON file after user confirms
-                with open('venue_search_results.json', 'w', encoding='utf-8') as f:
-                    f.write(result.model_dump_json(indent=2))
-                st.success("Results written to venue_search_results.json")
+            with st.spinner("Searching for venues..."):
+                inputs = {
+                    "address": address,
+                    "radius_km": radius_km,
+                    "event_date": event_date.strftime('%Y-%m-%d'),
+                    "event_time": event_time,
+                    "sender_name": sender_name,
+                    "sender_email": sender_email,
+                    "email_template": formatted_template,
+                    "openai_key": openai_key_input,
+                    "serper_key": serper_key_input,
+                }
 
-                if formatted_template != "":
-                    # Create the directory 'email_responses' if it doesn't exist
-                    output_dir = Path(__file__).parent / "email_responses"
-                    print("output_dir:", output_dir)
-                    output_dir.mkdir(parents=True, exist_ok=True)
+                # Run the workflow and display results
+                result = asyncio.run(run_with_inputs(inputs))
+                if result:
+                    st.json(result.model_dump_json(indent=2))
+                    # Write results to JSON file after user confirms
+                    with open('venue_search_results.json', 'w', encoding='utf-8') as f:
+                        f.write(result.model_dump_json(indent=2))
+                    st.success("Results written to venue_search_results.json")
 
-                    # Use the venue names from the update the email template with the venue names
-                    for venue in result.hydrated_venues:
-                        formatted_template = formatted_template.replace("{venue_name}", venue.name)
-                        # Write emails to file
-                        email_path = output_dir / f'emails_{venue.name}.txt'
-                        with open(email_path, 'w', encoding='utf-8') as f:
-                            f.write(formatted_template)
-                    st.success("Emails written to email_responses directory")
-            else:
-                st.error("Failed to retrieve results. Please check the agent configuration.")
+                    if formatted_template != "":
+                        # Create the directory 'email_responses' if it doesn't exist
+                        output_dir = Path(__file__).parent / "email_responses"
+                        print("output_dir:", output_dir)
+                        output_dir.mkdir(parents=True, exist_ok=True)
+
+                        # Use the venue names from the update the email template with the venue names
+                        for venue in result.hydrated_venues:
+                            formatted_template = formatted_template.replace("{venue_name}", venue.name)
+                            # Write emails to file
+                            email_path = output_dir / f'emails_{venue.name}.txt'
+                            with open(email_path, 'w', encoding='utf-8') as f:
+                                f.write(formatted_template)
+                        st.success("Emails written to email_responses directory")
+                else:
+                    st.error("Failed to retrieve results. Please check the agent configuration.")
 
 if __name__ == "__main__":
     main()

@@ -1,7 +1,11 @@
 #!/usr/bin/env python
-__import__('pysqlite3')
-import sys
-sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+try:
+    __import__('pysqlite3')
+    import sys
+    sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+except:
+    import sqlite3
+    sqlite3.connect(':memory:')
 
 
 import asyncio
@@ -36,12 +40,20 @@ class VenueScoreState(BaseModel):
     generated_emails: Dict[str, str] = Field(default_factory=dict)
 
 class VenueScoreFlow(Flow[VenueScoreState]):
+    def __init__(self, openai_key: str, serper_key: str, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.openai_key = openai_key
+        self.serper_key = serper_key
+
     initial_state = VenueScoreState
 
     @start()
     async def initialize_state(self) -> None:
         print("1. Starting VenueScoreFlow")
         print("Input data:", self.state.input_data)
+        # Set the API keys for use in the flow
+        os.environ["OPENAI_API_KEY"] = self.openai_key
+        os.environ["SERPER_API_KEY"] = self.serper_key
 
     @listen("initialize_state")
     async def search_venues(self):
@@ -334,7 +346,7 @@ async def run_with_inputs(inputs: dict):
     print("initial_state:", initial_state)
     print("initial_state.model_dump():", initial_state.model_dump())
     
-    flow = VenueScoreFlow()
+    flow = VenueScoreFlow(openai_key=inputs['openai_key'], serper_key=inputs['serper_key'])
     flow._state = initial_state
     print("flow.state:", flow.state)
     result = await flow.kickoff_async()
