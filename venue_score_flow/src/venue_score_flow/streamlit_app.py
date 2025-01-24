@@ -93,7 +93,7 @@ def main():
             value="",
             type="password",
             placeholder="Enter your OpenAI API key",
-            help="Required for AI-powered analysis and content generation",
+            help="Acquire an OpenAI API key by registering for a free account at openai.com",
             key="openai_key_input"
         )
 
