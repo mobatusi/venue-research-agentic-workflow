@@ -1,5 +1,6 @@
 import os
 import sys
+import requests  # Import requests for API testing
 
 import streamlit as st
 
@@ -21,6 +22,45 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from venue_score_flow.main import run_with_inputs, run
 from venue_score_flow.constants import EMAIL_TEMPLATE
+
+def test_openai_api_key(api_key):
+    """Test the OpenAI API key by making a simple request."""
+    headers = {
+        "Authorization": f"Bearer {api_key}"
+    }
+    try:
+        response = requests.get("https://api.openai.com/v1/models", headers=headers)
+        return response.status_code == 200  # Return True if the request was successful
+    except Exception as e:
+        st.error(f"Error testing OpenAI API key: {e}")
+        return False
+
+def test_serper_api_key(api_key):
+    """Test the Serper API key by making a simple request."""
+    headers = {
+        "Authorization": f"Bearer {api_key}"
+    }
+    try:
+        response = requests.get("https://google.serper.dev/scholar", headers=headers)
+        return response.status_code == 200  # Return True if the request was successful
+    except Exception as e:
+        st.error(f"Error testing Serper API key: {e}")
+        return False
+
+def test_serper_api_key(api_key):
+    os.environ['SERPER_API_KEY'] = api_key
+    from crewai_tools import SerperDevTool
+
+    tool = SerperDevTool(
+        search_url="https://google.serper.dev/scholar",
+        n_results=2,
+    )
+    try:
+        if tool.run(search_query="ChatGPT"):
+            return True
+    except Exception as e:
+        st.error(f"Error testing Serper API key: {e}")
+        return False
 
 def main():
     st.set_page_config(
@@ -48,37 +88,49 @@ def main():
         st.subheader("API Configuration")
         
         # OpenAI API Key input
-        openai_key_input = st.text_input(
+        openai_key = st.text_input(
             "OpenAI API Key",
-            value="",#mefZO5CkG0yRgCNo2YYYT3BlbkFJAMKVjx4P8o47XPNv6f3l
+            value="",
             type="password",
             placeholder="Enter your OpenAI API key",
             help="Required for AI-powered analysis and content generation",
             key="openai_key_input"
         )
-        
+
         # Serper API Key input
-        serper_key_input = st.text_input(
+        serper_key = st.text_input(
             "Serper API Key",
-            value="",#4bd10f7c4f4ccfabaa01fc66a55df06adee828cf
+            value="",
             type="password",
             placeholder="Enter your Serper API key",
-            help="Required for web search functionality",
+            help="Acquire a serper.dev API key by registering for a free account at serper.dev",
             key="serper_key_input"
         )
 
-        # Show API configuration status
-        if openai_key_input or serper_key_input:
-            st.write("**API Configuration Status:**")
-            if openai_key_input:
-                st.success("✅ OpenAI API key set")
+        # Initialize validity flags in session state if not already set
+        if 'openai_key_valid' not in st.session_state:
+            st.session_state['openai_key_valid'] = False
+        if 'serper_key_valid' not in st.session_state:
+            st.session_state['serper_key_valid'] = False
+
+        # Validate API keys
+        if st.button("Validate API Keys"):
+            if openai_key and serper_key:
+                st.session_state['openai_key_valid'] = test_openai_api_key(openai_key)
+                if st.session_state['openai_key_valid']:
+                    st.success("✅ OpenAI API key is valid.")
+                    os.environ['OPENAI_API_KEY'] = openai_key  # Set environment variable
+                else:
+                    st.error("❌ OpenAI API key is invalid.")
+
+                st.session_state['serper_key_valid'] = test_serper_api_key(serper_key)
+                if st.session_state['serper_key_valid']:
+                    st.success("✅ Serper API key is valid.")
+                    os.environ['SERPER_API_KEY'] = serper_key  # Set environment variable
+                else:
+                    st.error("❌ Serper API key is invalid.")
             else:
-                st.error("❌ OpenAI API key missing")
-                
-            if serper_key_input:
-                st.success("✅ Serper API key set")
-            else:
-                st.error("❌ Serper API key missing")
+                st.error("⚠️ Please enter both API keys.")
 
     # Initialize sender_name, sender_email, and email_template
     sender_name = st.session_state.get("sender_name", "John Doe")  # Default value
@@ -113,12 +165,11 @@ def main():
         formatted_template = formatted_template.replace("{instagram_url}", instagram_url)
         formatted_template = formatted_template.replace("{tiktok_url}", tiktok_url)
 
-
         st.text_area("Email Template Preview", formatted_template, height=300)
 
     # Search button
-    # Disable search button if API keys are missing
-    search_button_disabled = not (openai_key_input and serper_key_input)
+    # Enable search button only if both API keys are valid
+    search_button_disabled = not (st.session_state['openai_key_valid'] and st.session_state['serper_key_valid'])
     if search_button_disabled:
         st.warning("⚠️ Please configure both OpenAI and Serper API keys before searching")
     else:
@@ -133,8 +184,8 @@ def main():
                     "sender_name": sender_name,
                     "sender_email": sender_email,
                     "email_template": formatted_template,
-                    "openai_key": openai_key_input,
-                    "serper_key": serper_key_input,
+                    "openai_key": openai_key,
+                    "serper_key": serper_key,
                 }
 
                 # Run the workflow and display results

@@ -181,3 +181,4 @@ test_flow/
 ._*
 venue_score_flow/src/venue_score_flow/email_responses/
 venue_search_results.json
+venue_score_flow/src/venue_score_flow/venue_search_results.json
