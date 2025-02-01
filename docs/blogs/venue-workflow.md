@@ -114,8 +114,90 @@ The system architecture follows a modular design pattern, leveraging Python as t
   ```
   - Emails are saved to the email_responses directory
 
+#### State Management
+The state management in VenueScoreFlow is handled through the VenueScoreState Pydantic model and uses CrewAI's Flow system. Here's a detailed breakdown:
+1. State Definition:
+```python
+class VenueScoreState(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    input_data: InputData | None = None
+    venues: List[Venue] = Field(default_factory=list)
+    venue_score: List[VenueScore] = Field(default_factory=list)
+    hydrated_venues: List[ScoredVenues] = Field(default_factory=list)
+    scored_venues_feedback: Optional[str] = None
+    generated_emails: Dict[str, str] = Field(default_factory=dict)
+```
+2. State Initialization:
+```python
+@start()
+async def initialize_state(self) -> None:
+    print("1. Starting VenueScoreFlow")
+    print("Input data:", self.state.input_data)
+    os.environ["OPENAI_API_KEY"] = self.openai_key
+    os.environ["SERPER_API_KEY"] = self.serper_key
+```
+3. Data Flow Between Stages:
+a. Venue Search → Venue Scoring:
+```python
+@listen("initialize_state")
+async def search_venues(self):
+    # Stores results in state.venues
+    for venue_data in venues_data:
+        if isinstance(venue_data, dict):
+            try:
+                venue = Venue(**venue_data)
+                self.state.venues.append(venue)
+            except ValidationError as e:
+                print("Validation error for venue data:", e)
+    ```
+b. Venue Scoring → Venue Hydration:
+```python
+@listen(or_(search_venues, "score_venues_feedback"))
+async def score_venues(self):
+    # Stores scores in state.venue_score
+    venue_scores = await asyncio.gather(*tasks)
+    self.state.venue_score = [score for score in venue_scores if score is not None]
+```
+c. Venue Hydration (Combining Venues with Scores):
+```python
+def combine_venues_with_scores(venues: List[Venue], venue_scores: List[VenueScore]) -> List[ScoredVenues]:
+    score_dict = {score.name.strip().lower(): score for score in venue_scores}
+    scored_venues = []
+    for venue in venues:
+        normalized_name = venue.name.strip().lower()
+        score = score_dict.get(normalized_name)
+        if score:
+            scored_venues.append(
+                ScoredVenues(
+                    id=venue.id,
+                    name=venue.name,
+                    # ... other fields ...
+                    score=score.score,
+                    reason=score.reason,
+                )
+            )
+```
+4. Email Generation Stage:
+```python
+@listen("hydrate_venues")
+async def write_and_save_emails(self):
+    # Stores generated emails in state.generated_emails
+    async def write_email(venue):
+        result = await VenueResponseCrew().crew().kickoff_async(inputs={...})
+        self.state.generated_emails[venue.name] = result.raw
+```
+The state management follows these key principles:
+- All data is stored in the Pydantic-based VenueScoreState
+- Each stage listens for completion of previous stages using @listen decorators
+- Data is passed between stages through the state object
+- The state maintains consistency using Pydantic validation
+- Asynchronous operations are handled using asyncio for concurrent processing
+This design ensures thread-safe state management and maintains data integrity throughout the workflow.
+
 ## Future Work
 ### Planned Features
+- Human feedback can be incorporated through the scored_venues_feedback field
+
 - Enhanced Venue Filtering
   - Integration with more venue data sources and platforms
   - Advanced filtering based on event type (networking events, tech workshops, pitch competitions)
