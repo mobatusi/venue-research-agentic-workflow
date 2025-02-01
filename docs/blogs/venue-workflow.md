@@ -66,9 +66,45 @@ The system architecture follows a modular design pattern, leveraging Python as t
 #### Coordination Flow
   The coordination flow works as follows:
   - The search crew finds venues and stores them in state.venues
+  ```python
+      @CrewBase
+      class VenueSearchCrew:
+          @crew
+          def crew(self) -> Crew:
+              return Crew(
+                  agents=[self.location_analyst()],
+                  tasks=[self.analyze_location()],
+                  process=Process.sequential,
+                  verbose=True,
+              )
+  ```
   - The scoring crew evaluates each venue and stores scores in state.venue_score
+  ```python
+    @CrewBase
+    class VenueScoreCrew:
+        @crew
+        def crew(self) -> Crew:
+            return Crew(
+                agents=[self.scoring_agent()],
+                tasks=[self.score_venues_task()],
+                process=Process.sequential,
+                verbose=True,
+            )
+  ```
   - The scores are combined with venues using combine_venues_with_scores() utility
   - The response crew generates personalized emails for each scored venue
+  ```python
+  @CrewBase
+  class VenueResponseCrew:
+      @crew
+      def crew(self) -> Crew:
+          return Crew(
+              agents=[self.email_followup_agent()],
+              tasks=[self.send_followup_email_task()],
+              process=Process.sequential,
+              verbose=True,
+          )
+  ```
   - Emails are saved to the email_responses directory
 
 ## Future Work
