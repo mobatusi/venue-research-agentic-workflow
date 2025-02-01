@@ -3,6 +3,9 @@
 ## Introduction
 The Venue Workflow project is an innovative multi-agent system designed to streamline the process of identifying and evaluating potential venues for technology conference events in urban areas. By leveraging artificial intelligence and automation, the system efficiently researches suitable venues, analyzes their features, and scores them based on predefined criteria. The workflow not only saves time in venue discovery but also initiates contact with high-potential venues, creating a seamless bridge between event planners and venue operators. This solution addresses the common challenges of manual venue research while ensuring comprehensive coverage across different venue listing platforms like PartySlate and Peerspace. 
 
+![Venue Search Streamlit](../images/venue-search-streamlit.png)
+https://event-planning-research-assistant.streamlit.app/
+
 This is a multi-agent AI system designed to automate the process of finding and evaluating venues for technology conference events. The project, built using CrewAI framework, consists of three main components:
 Venue Search Crew: Searches for venues near a specified location within a given radius using Serper API.
 Venue Score Crew: Evaluates and scores venues based on predefined criteria, assigning specific scores (1-100) with detailed reasoning.
@@ -31,7 +34,7 @@ The project uses Python 3.10-3.13, follows a modular architecture, and includes 
 ### Architecture
 The system architecture follows a modular design pattern, leveraging Python as the primary programming language and Streamlit for the web interface. The core components include API integrations with OpenAI and Serper for intelligent venue analysis and search capabilities. The application is containerized using Docker for consistent deployment across environments, as evidenced by the devcontainer configuration. The workflow is structured around a multi-agent system where specialized agents handle different aspects of the venue research process, from initial discovery to detailed analysis and outreach. This architecture ensures scalability and maintainability while providing a robust foundation for future enhancements.
 
-![Venue Research Agent Architecture](../images/MixerCloud%20Event%20Venue%20Researcher%20Agent%20Design%20and%20Architecture.png)
+![Venue Research Agent Architecture](../images/flow-diagram.png)
 
 
 ### Implementation
