@@ -24,6 +24,8 @@ The venue management landscape faces several key challenges that impact event pl
 ## Project Overview
 The project scope encompasses several key components designed to create a comprehensive venue research and evaluation system. At its core, the workflow features a user-friendly interface that allows event planners to easily input search criteria and preferences. The system integrates seamlessly with existing venue platforms and databases, pulling real-time data from sources like PartySlate and Peerspace to provide up-to-date venue information. Through advanced data processing capabilities, the workflow analyzes venue details, availability, and suitability for different event types, presenting users with scored and ranked venue options. This automated approach not only streamlines the venue discovery process but also ensures consistent evaluation criteria across all potential venues, enabling even less experienced team members to make informed decisions about venue selection.
 
+The system is implemented as a Streamlit web application that requires OpenAI and Serper API keys to function. Users can input location details, search radius, event information, and sender details. The workflow automates what would typically be a manual venue research process, making it more efficient and standardized.
+The project uses Python 3.10-3.13, follows a modular architecture, and includes features for human-in-the-loop review of venue selections before proceeding with email generation.
 
 ## Technical Details
 ### Architecture
