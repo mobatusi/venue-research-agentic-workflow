@@ -63,6 +63,13 @@ The system architecture follows a modular design pattern, leveraging Python as t
        - Challenge: Making complex functionality accessible to non-technical users
        - Solution: Created an intuitive interface with clear guidance and feedback
 
+#### Coordination Flow
+  The coordination flow works as follows:
+  - The search crew finds venues and stores them in state.venues
+  - The scoring crew evaluates each venue and stores scores in state.venue_score
+  - The scores are combined with venues using combine_venues_with_scores() utility
+  - The response crew generates personalized emails for each scored venue
+  - Emails are saved to the email_responses directory
 
 ## Future Work
 ### Planned Features
