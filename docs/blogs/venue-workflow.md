@@ -1,8 +1,14 @@
 # Building an AI-Powered Venue Research Multi-Agent System with CrewAI
 
+## Introduction
+
 AI Agents are the latest trend in the race to AGI. What is captivating about building AI agents is the potential to automate all kinds of work. The idea to build a venue research multi-agent system came to me when my friend, who runs a tech mixer event mentioned all of the work that he has to do finding venues. 
 
 This felt like a great opportunity to get hands-on experience with AI agents. Now, I will share how I built the system with you. This tutorial shows how to use CrewAI to create multi-agent agents that search, evaluate, and reach out to potential event venues.
+
+You can find the complete source code for this project on GitHub:
+- Repository: [venue-score-flow](https://github.com/mobatusi/venue-research-agentic-workflow)
+- Live Demo: [Event Planning Research Assistant](https://event-planning-research-assistant.streamlit.app/)
 
 ## The Challenge
 
@@ -279,6 +285,7 @@ Hopefully, this tutorial provided some clarity into building multi-agent systems
 
 ## Resources
 
+- [GitHub Repository](https://github.com/evanmschultz/venue-score-flow)
 - [CrewAI Documentation](https://docs.crewai.com/concepts/flows#flow-state-management)
 - [Multi AI Agent Systems Tutorial](https://learn.deeplearning.ai/courses/multi-ai-agent-systems-with-crewai/lesson/1/introduction)
 - [OpenAI API Documentation](https://platform.openai.com/docs/api-reference)
