@@ -1,267 +1,241 @@
-# Venue Workflow Project
+# Building an AI-Powered Venue Research Multi-Agent System with CrewAI
+
+AI Agents are the latest trend in the race to AGI. What is captivating about building AI agents is the potential to automate all kinds of work. The idea to build a venue research multi-agent system came to me when my friend, who runs a tech mixer event mentioned all of the work that he has to do finding venues. 
+
+This felt like a great opportunity to get hands-on experience with AI agents. Now, I will shaer how I built the system with you. This tutorial shows how to use CrewAI to create multi-agent agents that search, evaluate, and reach out to potential event venues.
 
 ## Introduction
-The Venue Workflow project is an innovative multi-agent system designed to streamline the process of identifying and evaluating potential venues for technology conference events in urban areas. By leveraging artificial intelligence and automation, the system efficiently researches suitable venues, analyzes their features, and scores them based on predefined criteria. The workflow not only saves time in venue discovery but also initiates contact with high-potential venues, creating a seamless bridge between event planners and venue operators. This solution addresses the common challenges of manual venue research while ensuring comprehensive coverage across different venue listing platforms like PartySlate and Peerspace. 
+
+Manual venue research is time-consuming and often inconsistent. Event planners spend countless hours searching across platforms like PartySlate and Peerspace, evaluating venues, and reaching out to vendors. We'll show you how to automate this entire workflow using CrewAI's multi-agent architecture.
+
+Our solution has helped event planners:
+- Reduce venue research time from days to minutes
+- Ensure consistent venue evaluation across platforms
+- Automate personalized vendor outreach
+- Enable less experienced team members to manage venue searches effectively
 
 ![Venue Search Streamlit](../images/venue-search-streamlit.png)
-https://event-planning-research-assistant.streamlit.app/
+Try it out: https://event-planning-research-assistant.streamlit.app/
 
-This is a multi-agent AI system designed to automate the process of finding and evaluating venues for technology conference events. The project, built using CrewAI framework, consists of three main components:
-Venue Search Crew: Searches for venues near a specified location within a given radius using Serper API.
-Venue Score Crew: Evaluates and scores venues based on predefined criteria, assigning specific scores (1-100) with detailed reasoning.
-Venue Response Crew: Generates professional outreach emails to high-potential venues.
+## Building with CrewAI
 
-## Importance of Efficient Venue Management
-Efficient venue management is crucial for successful event planning and execution. The process of finding, evaluating, and securing the right venue can be time-consuming and resource-intensive, often requiring extensive research across multiple platforms and direct communication with various venue operators. Without a streamlined approach, organizations risk overlooking ideal venues, missing crucial details in venue specifications, or making decisions based on incomplete information. Additionally, the manual nature of traditional venue research methods can lead to inconsistent evaluation criteria and potential oversights in important factors such as capacity, technical capabilities, and cost considerations. By implementing an automated and systematic approach to venue management, organizations can significantly reduce the time and effort required while ensuring more comprehensive and accurate venue assessments.
+### Step 1: Setting Up the Pydantic Models
 
-## Goals
-The primary goals of this project are to automate and optimize the venue discovery process, standardize venue evaluation criteria across different platforms like PartySlate and Peerspace, enable less experienced team members to effectively manage venue searches, and provide comprehensive venue analysis that considers event-specific requirements such as networking events, tech workshops, and pitch competitions - ultimately saving time and improving the quality of venue selections for technology conference events.
+First, let's define our data models using Pydantic. These models will help us maintain type safety and data validation throughout our application:
 
-
-
-## Background
-
-The venue management landscape faces several key challenges that impact event planning efficiency and success. Traditional venue discovery methods often rely heavily on manual searches across multiple platforms, with popular sites like PartySlate and Peerspace each offering different venue types and experiences. While PartySlate tends to focus on traditional venues such as restaurants and hotels, Peerspace diversifies into unique spaces like art studios, mansions, clubhouses, and bars. This fragmentation of venue listings across platforms creates a significant challenge for comprehensive venue research. Additionally, the varying levels of venue engagement with these platforms - evidenced by "unclaimed" listings on PartySlate - can lead to incomplete or outdated information. These challenges are particularly pronounced when organizations aim to delegate venue finding tasks to less experienced team members, as they may lack the expertise to effectively navigate multiple platforms and evaluate venues consistently. The current solutions, while valuable, often limit users to their specific inventory and may not provide a complete picture of all available venues in a given area.
-
-
-## Project Overview
-The project scope encompasses several key components designed to create a comprehensive venue research and evaluation system. At its core, the workflow features a user-friendly interface that allows event planners to easily input search criteria and preferences. The system integrates seamlessly with existing venue platforms and databases, pulling real-time data from sources like PartySlate and Peerspace to provide up-to-date venue information. Through advanced data processing capabilities, the workflow analyzes venue details, availability, and suitability for different event types, presenting users with scored and ranked venue options. This automated approach not only streamlines the venue discovery process but also ensures consistent evaluation criteria across all potential venues, enabling even less experienced team members to make informed decisions about venue selection.
-
-The system is implemented as a Streamlit web application that requires OpenAI and Serper API keys to function. Users can input location details, search radius, event information, and sender details. The workflow automates what would typically be a manual venue research process, making it more efficient and standardized.
-The project uses Python 3.10-3.13, follows a modular architecture, and includes features for human-in-the-loop review of venue selections before proceeding with email generation.
-
-## Technical Details
-### Architecture
-The system architecture follows a modular design pattern, leveraging Python as the primary programming language and Streamlit for the web interface. The core components include API integrations with OpenAI and Serper for intelligent venue analysis and search capabilities. The application is containerized using Docker for consistent deployment across environments, as evidenced by the devcontainer configuration. The workflow is structured around a multi-agent system where specialized agents handle different aspects of the venue research process, from initial discovery to detailed analysis and outreach. This architecture ensures scalability and maintainability while providing a robust foundation for future enhancements.
-
-![Venue Research Agent Architecture](../images/flow-diagram.png)
-
-
-### Implementation
-- Step-by-step explanation of the implementation process
-  1. Development Environment Setup
-     - The project utilizes a containerized development environment using Docker and VS Code's devcontainer feature
-     - Key dependencies include Python 3.11, Streamlit for the web interface, and required API packages
-     - Environment variables are configured for API keys (OpenAI and Serper)
-
-  2. Core Components Implementation
-     - Web Interface
-       - Built using Streamlit to provide an intuitive user experience
-       - Includes configuration sections for API keys, search parameters, and user details
-       - Real-time validation of API credentials ensures reliable operation
-     
-     - Search Functionality
-       - Integrates with Serper API for comprehensive venue discovery
-       - Allows users to specify location, search radius, and event details
-       - Implements geocoding to convert addresses into searchable coordinates
-
-     - Venue Analysis System
-       - Leverages OpenAI's capabilities for intelligent venue assessment
-       - Scores venues based on multiple criteria including location, capacity, and amenities
-       - Generates customized outreach emails based on venue analysis
-
-  3. Challenges and Solutions
-     - API Integration Complexity
-       - Challenge: Managing multiple API dependencies and ensuring reliable connections
-       - Solution: Implemented robust error handling and API key validation systems
-       
-     - Data Consistency
-       - Challenge: Varying data formats from different venue platforms
-       - Solution: Developed standardized data processing pipelines
-       
-     - User Experience
-       - Challenge: Making complex functionality accessible to non-technical users
-       - Solution: Created an intuitive interface with clear guidance and feedback
-
-#### Coordination Flow
-  The coordination flow works as follows:
-  - The search crew finds venues and stores them in state.venues
-  ```python
-      @CrewBase
-      class VenueSearchCrew:
-          @crew
-          def crew(self) -> Crew:
-              return Crew(
-                  agents=[self.location_analyst()],
-                  tasks=[self.analyze_location()],
-                  process=Process.sequential,
-                  verbose=True,
-              )
-  ```
-  - The scoring crew evaluates each venue and stores scores in state.venue_score
-  ```python
-    @CrewBase
-    class VenueScoreCrew:
-        @crew
-        def crew(self) -> Crew:
-            return Crew(
-                agents=[self.scoring_agent()],
-                tasks=[self.score_venues_task()],
-                process=Process.sequential,
-                verbose=True,
-            )
-  ```
-  - The scores are combined with venues using combine_venues_with_scores() utility
-  - The response crew generates personalized emails for each scored venue
-  ```python
-  @CrewBase
-  class VenueResponseCrew:
-      @crew
-      def crew(self) -> Crew:
-          return Crew(
-              agents=[self.email_followup_agent()],
-              tasks=[self.send_followup_email_task()],
-              process=Process.sequential,
-              verbose=True,
-          )
-  ```
-  - Emails are saved to the email_responses directory
-
-#### State Management
-The state management in VenueScoreFlow is handled through the VenueScoreState Pydantic model and uses CrewAI's Flow system. Here's a detailed breakdown:
-1. State Definition:
 ```python
-class VenueScoreState(BaseModel):
+from pydantic import BaseModel, Field
+from typing import List, Dict, Optional
+from datetime import datetime
+
+class InputData(BaseModel):
+    """User input data for venue search"""
+    location: str
+    radius: int 
+    event_info: str
+    sender_name: str
+    sender_company: str
+    sender_email: str
+
+class Venue(BaseModel):
+    """Represents a venue found during search"""
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    input_data: InputData | None = None
-    venues: List[Venue] = Field(default_factory=list)
-    venue_score: List[VenueScore] = Field(default_factory=list)
-    hydrated_venues: List[ScoredVenues] = Field(default_factory=list)
-    scored_venues_feedback: Optional[str] = None
-    generated_emails: Dict[str, str] = Field(default_factory=dict)
+    name: str
+    address: str
+    description: str
+    website: Optional[str] = None
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    created_at: datetime = Field(default_factory=datetime.now)
+
+class VenueScore(BaseModel):
+    """Venue evaluation scores and reasoning"""
+    name: str
+    score: int  # 1-100
+    reason: str
+    created_at: datetime = Field(default_factory=datetime.now)
+
+class ScoredVenues(BaseModel):
+    """Combined venue data with scores"""
+    id: str
+    name: str
+    address: str
+    description: str
+    website: Optional[str] = None
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    score: int
+    reason: str
+    created_at: datetime
 ```
-2. State Initialization:
+
+These models serve different purposes in our workflow:
+
+1. `InputData`: Captures user requirements and contact information
+2. `Venue`: Stores raw venue data from our search results
+3. `VenueScore`: Contains the AI agent's evaluation of each venue
+4. `ScoredVenues`: Combines venue information with its evaluation score
+
+### Step 2: Setting Up the Agent Architecture
+
+The system uses three specialized crews, each handling a different aspect of the venue research process:
+
+1. Venue Search Crew - Discovers potential venues
+2. Venue Score Crew - Evaluates venues based on criteria
+3. Venue Response Crew - Generates outreach emails
+
+Here's how to create your first crew:
+
 ```python
-@start()
-async def initialize_state(self) -> None:
-    print("1. Starting VenueScoreFlow")
-    print("Input data:", self.state.input_data)
-    os.environ["OPENAI_API_KEY"] = self.openai_key
-    os.environ["SERPER_API_KEY"] = self.serper_key
+@CrewBase
+class VenueSearchCrew:
+    @crew
+    def crew(self) -> Crew:
+        return Crew(
+            agents=[self.location_analyst()],
+            tasks=[self.analyze_location()],
+            process=Process.sequential,
+            verbose=True,
+        )
 ```
-3. Data Flow Between Stages:
-a. Venue Search → Venue Scoring:
+
+### Step 3: Implementing the Workflow
+
+The workflow uses decorators (learn more about Python decorators [here](https://www.geeksforgeeks.org/decorators-in-python/)) to manage the sequence of operations. Here's how it works:
+
 ```python
-@listen("initialize_state")
-async def search_venues(self):
-    # Stores results in state.venues
-    for venue_data in venues_data:
-        if isinstance(venue_data, dict):
-            try:
-                venue = Venue(**venue_data)
-                self.state.venues.append(venue)
-            except ValidationError as e:
-                print("Validation error for venue data:", e)
-    ```
-b. Venue Scoring → Venue Hydration:
+class VenueScoreFlow(Flow):
+    def __init__(
+        self,
+        openai_key: str,
+        serper_key: str,
+        input_data: InputData,
+    ):
+        super().__init__()
+        self.openai_key = openai_key
+        self.serper_key = serper_key
+        self.state.input_data = input_data
+
+    @start()
+    async def initialize_state(self) -> None:
+        """Initialize the flow state and set up API keys"""
+        print("Starting VenueScoreFlow")
+        os.environ["OPENAI_API_KEY"] = self.openai_key
+        os.environ["SERPER_API_KEY"] = self.serper_key
+
+    @listen("initialize_state")
+    async def search_venues(self):
+        """Search for venues after initialization"""
+        print("Searching for venues...")
+        search_crew = VenueSearchCrew()
+        result = await search_crew.crew().kickoff_async(
+            inputs={"input_data": self.state.input_data}
+        )
+        
+        # Parse and store venues in state
+        venues_data = json.loads(result.raw)
+        for venue_data in venues_data:
+            if isinstance(venue_data, dict):
+                try:
+                    venue = Venue(**venue_data)
+                    self.state.venues.append(venue)
+                except ValidationError as e:
+                    print(f"Validation error: {e}")
+```
+
+The workflow is managed through several key components:
+
+1. **Flow Initialization**
+   - The `@start()` decorator marks the entry point
+   - Sets up required API keys and initializes state
+   - Triggers the first step in the workflow
+
+2. **Event Listeners**
+   - `@listen()` decorators create a chain of dependent tasks
+   - Each listener waits for completion of previous tasks
+   - Ensures tasks execute in the correct order
+
+3. **Crew Management**
+   - Each major task is handled by a specialized crew
+   - Crews are instantiated and executed asynchronously
+   - Results are stored in the shared state
+
+Here's how the scoring crew is implemented:
+
 ```python
 @listen(or_(search_venues, "score_venues_feedback"))
 async def score_venues(self):
-    # Stores scores in state.venue_score
+    """Score venues after search or feedback"""
+    print("Scoring venues...")
+    tasks = []
+    
+    for venue in self.state.venues:
+        score_crew = VenueScoreCrew()
+        task = score_crew.crew().kickoff_async(
+            inputs={
+                "venue": venue,
+                "event_info": self.state.input_data.event_info
+            }
+        )
+        tasks.append(task)
+    
+    # Process all venues concurrently
     venue_scores = await asyncio.gather(*tasks)
-    self.state.venue_score = [score for score in venue_scores if score is not None]
+    self.state.venue_score = [
+        score for score in venue_scores 
+        if score is not None
+    ]
 ```
-c. Venue Hydration (Combining Venues with Scores):
+
+The workflow follows this sequence:
+1. Initialize state and API keys
+2. Search for venues using the search crew
+3. Score venues using the scoring crew
+4. Generate emails using the response crew
+
+Each step waits for the completion of its dependencies, ensuring data consistency throughout the process.
+
+## Enhancing the System
+
+Here are some ways to extend the basic implementation:
+
+1. **Add Human Feedback**
+   - Implement feedback loops for venue scoring using crew.train()
+   - Allow manual review of generated emails
+   - Enable custom scoring criteria
+
+2. **Improve SearchResults**
+   - Integrate reasoning models such as OpenAI's o1 or o1 preview for venue recommendations. Just be sure to pay attention to the cost of this model.
+   - Consider updating the Crew design to include more sophisticated agents.
+   - Implement historical performance tracking
+
+3. **Evaluate the results**
+   - Consider using [Langtrace](https://docs.crewai.com/how-to/langtrace-observability#langtrace-overview) to evaluate the results of the crew.
+
+## Getting Started
+
+To build your own venue research system:
+
+1. Install required packages:
+```bash
+pip install crewai streamlit pydantic
+```
+
+2. Set up your environment:
 ```python
-def combine_venues_with_scores(venues: List[Venue], venue_scores: List[VenueScore]) -> List[ScoredVenues]:
-    score_dict = {score.name.strip().lower(): score for score in venue_scores}
-    scored_venues = []
-    for venue in venues:
-        normalized_name = venue.name.strip().lower()
-        score = score_dict.get(normalized_name)
-        if score:
-            scored_venues.append(
-                ScoredVenues(
-                    id=venue.id,
-                    name=venue.name,
-                    # ... other fields ...
-                    score=score.score,
-                    reason=score.reason,
-                )
-            )
+os.environ["OPENAI_API_KEY"] = your_openai_key
+os.environ["SERPER_API_KEY"] = your_serper_key
 ```
-4. Email Generation Stage:
-```python
-@listen("hydrate_venues")
-async def write_and_save_emails(self):
-    # Stores generated emails in state.generated_emails
-    async def write_email(venue):
-        result = await VenueResponseCrew().crew().kickoff_async(inputs={...})
-        self.state.generated_emails[venue.name] = result.raw
-```
-The state management follows these key principles:
-- All data is stored in the Pydantic-based VenueScoreState
-- Each stage listens for completion of previous stages using @listen decorators
-- Data is passed between stages through the state object
-- The state maintains consistency using Pydantic validation
-- Asynchronous operations are handled using asyncio for concurrent processing
-This design ensures thread-safe state management and maintains data integrity throughout the workflow.
 
-## Future Work
-### Planned Features
-- Human feedback can be incorporated through the scored_venues_feedback field
+3. Create your first crew and start experimenting!
 
-- Enhanced Venue Filtering
-  - Integration with more venue data sources and platforms
-  - Advanced filtering based on event type (networking events, tech workshops, pitch competitions)
-  - Custom scoring weights for different event requirements
+## Resources
 
-- Improved Analysis
-  - Machine learning models for venue recommendation
-  - Historical data analysis for venue performance
-  - Sentiment analysis from venue reviews
-  - Real-time availability checking
-
-- User Experience Enhancements
-  - Interactive venue comparison tools
-  - Visual venue scoring dashboards
-  - Saved searches and favorite venues
-  - Bulk email campaign management
-
-### Scaling Strategy
-- Infrastructure
-  - Microservices architecture for better scalability
-  - Caching layer for improved performance
-  - Load balancing for high availability
-
-- Data Management
-  - Distributed database system
-  - Regular data synchronization with venue platforms
-  - Automated data validation and cleaning
-
-- Business Growth
-  - API access for third-party integrations
-  - White-label solutions for event planning companies
-  - Multi-language support for international markets
-
+- [CrewAI Documentation](https://docs.crewai.com/concepts/flows#flow-state-management)
+- [Multi AI Agent Systems Tutorial](https://learn.deeplearning.ai/courses/multi-ai-agent-systems-with-crewai/lesson/1/introduction)
+- [OpenAI API Documentation](https://platform.openai.com/docs/api-reference)
+- [Streamlit Documentation](https://docs.streamlit.io/)
 
 ## Conclusion
-The Venue Research Agentic Workflow represents a significant advancement in automating and streamlining the venue search and evaluation process for technology events. By leveraging AI agents and modern APIs, this project demonstrates how complex, traditionally manual tasks can be transformed into efficient, data-driven workflows.
 
-Key achievements of this project include:
-- Automated venue discovery and evaluation using intelligent agents
-- Standardized scoring system for objective venue assessment
-- Streamlined communication process with venue representatives
-- User-friendly interface making advanced functionality accessible
-
-The project's significance extends beyond its immediate functionality:
-- It showcases the practical application of AI agents in business processes
-- Demonstrates how multiple APIs can be integrated into a cohesive workflow
-- Provides a framework for scaling venue research operations
-- Sets a foundation for future enhancements in event planning automation
-
-We invite readers to:
-- Try out the workflow for their own venue search needs
-- Contribute to the project's development on GitHub
-- Share feedback and suggestions for future improvements
-- Join our community of users working to revolutionize event planning
-
-As we continue to develop and enhance this system, we remain committed to our goal of making venue research more efficient, data-driven, and accessible to event planners worldwide.
-
-
-## References
-- CrewAI Documentation: https://docs.crewai.com/concepts/flows#flow-state-management
-- Multi AI Agent Systems with CrewAI: https://learn.deeplearning.ai/courses/multi-ai-agent-systems-with-crewai/lesson/1/introduction
-- OpenAI API Documentation: https://platform.openai.com/docs/api-reference
-- Serper Dev API Documentation: https://serper.dev/docs
-- Streamlit Documentation: https://docs.streamlit.io/
+Hopefully, this tutorial provided some clarity into building multi-agent systems using CrewAI and did not confuse you. Overall, the best way to learn is through application and building a multi-agent venue research system with CrewAI doesn't have to be complicated, especially since there are [examples] (https://github.com/crewAIInc/crewAI-examples/tree/main) with different multi-agent architectures to learn from. 
