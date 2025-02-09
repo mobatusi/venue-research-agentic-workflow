@@ -2,13 +2,13 @@
 
 AI Agents are the latest trend in the race to AGI. What is captivating about building AI agents is the potential to automate all kinds of work. The idea to build a venue research multi-agent system came to me when my friend, who runs a tech mixer event mentioned all of the work that he has to do finding venues. 
 
-This felt like a great opportunity to get hands-on experience with AI agents. Now, I will shaer how I built the system with you. This tutorial shows how to use CrewAI to create multi-agent agents that search, evaluate, and reach out to potential event venues.
+This felt like a great opportunity to get hands-on experience with AI agents. Now, I will share how I built the system with you. This tutorial shows how to use CrewAI to create multi-agent agents that search, evaluate, and reach out to potential event venues.
 
-## Introduction
+## The Challenge
 
-Manual venue research is time-consuming and often inconsistent. Event planners spend countless hours searching across platforms like PartySlate and Peerspace, evaluating venues, and reaching out to vendors. We'll show you how to automate this entire workflow using CrewAI's multi-agent architecture.
+Manual venue research is time-consuming and often inconsistent. Event planners spend countless hours searching across platforms like PartySlate and Peerspace, evaluating venues, and reaching out to vendors. In this tutorial, I will show you how to automate this entire workflow using CrewAI's multi-agent architecture.
 
-Our solution has helped event planners:
+This solution has the potential to help event planners:
 - Reduce venue research time from days to minutes
 - Ensure consistent venue evaluation across platforms
 - Automate personalized vendor outreach
@@ -212,22 +212,70 @@ Here are some ways to extend the basic implementation:
 3. **Evaluate the results**
    - Consider using [Langtrace](https://docs.crewai.com/how-to/langtrace-observability#langtrace-overview) to evaluate the results of the crew.
 
-## Getting Started
+## The Solution
 
-To build your own venue research system:
+The venue research application provides a simple web interface to automate venue discovery and outreach. Here's how to use it:
 
-1. Install required packages:
-```bash
-pip install crewai streamlit pydantic
-```
+![Venue Search Crew](../images/validated_api_keys.png)
 
-2. Set up your environment:
-```python
-os.environ["OPENAI_API_KEY"] = your_openai_key
-os.environ["SERPER_API_KEY"] = your_serper_key
-```
+### Step 1: Configure API Keys
+1. Get your API keys:
+   - OpenAI API key from [OpenAI Platform](https://platform.openai.com/api-keys)
+   - Serper API key from [Serper.dev](https://serper.dev)
+2. Enter both API keys in the sidebar
+3. Click "Validate API Keys" to ensure they work
 
-3. Create your first crew and start experimenting!
+### Step 2: Enter Search Parameters and Custom Email Template
+1. Location Details:
+   - Enter the city or area where you want to find venues
+   - Specify search radius in miles (e.g., 5, 10, 20)
+
+2. Event Information:
+   - Describe your event details:
+     - Event date
+     - Event time
+   
+3. Contact Information:
+   - Your full name
+   - Company name
+   - Professional email address
+
+4. Click "Use Custom Email Template" to use a custom email template
+![Custom Email Template](../images/custom_email_template.png)
+  - Social Media Links
+    - Linkedin Url
+    - Instagram Url
+    - TikTok Url
+  - The system generates a default email template if this is not checked
+
+### Step 3: Run the Search
+1. Click "Start Venue Search" to begin the process
+2. The system will:
+   - Search for venues matching your criteria
+   - Evaluate each venue's suitability
+   - Generate personalized outreach emails
+
+### Step 4: Review Results
+![Venue List](../images/venue_list.png)
+1. View the Venue List:
+   - Each venue includes details like location, capacity, and amenities
+   - Review AI-generated scores and reasoning
+   
+2. Check Generated Emails:
+   - Review personalized outreach emails for each venue
+   - Emails are saved in the email_responses directory
+   - Edit as needed before sending
+
+### Tips for Best Results
+- Include all important requirements upfront
+- Review and customize generated emails before sending
+- Use the feedback option if venue scores need adjustment
+
+Try it yourself: [Event Planning Research Assistant](https://event-planning-research-assistant.streamlit.app/)
+
+## Conclusion
+
+Hopefully, this tutorial provided some clarity into building multi-agent systems using CrewAI and did not confuse you. Overall, the best way to learn is through application and building a multi-agent venue research system with CrewAI doesn't have to be complicated, especially since there are [examples] (https://github.com/crewAIInc/crewAI-examples/tree/main) with different multi-agent architectures to learn from. 
 
 ## Resources
 
@@ -235,7 +283,3 @@ os.environ["SERPER_API_KEY"] = your_serper_key
 - [Multi AI Agent Systems Tutorial](https://learn.deeplearning.ai/courses/multi-ai-agent-systems-with-crewai/lesson/1/introduction)
 - [OpenAI API Documentation](https://platform.openai.com/docs/api-reference)
 - [Streamlit Documentation](https://docs.streamlit.io/)
-
-## Conclusion
-
-Hopefully, this tutorial provided some clarity into building multi-agent systems using CrewAI and did not confuse you. Overall, the best way to learn is through application and building a multi-agent venue research system with CrewAI doesn't have to be complicated, especially since there are [examples] (https://github.com/crewAIInc/crewAI-examples/tree/main) with different multi-agent architectures to learn from. 
